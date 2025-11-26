@@ -1,0 +1,9 @@
+tabula-py
+pandas
+playwright
+numpy
+djangorestframework
+Django>=5.0
+psycopg2-binary
+celery[redis]
+requests

@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+psycopg2-binary = "*"
+celery = {extras = ["redis"], version = "*"}
+requests = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
+numpy = "*"
+playwright = "*"
+tabula-py = "*"
+pandas = "*"
+pypdf2 = "*"
+certifi = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"

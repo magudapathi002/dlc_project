@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis_broker
+    restart: always
+    ports:
+      - "6380:6380"
+
+  web:
+    build: .
+    container_name: django_vid
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             python manage.py runserver 0.0.0.0:8009"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - "8009:8009"
+#    depends_on:
+#      - redis
+
+  celery:
+    build: .
+    container_name: celery_worker
+    command: celery -A DLC_processing worker --loglevel=info
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+#    depends_on:
+#      - redis
+
+  celery-beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A DLC_processing beat --loglevel=info
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+#    depends_on:
+#      - redis
