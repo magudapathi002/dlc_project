@@ -437,7 +437,7 @@ def save_to_db(final_json, report_date=None):
 
     try:
         # Save data from Table A
-        table_a_data = final_json.get("POSOCO", {}).get("posoco_table_a", [])
+        table_a_data = final_json.get("posoco_table_a", [])
         if table_a_data and table_a_data[0]:
             for category, values in table_a_data[0].items():
                 if values is None or not isinstance(values, dict):
@@ -458,7 +458,7 @@ def save_to_db(final_json, report_date=None):
                 )
 
         # Save data from Table G
-        table_g_data = final_json.get("POSOCO", {}).get("posoco_table_g", [])
+        table_g_data = final_json.get("posoco_table_g", [])
         if table_g_data and table_g_data[0]:
             for fuel, values in table_g_data[0].items():
                 if values is None or not isinstance(values, dict):

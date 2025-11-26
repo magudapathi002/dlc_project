@@ -44,6 +44,8 @@ class DemandData(models.Model):
 
 
 class Nrldc2AData(models.Model):
+    objects = None
+    objcts = None
     report_date = models.DateField()
     state = models.CharField(max_length=100, null=True, blank=True)
 
@@ -73,6 +75,7 @@ class Nrldc2AData(models.Model):
 
 
 class Nrldc2CData(models.Model):
+    objects = None
     report_date = models.DateField(default=date.today)
     state = models.CharField(max_length=100, null=True, blank=True)
 
@@ -147,6 +150,7 @@ class PosocoTableG(models.Model):
 from datetime import date
 
 class Srldc2AData(models.Model):
+    objects = []
     report_date = models.DateField()  # Multiple states per day allowed
     state = models.CharField(max_length=100, null=True, blank=True)
 
@@ -177,6 +181,7 @@ class Srldc2AData(models.Model):
 
 
 class Srldc2CData(models.Model):
+    objects = None
     report_date = models.DateField(default=date.today)
     state = models.CharField(max_length=100, null=True, blank=True)
 
@@ -236,6 +241,7 @@ class Wrldc2AData(models.Model):
 
 
 class Wrldc2CData(models.Model):
+    objects = None
     report_date = models.DateField(default=date.today)
     state = models.CharField(max_length=100, null=True, blank=True)
 
