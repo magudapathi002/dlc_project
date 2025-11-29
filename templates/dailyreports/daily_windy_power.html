@@ -1,0 +1,333 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Daily Wind Report</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+  {% include "partials/navbar.html" %}
+    <main class="max-w-7xl px-4 sm:px-6 lg:px-8 mt-6 pb-12 lg:ml-56">
+
+    <div class="flex gap-6">
+
+      <!-- SIDEBAR: visible on lg, toggled on mobile -->
+      <aside id="mainSidebar" class="hidden lg:block w-64 fixed left-0 top-20 overflow-auto z-50 bg-white lg:shadow-2xl transition-all duration-300">
+        {% include "partials/sidebar.html" %}
+      </aside>
+
+
+      <!-- MAIN CONTENT -->
+      <section class="flex-1">
+
+        <div class="mx-auto w-full">
+          <div class="grid grid-cols-1 lg:grid-cols-6 gap-3 w-full">
+
+            <!-- Main card -->
+            <main class="lg:col-span-5 w-full">
+              <div class="bg-white shadow-md rounded-lg overflow-hidden">
+
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 border-b">
+                  <div>
+                    <h1 class="text-xl font-semibold">Daily Wind Report</h1>
+                    <p class="text-sm text-gray-500">Select date and view state-wise report</p>
+                  </div>
+                  <div class="text-right text-sm text-gray-600">
+                    {% if selected_state %}<div>State: <span class="font-medium">{{ selected_state }}</span></div>{% endif %}
+                    {% if selected_date %}<div>Date: <span class="font-medium">{{ selected_date }}</span></div>{% endif %}
+                  </div>
+                </div>
+
+                <!-- Controls (REPLACED: single date input) -->
+                <div class="p-4">
+                  <form method="GET" id="monthYearForm" class="flex flex-col md:flex-row md:items-center gap-3">
+
+                    <div class="w-full md:w-48">
+                      <input
+                        type="date"
+                        id="date_input"
+                        name="date"
+                        class="w-full p-2 border rounded-md bg-white"
+                        value="{{ request.GET.date|default:'' }}"
+                      />
+                    </div>
+
+                    <div class="flex gap-2 items-center">
+                      <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                        VIEW
+                      </button>
+
+                      <button type="button" id="exportCsvBtn" class="inline-flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                        Export Excel
+                      </button>
+
+                      <button type="button" id="refreshBtn" class="inline-flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                        Refresh
+                      </button>
+                    </div>
+
+                  </form>
+                </div>
+
+                <!-- REPLACED: Empty template design (keeps behavior intact) -->
+                <div class="p-4 border-t">
+                  <div class="rounded overflow-hidden shadow-sm bg-white">
+
+                    <!-- Card header (dark green) -->
+                    <div class="bg-[#072a12] text-white p-3">
+                      <div class="flex items-center justify-between">
+                        <div>
+                          <h2 class="text-sm font-semibold">TN - DAILY WIND POWER GENERATION UPDATES</h2>
+                          <div class="text-xs text-gray-200 mt-1">{{ selected_date|default:"-- -- -- -- --" }}</div>
+                        </div>
+                        <div class="text-xs text-right">
+                          <div class="font-medium">{{ selected_date|default:'24-NOV-2025' }}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Top numeric grid -->
+                    <div class="p-4">
+                      <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+                        <!-- Column headings -->
+                        <div class="col-span-1 font-semibold text-gray-700">Data</div>
+                        <div class="col-span-1 font-semibold text-right text-gray-700">Generation (MU)</div>
+                        <div class="col-span-1 font-semibold text-right text-gray-700">Absolute Error(%)</div>
+                        <div class="col-span-1"></div>
+
+                        <!-- Row: AMR Meter -->
+                        <div class="col-span-1 text-gray-700 py-2 border-t">AMR Meter</div>
+                        <div class="col-span-1 text-right py-2 border-t bg-yellow-50">&nbsp;</div>
+                        <div class="col-span-1 text-right py-2 border-t bg-green-50">&nbsp;</div>
+                        <div class="col-span-1 border-t"></div>
+
+                        <!-- Row: Feeder Meter -->
+                        <div class="col-span-1 text-gray-700 py-2">Feeder Meter</div>
+                        <div class="col-span-1 text-right py-2 bg-yellow-50">&nbsp;</div>
+                        <div class="col-span-1 text-right py-2 bg-green-50">&nbsp;</div>
+                        <div class="col-span-1"></div>
+
+                        <!-- Row: SRLDC -->
+                        <div class="col-span-1 text-gray-700 py-2">SRLDC</div>
+                        <div class="col-span-1 text-right py-2 bg-yellow-50">&nbsp;</div>
+                        <div class="col-span-1 text-right py-2 bg-green-50">&nbsp;</div>
+                        <div class="col-span-1"></div>
+
+                        <!-- Row: TNSLDC -->
+                        <div class="col-span-1 text-gray-700 py-2">TNSLDC</div>
+                        <div class="col-span-1 text-right py-2 bg-yellow-50">&nbsp;</div>
+                        <div class="col-span-1 text-right py-2 bg_green-50">&nbsp;</div>
+                        <div class="col-span-1"></div>
+
+                        <!-- Row: Forecast -->
+                        <div class="col-span-1 text-gray-700 py-2">Forecast</div>
+                        <div class="col-span-1 text-right py-2 bg-blue-50">&nbsp;</div>
+                        <div class="col-span-1 text-right py-2 bg-blue-50">&nbsp;</div>
+                        <div class="col-span-1"></div>
+
+                        <!-- Row: Back Down Losses -->
+                        <div class="col-span-1 text-gray-700 py-2">Back Down Losses</div>
+                        <div class="col-span-1 text-right py-2">&nbsp;</div>
+                        <div class="col-span-1 text-right py-2">&nbsp;</div>
+                        <div class="col-span-1"></div>
+                      </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="border-t my-2"></div>
+
+                    <!-- Bottom two summary boxes -->
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <!-- AMR Meter summary -->
+                      <div class="bg-white border rounded">
+                        <div class="bg-[#3f7c2b] text-white px-3 py-2 font-semibold text-sm rounded-t">AMR Meter</div>
+                        <div class="p-3 grid grid-cols-2 gap-2 text-xs">
+                          <div class="py-2 border rounded bg-gray-50">Max AVC (MW)</div>
+                          <div class="py-2 border rounded bg-red-50 text-right">&nbsp;</div>
+
+                          <div class="py-2 border rounded bg-gray-50">Min AVC (MW)</div>
+                          <div class="py-2 border rounded bg-red-50 text-right">&nbsp;</div>
+                        </div>
+                      </div>
+
+                      <!-- Feeder Meter summary -->
+                      <div class="bg-white border rounded">
+                        <div class="bg-[#3f7c2b] text-white px-3 py-2 font-semibold text-sm rounded-t">Feeder Meter</div>
+                        <div class="p-3 grid grid-cols-2 gap-2 text-xs">
+                          <div class="py-2 border rounded bg-gray-50">Max AVC (MW)</div>
+                          <div class="py-2 border rounded bg-red-50 text-right">&nbsp;</div>
+
+                          <div class="py-2 border rounded bg_gray-50">Min AVC (MW)</div>
+                          <div class="py-2 border rounded bg-red-50 text-right">&nbsp;</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Small footer tip -->
+                    <div class="p-3 text-xs text-gray-500 border-t">Tip: Choose month &amp; year then click <strong>VIEW</strong> to fetch state data. Export will download the currently visible table.</div>
+                  </div>
+                </div>
+                <!-- END REPLACED SECTION -->
+
+              </div> <!-- end card -->
+            </main>
+
+          </div>
+        </div>
+
+      </section> <!-- end main content -->
+
+    </div> <!-- end flex -->
+  </main> <!-- end container -->
+
+  <!-- JS: fetch, export and mobile sidebar toggle -->
+  <script>
+    const dataApiUrl = ""; // set if you have an API
+    const selectedState = "{{ selected_state|default:''|escapejs }}";
+    const refreshBtn = document.getElementById('refreshBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+    // Helper to get current tbody (may be replaced dynamically)
+    function getTbody() {
+      return document.getElementById('psp-tbody');
+    }
+
+    // kept for backward compatibility with pages that expect it
+    function renderEmptyRows() {
+      const tb = getTbody();
+      if (!tb) return;
+      tb.innerHTML = '';
+      for (let i = 1; i <= 9; i++) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50';
+        tr.innerHTML = `
+          <td class="px-3 py-2 text-sm text-gray-700">${i}</td>
+          <td class="px-3 py-2 text-sm text-gray-700">&nbsp;</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">&nbsp;</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">&nbsp;</td>
+        `;
+        tb.appendChild(tr);
+      }
+    }
+
+    // When real data arrives, replace the template card with an actual table (and add id="psp-tbody")
+    function renderRows(rows) {
+      const outer = document.querySelector('.p-4.border-t > .rounded.overflow-hidden');
+      if (!outer) return;
+
+      const tableHtml = `
+        <div class="overflow-x-auto rounded bg-white p-4">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-blue-50">
+              <tr>
+                <th class="px-3 py-2 text-left text-xs font-medium text-gray-600">S.No.</th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-gray-600">Plants</th>
+                <th class="px-3 py-2 text-right text-xs font-medium text-gray-600">MU</th>
+                <th class="px-3 py-2 text-right text-xs font-medium text-gray-600">Contribution %</th>
+              </tr>
+            </thead>
+            <tbody id="psp-tbody" class="bg-white divide-y divide-gray-100">
+              ${rows.map((r, idx) => `
+                <tr class="hover:bg-gray-50">
+                  <td class="px-3 py-2 text-sm text-gray-700">${r.sno!==undefined?r.sno:idx+1}</td>
+                  <td class="px-3 py-2 text-sm text-gray-700">${r.plant||''}</td>
+                  <td class="px-3 py-2 text-sm text-right text-gray-700">${r.mu||''}</td>
+                  <td class="px-3 py-2 text-sm text-right text-gray-700">${r.contrib||''}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      outer.innerHTML = tableHtml;
+    }
+
+    function getFormParams() {
+      return {
+        date: document.getElementById('date_input') ? document.getElementById('date_input').value : ''
+      };
+    }
+
+    async function fetchAndPopulate() {
+      // If there's no API configured or no selectedState, keep the empty template visible.
+      if (!dataApiUrl) { return; }
+      if (!selectedState) { return; }
+      const { date } = getFormParams();
+      if (!date) { return; }
+
+      const url = new URL(dataApiUrl, window.location.origin);
+      url.searchParams.set('state', selectedState);
+      url.searchParams.set('date', date);
+
+      try {
+        const res = await fetch(url.toString(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
+        if (!res.ok) { return; }
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) { return; }
+        renderRows(data);
+      } catch (e) { console.error(e); }
+    }
+
+    function tableToCSV(filename = 'psp-report.csv') {
+      const tb = getTbody();
+      if (!tb) return;
+      const rows = [];
+      const headers = ['S.No.','Plants','MU','Contribution %'];
+      rows.push(headers.join(','));
+      tb.querySelectorAll('tr').forEach(tr => {
+        const cols = Array.from(tr.querySelectorAll('td')).map(td => {
+          let text = td.textContent.trim().replace(/"/g,'""');
+          if (text.includes(',')) text = `"${text}"`;
+          return text;
+        });
+        rows.push(cols.join(','));
+      });
+      const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    if (refreshBtn) refreshBtn.addEventListener('click', fetchAndPopulate);
+    if (exportCsvBtn) exportCsvBtn.addEventListener('click', () => tableToCSV('psp-report.csv'));
+
+    // Mobile sidebar toggle
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mainSidebar = document.getElementById('mainSidebar');
+    if (sidebarToggle && mainSidebar) {
+      sidebarToggle.addEventListener('click', () => {
+        const isHidden = mainSidebar.classList.contains('hidden');
+        if (isHidden) {
+          mainSidebar.classList.remove('hidden');
+          mainSidebar.classList.add('block', 'absolute', 'z-50', 'left-3', 'top-20', 'w-64', 'shadow-lg');
+          sidebarToggle.setAttribute('aria-expanded', 'true');
+        } else {
+          // hide on mobile
+          mainSidebar.classList.add('hidden');
+          mainSidebar.classList.remove('block','absolute','z-50','left-3','top-20','w-64','shadow-lg');
+          sidebarToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // If server passed GET params, attempt fetch
+      fetchAndPopulate();
+    });
+  </script>
+
+  {% block content %}{% endblock %}
+</body>
+</html>

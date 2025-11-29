@@ -1,0 +1,45 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}MySite{% endblock %}</title>
+
+  <!-- Tailwind CDN for dev/demo -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Optional project CSS (kept for your static assets if any) -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Top navbar (fixed) -->
+  {% include "partials/navbar.html" %}
+
+  <!-- Main layout: sidebar left, content right -->
+  <div class="flex min-h-screen pt-16">
+
+    <!-- Sidebar -->
+    {% include "partials/sidebar.html" %}
+
+    <!-- Content area -->
+    <main class="flex-1 p-6 ml-64"> {# ml-64 leaves space for 16rem sidebar #}
+      <!-- place for Django messages -->
+      {% if messages %}
+        <div class="space-y-2 mb-4">
+          {% for message in messages %}
+            <div class="px-4 py-2 rounded {{ message.tags|default:'bg-blue-100 text-blue-800' }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

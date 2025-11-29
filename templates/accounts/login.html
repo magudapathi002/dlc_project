@@ -1,0 +1,340 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    /* (Your entire existing CSS unchanged) */
+    :root { --bg-expand: -6%; }
+    .left-panel { background: transparent; width: 100%; height: 100%; }
+    #map { width: 100%; height: 100%; border-radius: 0; background: transparent !important; box-shadow: none !important; position: relative; }
+    #map-tooltip { position: absolute; pointer-events: none; display: none; background: rgba(0,0,0,0.85); color: #fff; padding: 6px 9px; border-radius: 6px; font-size: 13px; transform: translate(-50%, -120%); white-space: nowrap; z-index: 9999; user-select: none; }
+    .leaflet-container .leaflet-interactive { cursor: pointer; }
+    .login-card-initial { opacity: 0; transform: translateY(20px); }
+    .login-card-animated { transition: opacity 0.5s ease-out, transform 0.5s ease-out; transition-delay: 0.3s; }
+    #map.map-initial { opacity: 0; transform: scale(0.98); }
+    #map.map-animated { transition: opacity 0.8s ease-out, transform 0.8s ease-out; transition-delay: 0.1s; }
+    .login-card { position: relative; overflow: hidden; -webkit-font-smoothing: antialiased; -webkit-backface-visibility: hidden; backface-visibility: hidden; transform-style: preserve-3d; }
+    .login-card .card-bg { position: absolute; inset: var(--bg-expand); z-index: 0; pointer-events: none; background-image: inherit; background-size: 125% 125%; background-position: center center; background-repeat: no-repeat; border-radius: inherit; -webkit-border-radius: inherit; transform: translateZ(0); will-change: transform, opacity, filter; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+    .login-card .card-bg::before, .login-card .card-bg::after { content: ""; position: absolute; inset: 0; border-radius: inherit; -webkit-border-radius: inherit; background-image: inherit; background-size: 135% 135%; background-position: center center; background-repeat: no-repeat; pointer-events: none; will-change: transform, opacity; -webkit-backface-visibility: hidden; backface-visibility: hidden; z-index: 1; }
+    .login-card .card-bg::after { z-index: 2; mix-blend-mode: overlay; }
+    .login-card .dim { position: absolute; inset: 0; z-index: 3; transition: background-color 2.2s ease-in-out; background-color: rgba(255,255,255,0.12); pointer-events: none; }
+    .login-card .dim.animate-dim { animation: dim-breath 9s ease-in-out infinite both; }
+    .login-card .card-content { position: relative; z-index: 10; }
+    @keyframes kb-base { 0% { transform: scale(1) translate3d(0,0,0) rotate(0deg); } 20% { transform: scale(1.12) translate3d(-3.2%,-1.6%,0) rotate(-0.35deg); } 45% { transform: scale(1.22) translate3d(2.6%,-1.2%,0) rotate(0.45deg); } 70% { transform: scale(1.14) translate3d(-1.2%,1.6%,0) rotate(-0.2deg); } 100% { transform: scale(1) translate3d(0,0,0) rotate(0deg); } }
+    @keyframes kb-micro { 0% { transform: translate3d(0,0,0) rotate(0deg) scale(1); } 30% { transform: translate3d(-0.9%,0.6%,0) rotate(0.45deg) scale(1.003); } 60% { transform: translate3d(0.7%,-0.4%,0) rotate(-0.35deg) scale(1.001); } 100% { transform: translate3d(0.2%,-0.15%,0) rotate(0deg) scale(1); } }
+    @keyframes kb-parallax { 0% { transform: scale(1.04) translate3d(0,0,0) rotate(0deg); } 50% { transform: scale(1.12) translate3d(2.4%,-1.2%,0) rotate(0.18deg); } 100% { transform: scale(1.04) translate3d(0,0,0) rotate(0deg); } }
+    @keyframes kb-color { 0% { transform: translate3d(0,0,0) rotate(0deg); opacity: 0.9; } 50% { transform: translate3d(-1.2%,0.6%,0) rotate(0.6deg); opacity: 0.95; } 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 0.9; } }
+    @keyframes dim-breath { 0% { background-color: rgba(255,255,255,0.14); } 50% { background-color: rgba(255,255,255,0.10); } 100% { background-color: rgba(255,255,255,0.14); } }
+    .login-card:hover .card-bg, .login-card:hover .card-bg::before, .login-card:hover .card-bg::after, .login-card:hover .dim { animation-play-state: paused !important; }
+    @media (prefers-reduced-motion: reduce) { .login-card .card-bg, .login-card .card-bg::before, .login-card .card-bg::after, .login-card .dim { animation: none !important; transform: none !important; } }
+    @media (max-width: 1024px) { .login-card .card-bg, .login-card .card-bg::before, .login-card .card-bg::after, .login-card .dim { animation: none !important; transform: none !important; } }
+    .login-card .card-bg { animation: kb-base 6s cubic-bezier(.22,.9,.32,1) infinite alternate both, kb-micro 2.2s cubic-bezier(.4,0,.2,1) infinite alternate both; }
+    .login-card .card-bg::before { opacity: 0.16; animation: kb-parallax 10s ease-in-out infinite alternate both; }
+    .login-card .card-bg::after { animation: kb-color 18s linear infinite alternate both; }
+    .login-card .card-content img { display: block; max-width: 100%; height: auto; }
+  </style>
+</head>
+
+<body class="bg-yellow-100 text-black">
+  <div class="flex justify-center h-screen">
+
+    <!-- LEFT MAP PANEL -->
+    <div class="hidden lg:flex lg:w-2/3 items-center justify-center left-panel relative">
+      <div class="absolute top-4 left-4 z-[9999]">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-10 w-auto drop-shadow-lg">
+      </div>
+
+      <div id="map" class="text-gray-900 text-xl map-initial map-animated w-full h-full">
+        <div id="map-tooltip" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT LOGIN PANEL -->
+    <div class="flex items-start justify-center w-full lg:w-2/6 h-screen px-6 py-8">
+      <div id="login-card-container" class="w-full max-w-md login-card-initial login-card-animated">
+
+        <div id="state-title" class="mb-4 text-sm font-semibold">
+          {{ selected_state|default:"TamilNadu" }} Data
+        </div>
+
+        <div class="shadow-xl rounded-2xl p-8 border border-gray-200 relative overflow-hidden login-card">
+          <div class="card-bg" style="background-image: url('{% static 'images/logocart.jpg' %}');"></div>
+          <div class="absolute inset-0 bg-white/60 dim"></div>
+
+          <!-- CARD CONTENT -->
+          <div class="relative z-10 card-content">
+
+            <div class="text-center">
+              <div class="flex justify-center mx-auto">
+                <img class="w-auto h-8 sm:h-10" src="{% static 'images/logo.svg' %}" alt="Logo">
+              </div>
+              <p class="mt-3 text-gray-700">Sign in to access your account</p>
+            </div>
+
+            <div class="mt-6">
+
+              <button type="button"
+                      class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2
+                             text-sm font-medium rounded-lg border border-gray-200 bg-white
+                             text-gray-800 shadow-sm hover:bg-gray-50 mb-4">
+                Sign in with Google
+              </button>
+
+              <div class="py-3 flex items-center text-xs text-gray-400 uppercase
+                          before:flex-1 before:border-t before:border-gray-200 before:me-6
+                          after:flex-1 after:border-t after:border-gray-200 after:ms-6 mt-4">
+                Or
+              </div>
+
+              {# ====== Display messages (success / error) ====== #}
+              {% if messages %}
+                <div class="mt-4">
+                  {% for message in messages %}
+                    <div class="p-3 mb-2 rounded text-sm {% if message.tags %}{{ message.tags }}{% endif %} bg-white/60 border">
+                      {{ message }}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next|default_if_none:'' }}">
+
+                <div class="grid gap-y-4">
+
+                  <div>
+                    <label class="block text-sm mb-2 text-black">Email / Username</label>
+
+                    <!-- keep your custom markup but show field errors if any -->
+                    <input type="text"
+                           name="{{ form.username.html_name }}"
+                           id="{{ form.username.id_for_label }}"
+                           value="{{ form.username.value|default_if_none:'' }}"
+                           placeholder="you@example.com"
+                           autocomplete="username"
+                           class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm
+                                  focus:border-blue-500 focus:ring-blue-500">
+
+                    {% if form.username.errors %}
+                      <p class="mt-2 text-xs text-red-600">
+                        {{ form.username.errors.as_text|striptags }}
+                      </p>
+                    {% endif %}
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between items-center">
+                      <label class="block text-sm mb-2 text-gray-700">Password</label>
+                      <a class="text-sm text-blue-600 hover:underline" href="#">
+                        Forgot password?
+                      </a>
+                    </div>
+
+                    <input type="password"
+                           name="{{ form.password.html_name }}"
+                           id="{{ form.password.id_for_label }}"
+                           autocomplete="current-password"
+                           class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm
+                                  focus:border-blue-500 focus:ring-blue-500">
+
+                    {% if form.password.errors %}
+                      <p class="mt-2 text-xs text-red-600">
+                        {{ form.password.errors.as_text|striptags }}
+                      </p>
+                    {% endif %}
+                  </div>
+
+                  <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox"
+                           class="shrink-0 mt-0.5 border-gray-200 rounded-sm text-blue-600">
+                    <label for="remember-me" class="ms-3 text-sm text-gray-700">
+                      Remember me
+                    </label>
+                  </div>
+
+                  <button type="submit"
+                          class="w-full py-3 px-4 text-sm font-medium rounded-lg bg-blue-600
+                                 text-white hover:bg-blue-700">
+                    Sign in
+                  </button>
+                </div>
+              </form>
+
+              <p class="mt-4 text-sm text-center text-gray-500">
+                Don't have an account yet?
+                <a href="{% url 'signup' %}" class="text-blue-600 font-medium hover:underline">
+                  Sign up here
+                </a>.
+              </p>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LEAFLET JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- CSRF helper + postSelectedState (AJAX) -->
+  <script>
+    function getCookie(name) {
+      let v = null;
+      if (document.cookie) {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const c = cookies[i].trim();
+          if (c.startsWith(name + '=')) {
+            v = decodeURIComponent(c.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return v;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    function postSelectedState(name) {
+      const stateTitleEl = document.getElementById('state-title');
+      if (stateTitleEl) stateTitleEl.textContent = `${name} Data`;
+
+      fetch("{% url 'select_state' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({ state: name })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data || !data.ok) {
+          console.warn('Failed saving state', data);
+        } else {
+          console.log('Selected state saved:', data.state);
+        }
+      })
+      .catch(err => {
+        console.error('Error saving selected state', err);
+      });
+    }
+  </script>
+
+  <!-- MAP SCRIPT -->
+  <script>
+    (function () {
+      const geojsonUrl = "{% static 'data/india.geojson' %}";
+
+      const stateColorMap = {
+        'Tamil Nadu': '#3388ff',
+        'Kerala': '#4BBF73',
+        'Karnataka': '#FFC300',
+        'Maharashtra': '#80493dff',
+        'Delhi': '#900C3F',
+        'Gujarat': '#8A2BE2',
+        'Rajasthan': '#e2562bff'
+      };
+
+      const defaultStateColor = '#ffffffff';
+      const mapEl = document.getElementById('map');
+      const tooltipEl = document.getElementById('map-tooltip');
+      const stateTitleEl = document.getElementById('state-title');
+      const loginCardEl = document.getElementById('login-card-container');
+
+      document.addEventListener('DOMContentLoaded', () => {
+        mapEl.classList.remove('map-initial');
+        loginCardEl.classList.remove('login-card-initial');
+      });
+
+      const map = L.map('map', {
+        center: [22.0, 79.0],
+        zoom: 5,
+        minZoom: 5,
+        maxZoom: 5,
+        zoomControl: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        touchZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        dragging: false,
+        attributionControl: false
+      });
+
+      function defaultStyle(feature) {
+        const props = feature.properties || {};
+        const name = props.NAME_1 || props.NAME || props.st_nm || 'State';
+        const fillColor = stateColorMap[name] || defaultStateColor;
+        return { fillColor: fillColor, color: "#000", weight: 1, fillOpacity: 1, interactive: true };
+      }
+
+      function highlightFeature(e) {
+        const layer = e.target;
+        layer.setStyle({ weight: 3, color: "#FFFF00", fillColor: "#BBBBBB", fillOpacity: 1 });
+        const props = layer.feature?.properties || {};
+        const name = props.NAME_1 || props.NAME || props.st_nm || 'State';
+        tooltipEl.textContent = name;
+        tooltipEl.style.display = 'block';
+      }
+
+      function resetHighlight(e) {
+        try { geojson.resetStyle(e.target); } catch (err) {}
+        tooltipEl.style.display = 'none';
+      }
+
+      function moveTooltip(e) {
+        const ev = e.originalEvent;
+        const rect = mapEl.getBoundingClientRect();
+        tooltipEl.style.left = `${ev.clientX - rect.left}px`;
+        tooltipEl.style.top = `${ev.clientY - rect.top - 10}px`;
+      }
+
+      function onEachFeature(feature, layer) {
+        layer.on({
+          mouseover: highlightFeature,
+          mouseout: resetHighlight,
+          mousemove: moveTooltip,
+          click: () => {
+            const props = feature.properties || {};
+            const name = props.NAME_1 || props.NAME || props.st_nm || 'State';
+            postSelectedState(name);
+          }
+        });
+      }
+
+      let geojson;
+
+      fetch(geojsonUrl)
+        .then(r => r.json())
+        .then(data => {
+          geojson = L.geoJson(data, { style: defaultStyle, onEachFeature: onEachFeature }).addTo(map);
+          const bounds = geojson.getBounds();
+          if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20] });
+          setTimeout(() => map.invalidateSize(), 250);
+        });
+
+    })();
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const dim = document.querySelector('.login-card .dim');
+      if (dim) setTimeout(()=> dim.classList.add('animate-dim'), 60);
+    });
+  </script>
+
+</body>
+</html>

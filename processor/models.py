@@ -211,6 +211,7 @@ class Srldc2CData(models.Model):
 
 
 class Wrldc2AData(models.Model):
+    objects = None
     report_date = models.DateField()  # Multiple states per day allowed
     state = models.CharField(max_length=100, null=True, blank=True)
 

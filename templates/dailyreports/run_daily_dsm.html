@@ -1,0 +1,369 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Run Daily DSM</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+  {% include "partials/navbar.html" %}
+
+  <!-- MOBILE: sidebar toggle button (visible on small screens) -->
+  <button id="sidebarToggle"
+          class="fixed z-40 top-4 left-4 inline-flex items-center justify-center p-2 rounded-md bg-white border shadow-sm lg:hidden"
+          aria-label="Open sidebar"
+          type="button">
+    <!-- hamburger icon -->
+    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+  </button>
+
+  <!-- Sidebar overlay for mobile -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden"></div>
+
+  <div class="flex gap-6">
+
+    <!-- Sidebar (slides on mobile, static on large screens) -->
+    <aside id="mainSidebar" class="hidden lg:block w-64 fixed left-0 top-20 overflow-auto z-50 bg-white lg:shadow-2xl transition-all duration-300">
+        {% include "partials/sidebar.html" %}
+      </aside>
+
+    <!-- Main content area -->
+    <main id="mainContent" class="flex-1 lg:ml-0">
+      <div class="flex item-left max-w-4xl mx-auto mt-6 p-3">
+        <div class="grid grid-cols-1 lg:grid-cols-6 gap-3 w-full">
+
+          <!-- LEFT: Main card (takes left columns) -->
+          <div class="lg:col-span-5 w-full">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+
+              <!-- Header -->
+              <div class="flex items-center justify-between p-4 border-b">
+                <div>
+                  <h1 class="text-xl font-semibold">Run Daily DSM</h1>
+                  <p class="text-sm text-gray-500">Select date and view state-wise report</p>
+                </div>
+                <div class="text-right text-sm text-gray-600">
+                  {% if selected_state %}<div>State: <span class="font-medium">{{ selected_state }}</span></div>{% endif %}
+                  {% if selected_date %}<div>Date: <span class="font-medium">{{ selected_date }}</span></div>{% endif %}
+                </div>
+              </div>
+
+              <!-- Controls: Date + Buttons -->
+              <div class="p-4">
+                <form method="GET" id="dateForm" class="flex flex-col md:flex-row md:items-center gap-3">
+
+                  <!-- DATE input (single) -->
+                  <label for="date_input" class="sr-only">Date</label>
+                  <input
+                    type="date"
+                    id="date_input"
+                    name="date"
+                    class="w-full md:w-40 p-2 border rounded-md bg-white"
+                    value="{{ request.GET.date|default:'' }}"
+                  />
+
+                  <!-- VIEW button (submits GET with date) -->
+                  <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                    VIEW
+                  </button>
+
+                  <!-- Export Excel (CSV) button -->
+                  <button type="button" id="exportCsvBtn" class="inline-flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-gray-700 bg-gr hover:bg-gray-50 ml-auto md:ml-0">
+                    Export Excel
+                  </button>
+
+                  <!-- Refresh -->
+                  <button type="button" id="refreshBtn" class="inline-flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                    Refresh
+                  </button>
+                </form>
+              </div>
+
+              <!-- Table / Empty template -->
+              <div class="p-4 border-t">
+                <div class="rounded overflow-hidden shadow-sm bg-white">
+
+                  <!-- Card header (dark green) -->
+                  <div class="bg-[#072a12] text-white p-3">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h2 class="text-sm font-semibold">TN - DAILY WIND POWER GENERATION UPDATES</h2>
+                        <div class="text-xs text-gray-200 mt-1">{{ selected_date|default:"-- -- -- -- --" }}</div>
+                      </div>
+                      <div class="text-xs text-right">
+                        <div class="font-medium">{{ selected_date|default:'24-NOV-2025' }}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Top numeric grid -->
+                  <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+                      <!-- Column headings -->
+                      <div class="col-span-1 font-semibold text-gray-700">Data</div>
+                      <div class="col-span-1 font-semibold text-right text-gray-700">Generation (MU)</div>
+                      <div class="col-span-1 font-semibold text-right text-gray-700">Absolute Error(%)</div>
+                      <div class="col-span-1"></div>
+
+                      <!-- Row: AMR Meter -->
+                      <div class="col-span-1 text-gray-700 py-2 border-t">AMR Meter</div>
+                      <div class="col-span-1 text-right py-2 border-t bg-yellow-50">&nbsp;</div>
+                      <div class="col-span-1 text-right py-2 border-t bg-green-50">&nbsp;</div>
+                      <div class="col-span-1 border-t"></div>
+
+                      <!-- Row: Feeder Meter -->
+                      <div class="col-span-1 text-gray-700 py-2">Feeder Meter</div>
+                      <div class="col-span-1 text-right py-2 bg-yellow-50">&nbsp;</div>
+                      <div class="col-span-1 text-right py-2 bg-green-50">&nbsp;</div>
+                      <div class="col-span-1"></div>
+
+                      <!-- Row: SRLDC -->
+                      <div class="col-span-1 text-gray-700 py-2">SRLDC</div>
+                      <div class="col-span-1 text-right py-2 bg-yellow-50">&nbsp;</div>
+                      <div class="col-span-1 text-right py-2 bg-green-50">&nbsp;</div>
+                      <div class="col-span-1"></div>
+
+                      <!-- Row: TNSLDC -->
+                      <div class="col-span-1 text-gray-700 py-2">TNSLDC</div>
+                      <div class="col-span-1 text-right py-2 bg-yellow-50">&nbsp;</div>
+                      <div class="col-span-1 text-right py-2 bg-green-50">&nbsp;</div>
+                      <div class="col-span-1"></div>
+
+                      <!-- Row: Forecast -->
+                      <div class="col-span-1 text-gray-700 py-2">Forecast</div>
+                      <div class="col-span-1 text-right py-2 bg-blue-50">&nbsp;</div>
+                      <div class="col-span-1 text-right py-2 bg-blue-50">&nbsp;</div>
+                      <div class="col-span-1"></div>
+
+                      <!-- Row: Back Down Losses -->
+                      <div class="col-span-1 text-gray-700 py-2">Back Down Losses</div>
+                      <div class="col-span-1 text-right py-2">&nbsp;</div>
+                      <div class="col-span-1 text-right py-2">&nbsp;</div>
+                      <div class="col-span-1"></div>
+                    </div>
+                  </div>
+
+                  <!-- Divider -->
+                  <div class="border-t my-2"></div>
+
+                  <!-- Bottom two summary boxes -->
+                  <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- AMR Meter summary -->
+                    <div class="bg-white border rounded">
+                      <div class="bg-[#3f7c2b] text-white px-3 py-2 font-semibold text-sm rounded-t">AMR Meter</div>
+                      <div class="p-3 grid grid-cols-2 gap-2 text-xs">
+                        <div class="py-2 border rounded bg-gray-50">Max AVC (MW)</div>
+                        <div class="py-2 border rounded bg-red-50 text-right">&nbsp;</div>
+
+                        <div class="py-2 border rounded bg-gray-50">Min AVC (MW)</div>
+                        <div class="py-2 border rounded bg-red-50 text-right">&nbsp;</div>
+                      </div>
+                    </div>
+
+                    <!-- Feeder Meter summary -->
+                    <div class="bg-white border rounded">
+                      <div class="bg-[#3f7c2b] text-white px-3 py-2 font-semibold text-sm rounded-t">Feeder Meter</div>
+                      <div class="p-3 grid grid-cols-2 gap-2 text-xs">
+                        <div class="py-2 border rounded bg-gray-50">Max AVC (MW)</div>
+                        <div class="py-2 border rounded bg-red-50 text-right">&nbsp;</div>
+
+                        <div class="py-2 border rounded bg-gray-50">Min AVC (MW)</div>
+                        <div class="py-2 border rounded bg-red-50 text-right">&nbsp;</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Small footer tip -->
+                  <div class="p-3 text-xs text-gray-500 border-t">Tip: Choose date then click <strong>VIEW</strong> to fetch state data. Export will download the currently visible table.</div>
+                </div>
+              </div>
+              <!-- END Table / Empty template -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- JS: date fetch, export and sidebar behavior -->
+  <script>
+    // Sidebar toggling
+    (function () {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      const closeBtn = document.getElementById('sidebarClose');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function openSidebar() {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+        overlay.style.display = 'block';
+      }
+      function closeSidebar() {
+        if (!sidebar) return;
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+        overlay.style.display = 'none';
+      }
+
+      if (toggle) toggle.addEventListener('click', openSidebar);
+      if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+      if (overlay) overlay.addEventListener('click', closeSidebar);
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeSidebar();
+      });
+
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 1024) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.add('hidden');
+          overlay.style.display = 'none';
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+          overlay.style.display = 'none';
+        }
+      });
+    })();
+
+    // CONFIG: set this to your API endpoint when ready (expects ?state=...&date=yyyy-mm-dd)
+    const dataApiUrl = ""; // e.g. "/api/psp-data/"
+
+    const selectedState = "{{ selected_state|default:''|escapejs }}";
+    const tbody = document.getElementById('psp-tbody');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+    function getTbody() {
+      return document.getElementById('psp-tbody');
+    }
+
+    function renderEmptyRows() {
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      for (let i = 1; i <= 9; i++) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50';
+        tr.innerHTML = `
+          <td class="px-3 py-2 text-sm text-gray-700">${i}</td>
+          <td class="px-3 py-2 text-sm text-gray-700">&nbsp;</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">&nbsp;</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">&nbsp;</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function renderRows(dataRows) {
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      dataRows.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50';
+
+        let extraClass = '';
+        if (r.highlight === 'green') extraClass = 'bg-green-50';
+        if (r.highlight === 'dark') extraClass = 'bg-gray-800 text-white';
+
+        if (extraClass) tr.classList.add(...extraClass.split(' '));
+
+        const sno = r.sno !== undefined ? r.sno : (idx + 1);
+        const plant = r.plant || '';
+        const mu = r.mu || '';
+        const contrib = r.contrib || '';
+
+        tr.innerHTML = `
+          <td class="px-3 py-2 text-sm text-gray-700">${sno}</td>
+          <td class="px-3 py-2 text-sm text-gray-700">${plant}</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">${mu}</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">${contrib}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getFormParams() {
+      const dateInput = document.getElementById('date_input');
+      return { date: dateInput ? dateInput.value : '' };
+    }
+
+    async function fetchAndPopulate() {
+      // If no API configured, show placeholders
+      if (!dataApiUrl) { renderEmptyRows(); return; }
+      if (!selectedState) { renderEmptyRows(); return; }
+
+      const { date } = getFormParams();
+      if (!date) { renderEmptyRows(); return; } // require date
+
+      const url = new URL(dataApiUrl, window.location.origin);
+      url.searchParams.set('state', selectedState);
+      url.searchParams.set('date', date);
+
+      try {
+        const res = await fetch(url.toString(), { method: 'GET', headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
+        if (!res.ok) { renderEmptyRows(); return; }
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) { renderEmptyRows(); return; }
+        renderRows(data);
+      } catch (err) {
+        console.error(err);
+        renderEmptyRows();
+      }
+    }
+
+    function tableToCSV(filename = 'psp-report.csv') {
+      const tb = getTbody();
+      if (!tb) return;
+      const rows = [];
+      const headers = ['S.No.', 'Plants', 'MU', 'Contribution %'];
+      rows.push(headers.join(','));
+
+      const trs = tb.querySelectorAll('tr');
+      trs.forEach(tr => {
+        const cols = Array.from(tr.querySelectorAll('td')).map(td => {
+          let text = td.textContent.trim().replace(/"/g, '""');
+          if (text.includes(',')) text = `"${text}"`;
+          return text;
+        });
+        rows.push(cols.join(','));
+      });
+
+      const csv = rows.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Events
+    if (refreshBtn) refreshBtn.addEventListener('click', fetchAndPopulate);
+    if (exportCsvBtn) exportCsvBtn.addEventListener('click', function () {
+      tableToCSV('psp-report.csv');
+    });
+
+    // On page load, attempt to fetch (if GET params present)
+    document.addEventListener('DOMContentLoaded', function () {
+      fetchAndPopulate();
+    });
+  </script>
+
+  {% block content %}{% endblock %}
+</body>
+</html>
