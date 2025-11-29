@@ -4,29 +4,336 @@
 {% block title %}Dashboard - {{ user.username }}{% endblock %}
 
 {% block content %}
-  <div class="max-w-7xl mx-auto">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h1 class="text-2xl font-bold">Dashboard</h1>
-        <p class="text-sm text-gray-600">Welcome back, {{ user.get_full_name|default:user.username }}</p>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<style>
+    /* Width of the scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    /* The track (background) */
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #0B1221;
+    }
+    /* The thumb (moving part) */
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155; /* Slate-700 */
+        border-radius: 4px;
+    }
+    /* Hover state */
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #06b6d4; /* Cyan-500 glow */
+    }
+</style>
+
+<div class="max-w-8xl -mt-10 px-4 sm:px-6 lg:px-8">
+
+  <div class="flex items-center justify-between mb-6 pt-4">
+    <div>
+      <h1 class="text-2xl font-bold">Dashboard</h1>
+      <p class="text-sm text-gray-600">
+        Welcome back, {{ user.get_full_name|default:user.username }}
+      </p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+    <div class="bg-[#0B1221] rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-slate-700/50 overflow-hidden ring-1 ring-cyan-500/20 h-96">
+      <div class="flex items-center justify-between bg-[#111827] px-5 py-4 border-b border-slate-700/60">
+        <h2 class="font-bold text-lg text-slate-100 tracking-wide shadow-black drop-shadow-md">Tamil Nadu Summary</h2>
+        <div class="flex items-center gap-4 text-emerald-400">
+          <button class="hover:text-emerald-300 transition-colors duration-200"><i class="fas fa-sync-alt"></i></button>
+          <button class="hover:text-emerald-300 transition-colors duration-200"><i class="fas fa-expand"></i></button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="bg-[#131b2e] border-b border-slate-700/50">
+              <th class="px-5 py-3 text-left font-medium text-slate-400 uppercase tracking-wider text-xs">Slot #</th>
+              <th class="px-5 py-3 text-left font-medium text-slate-400 uppercase tracking-wider text-xs">DateTime</th>
+              <th class="px-5 py-3 text-left font-medium text-emerald-400 uppercase tracking-wider text-xs">MW</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-300 divide-y divide-slate-800/60">
+             </tbody>
+        </table>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white p-5 rounded shadow">
-        <div class="text-sm text-gray-500">Visitors</div>
-        <div class="text-2xl font-semibold mt-2">10K</div>
+    <div class="bg-[#0B1221] rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-slate-700/50 overflow-hidden ring-1 ring-cyan-500/20 h-96">
+      <div class="flex items-center justify-between bg-[#111827] px-5 py-4 border-b border-slate-700/60">
+        <h2 class="font-bold text-lg text-slate-100 tracking-wide shadow-black drop-shadow-md">Summary Region Wise</h2>
+        <div class="flex items-center gap-4 text-emerald-400">
+          <button class="hover:text-emerald-300 transition-colors duration-200"><i class="fas fa-sync-alt"></i></button>
+          <button class="hover:text-emerald-300 transition-colors duration-200"><i class="fas fa-expand"></i></button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="bg-[#131b2e] border-b border-slate-700/50">
+              <th class="px-5 py-3 text-left font-medium text-cyan-500 uppercase tracking-wider text-xs">Slot #</th>
+              <th class="px-5 py-3 text-left font-medium text-slate-400 uppercase tracking-wider text-xs">DateTime</th>
+              <th class="px-5 py-3 text-left font-medium text-slate-400 uppercase tracking-wider text-xs">Madurai LDC</th>
+              <th class="px-5 py-3 text-left font-medium text-slate-400 uppercase tracking-wider text-xs">Erode LDC</th>
+              <th class="px-5 py-3 text-left font-medium text-emerald-400 uppercase tracking-wider text-xs">Total</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-300 divide-y divide-slate-800/60">
+             </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-[#0B1221] rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-slate-700/50 overflow-hidden ring-1 ring-cyan-500/20 flex flex-col h-96">
+
+      <div class="flex items-center justify-between bg-[#111827] px-5 py-4 border-b border-slate-700/60 shrink-0">
+        <h2 class="font-bold text-lg text-slate-100 tracking-wide shadow-black drop-shadow-md">Substation Forecast 11 Hrs</h2>
+        <div class="flex items-center gap-4 text-cyan-400">
+          <button class="hover:text-cyan-300 transition-colors duration-200"><i class="fas fa-sync-alt"></i></button>
+          <button class="hover:text-cyan-300 transition-colors duration-200"><i class="fas fa-expand"></i></button>
+        </div>
       </div>
 
-      <div class="bg-white p-5 rounded shadow">
-        <div class="text-sm text-gray-500">Files</div>
-        <div class="text-2xl font-semibold mt-2">2000+</div>
-      </div>
+      <div class="flex-1 overflow-y-auto custom-scrollbar">
+        <table class="min-w-full text-sm">
+          <thead class="sticky top-0 z-10">
+            <tr class="bg-[#131b2e] border-b border-slate-700/50 shadow-md">
+              <th class="px-5 py-3 text-left font-medium text-slate-400 uppercase tracking-wider text-xs bg-[#131b2e]">Sub Station</th>
+              <th class="px-5 py-3 text-left font-medium text-cyan-500 uppercase tracking-wider text-xs bg-[#131b2e]">Wind(m/s)</th>
+              <th class="px-5 py-3 text-left font-medium text-cyan-500 uppercase tracking-wider text-xs bg-[#131b2e]">Power(MW)</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-300 divide-y divide-slate-800/60">
 
-      <div class="bg-white p-5 rounded shadow">
-        <div class="text-sm text-gray-500">Income</div>
-        <div class="text-2xl font-semibold mt-2">$5,782</div>
+            <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="px-5 py-3 font-medium text-slate-300">Substation 1</td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="wind-spark-1" class="w-20 h-8"></div>
+                        <span class="text-cyan-400 font-bold font-mono">6.44</span>
+                    </div>
+                </td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="power-spark-1" class="w-20 h-8"></div>
+                        <span class="text-emerald-400 font-bold font-mono">585.92</span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="px-5 py-3 font-medium text-slate-300">Substation 2</td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="wind-spark-2" class="w-20 h-8"></div>
+                        <span class="text-cyan-400 font-bold font-mono">4.60</span>
+                    </div>
+                </td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="power-spark-2" class="w-20 h-8"></div>
+                        <span class="text-emerald-400 font-bold font-mono">719.95</span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="px-5 py-3 font-medium text-slate-300">Substation 3</td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="wind-spark-3" class="w-20 h-8"></div>
+                        <span class="text-cyan-400 font-bold font-mono">3.60</span>
+                    </div>
+                </td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="power-spark-3" class="w-20 h-8"></div>
+                        <span class="text-emerald-400 font-bold font-mono">53.80</span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="px-5 py-3 font-medium text-slate-300">Substation 4</td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="wind-spark-4" class="w-20 h-8"></div>
+                        <span class="text-cyan-400 font-bold font-mono">5.20</span>
+                    </div>
+                </td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="power-spark-4" class="w-20 h-8"></div>
+                        <span class="text-emerald-400 font-bold font-mono">120.40</span>
+                    </div>
+                </td>
+            </tr>
+
+             <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="px-5 py-3 font-medium text-slate-300">Substation 5</td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="wind-spark-5" class="w-20 h-8"></div>
+                        <span class="text-cyan-400 font-bold font-mono">4.10</span>
+                    </div>
+                </td>
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                        <div id="power-spark-5" class="w-20 h-8"></div>
+                        <span class="text-emerald-400 font-bold font-mono">98.20</span>
+                    </div>
+                </td>
+            </tr>
+
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+
+
+  <div class="relative w-full bg-[#0B1221] rounded-xl border border-slate-700/50 shadow-[0_0_20px_rgba(0,0,0,0.6)] p-2 md:p-6 ring-1 ring-cyan-500/20 mb-10">
+
+      <div class="flex items-center justify-between mb-4 px-2">
+          <div class="w-6"></div>
+          <h2 class="text-slate-200 font-medium text-sm md:text-lg tracking-wide">
+              Tamil Nadu Wind Power Forecast for 29-Nov-2025
+          </h2>
+          <button class="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-800 transition-colors text-slate-400 hover:text-cyan-400">
+              <i class="fas fa-bars"></i>
+          </button>
+      </div>
+
+      <div class="relative w-full pr-8">
+          <div id="windChart"></div>
+          <div class="absolute right-[-10px] top-1/2 transform -translate-y-1/2 rotate-90 origin-center pointer-events-none">
+              <span class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold">
+                  Leaf Green Energy
+              </span>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // -----------------------------------------------------
+        // 1. MAIN LARGE CHART RENDER
+        // -----------------------------------------------------
+        const dataValues = [430, 620, 560, 470, 680, 340, 300, 260, 280, 260, 250, 120, 130, 150, 140, 120, 120, 125, 130, 140, 160, 180, 220, 320];
+
+        var options = {
+            series: [{ name: 'Total MW', data: dataValues }],
+            chart: {
+                type: 'area',
+                height: 350,
+                toolbar: { show: false },
+                background: 'transparent',
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+            },
+            stroke: { curve: 'smooth', width: 3, colors: ['#06b6d4'] },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.05,
+                    stops: [0, 90, 100],
+                    colorStops: [
+                        { offset: 0, color: '#06b6d4', opacity: 0.6 },
+                        { offset: 100, color: '#06b6d4', opacity: 0.01 }
+                    ]
+                }
+            },
+            markers: { size: 0, colors: ['#0B1221'], strokeColors: '#06b6d4', strokeWidth: 2, hover: { size: 6 } },
+            xaxis: {
+                categories: Array.from({length: 24}, (_, i) => i + 1),
+                tooltip: { enabled: false },
+                axisBorder: { show: true, color: '#334155' },
+                axisTicks: { show: false },
+                labels: { style: { colors: '#94a3b8', fontSize: '12px' } }
+            },
+            yaxis: {
+                min: 0, max: 800, tickAmount: 4,
+                labels: { style: { colors: '#94a3b8' } },
+                title: { text: 'Power in MW', style: { color: '#94a3b8', fontWeight: 400 } }
+            },
+            grid: { borderColor: '#1e293b', strokeDashArray: 0, yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } } },
+            tooltip: { theme: 'dark', style: { fontSize: '12px' }, x: { show: false }, marker: { show: true } },
+            legend: { position: 'bottom', offsetY: 0, markers: { radius: 0, width: 20, height: 3 }, itemMargin: { horizontal: 10 }, formatter: function() { return "29-Nov" }, labels: { colors: '#94a3b8' } }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#windChart"), options);
+        chart.render();
+
+
+        // -----------------------------------------------------
+        // 2. SPARKLINES CONFIGURATION
+        // -----------------------------------------------------
+
+        // Wind Config (Cyan)
+        const windSparkConfig = {
+            chart: { type: 'area', height: 35, width: 80, sparkline: { enabled: true }, animations: { enabled: false } },
+            stroke: { curve: 'smooth', width: 2, colors: ['#06b6d4'] },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 100], colorStops: [{ offset: 0, color: '#06b6d4', opacity: 0.5 }, { offset: 100, color: '#06b6d4', opacity: 0.1 }] } },
+            tooltip: { enabled: false }
+        };
+
+        // Power Config (Green)
+        const powerSparkConfig = {
+            ...windSparkConfig,
+            stroke: { curve: 'smooth', width: 2, colors: ['#10b981'] },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 100], colorStops: [{ offset: 0, color: '#10b981', opacity: 0.5 }, { offset: 100, color: '#10b981', opacity: 0.1 }] } }
+        };
+
+        // -----------------------------------------------------
+        // 3. RENDER ALL TABLE ROWS (Dummy Data)
+        // -----------------------------------------------------
+
+        // Row 1
+        new ApexCharts(document.querySelector("#wind-spark-1"), { ...windSparkConfig, series: [{ data: [5, 8, 6, 9, 7, 8, 6] }] }).render();
+        new ApexCharts(document.querySelector("#power-spark-1"), { ...powerSparkConfig, series: [{ data: [500, 520, 550, 580, 560, 585, 590] }] }).render();
+
+        // Row 2
+        new ApexCharts(document.querySelector("#wind-spark-2"), { ...windSparkConfig, series: [{ data: [2, 3, 4, 3, 4, 5, 4] }] }).render();
+        new ApexCharts(document.querySelector("#power-spark-2"), { ...powerSparkConfig, series: [{ data: [600, 650, 620, 680, 700, 710, 720] }] }).render();
+
+        // Row 3
+        new ApexCharts(document.querySelector("#wind-spark-3"), { ...windSparkConfig, series: [{ data: [4, 3, 5, 2, 3, 2, 3] }] }).render();
+        new ApexCharts(document.querySelector("#power-spark-3"), { ...powerSparkConfig, series: [{ data: [40, 45, 42, 50, 48, 52, 53] }] }).render();
+
+        // Row 4
+        new ApexCharts(document.querySelector("#wind-spark-4"), { ...windSparkConfig, series: [{ data: [3, 4, 5, 4, 6, 5, 6] }] }).render();
+        new ApexCharts(document.querySelector("#power-spark-4"), { ...powerSparkConfig, series: [{ data: [100, 110, 105, 120, 115, 125, 130] }] }).render();
+
+        // Row 5
+        new ApexCharts(document.querySelector("#wind-spark-5"), { ...windSparkConfig, series: [{ data: [2, 3, 2, 4, 3, 5, 4] }] }).render();
+        new ApexCharts(document.querySelector("#power-spark-5"), { ...powerSparkConfig, series: [{ data: [80, 85, 90, 88, 92, 95, 98] }] }).render();
+
+
+        // -----------------------------------------------------
+        // 4. CSS INJECTION FOR TOOLTIPS
+        // -----------------------------------------------------
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .apexcharts-tooltip {
+                background: #0f172a !important;
+                border: 1px solid #06b6d4 !important;
+                box-shadow: 0 0 15px rgba(6, 182, 212, 0.4) !important;
+                color: #fff;
+                border-radius: 8px !important;
+            }
+            .apexcharts-tooltip-title {
+                background: #1e293b !important;
+                border-bottom: 1px solid #334155 !important;
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
 {% endblock %}

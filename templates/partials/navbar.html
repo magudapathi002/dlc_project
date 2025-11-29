@@ -29,11 +29,11 @@
 
         {% if selected_state %}
           <div class="flex items-center gap-2">
-            <a href="{% url 'dashboard' %}" class="text-xs px-2 py-1 rounded bg-yellow-400 text-black font-semibold">{{ selected_state }}</a>
+            <a href="{% url 'dashboard:dashboard' %}" class="text-xs px-2 py-1 rounded bg-yellow-400 text-black font-semibold">{{ selected_state }}</a>
           </div>
         {% elif request.session.selected_state %}
           <div class="flex items-center gap-2">
-            <a href="{% url 'dashboard' %}" class="text-xs px-2 py-1 rounded bg-yellow-400 text-black font-semibold">{{ request.session.selected_state }}</a>
+            <a href="{% url 'dashboard:dashboard' %}" class="text-xs px-2 py-1 rounded bg-yellow-400 text-black font-semibold">{{ request.session.selected_state }}</a>
           </div>
         {% endif %}
 

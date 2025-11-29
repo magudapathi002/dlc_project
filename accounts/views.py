@@ -1,4 +1,3 @@
-# accounts/views.py
 import json
 import os
 from django.conf import settings
@@ -97,7 +96,7 @@ def login_view(request):
                 if allowed:
                     return redirect(next_url)
 
-            return redirect('dashboard')
+            return redirect('dashboard:dashboard')
         else:
             messages.error(request, "Invalid credentials. Try again.")
     else:
@@ -136,17 +135,6 @@ def logout_view(request):
     return redirect('login')
 
 
-@login_required
-def dashboard_view(request):
-    selected_state = request.session.get(SESSION_STATE_KEY)
-    context = {
-        'user': request.user,
-        'selected_state': selected_state,
-    }
-    # NOTE: render top-level template 'dashboard.html'
-    return render(request, 'accounts/dashboard.html', context)
-
-
 def select_state(request):
     """
     Accept AJAX POST to save `selected_state` in session and return JSON (no redirect).
@@ -166,7 +154,7 @@ def select_state(request):
     if is_ajax:
         return JsonResponse({'ok': True, 'state': state or ''})
 
-    requested_next = request.GET.get('next') or request.POST.get('next') or reverse('dashboard')
+    requested_next = request.GET.get('next') or request.POST.get('next') or reverse('dashboard:dashboard')
     try:
         is_safe = url_has_allowed_host_and_scheme(
             url=requested_next,
@@ -177,7 +165,7 @@ def select_state(request):
         is_safe = False
 
     if not is_safe:
-        requested_next = reverse('dashboard')
+        requested_next = reverse('dashboard:dashboard')
 
     login_url = reverse('login')
     return redirect(f"{login_url}?next={requested_next}")

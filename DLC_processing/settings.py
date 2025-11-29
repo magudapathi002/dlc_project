@@ -22,8 +22,8 @@ INSTALLED_APPS = [
     'rest_framework',
     # 'django_filters',
     'accounts',
-
     'processor',
+    'dashboard',
 ]
 
 
@@ -128,6 +128,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-
-LOGIN_REDIRECT_URL = '/dashboard/'  # change as you like
-LOGIN_URL = '/login/'
+#
+# LOGIN_REDIRECT_URL = '/dashboard/'  # change as you like
+# LOGIN_URL = '/login/'

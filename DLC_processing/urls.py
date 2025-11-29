@@ -14,13 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# project urls.py (replace only the dashboard include line)
 from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),
-    path('dashboard/', include('dailyreports.urls')),
-    # <-- ensures /login, /signup, /dashboard exist
+    path('', include('accounts.urls')),         # accounts handles /login /signup etc.
+    path('dashboard/', include(('dashboard.urls', 'dashboard'), namespace='dashboard')),  # <- updated
+    path('reports/', include('dailyreports.urls')), # moved dailyreports to /reports/ to avoid conflict
     path('api/', include('api_app.urls')),
 ]
