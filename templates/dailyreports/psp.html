@@ -1,0 +1,599 @@
+{% load static %}
+
+{# placeholder image path for server-side use #}
+{% static 'images/placeholder.png' as placeholder_img %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PSP Reports</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+
+  <style>
+    :root { --navbar-height: 72px; }
+
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { overflow: hidden; background: #f5f7fa; }
+
+    .page-content {
+      height: calc(100vh - var(--navbar-height));
+      padding-top: 1rem;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .cards-row {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+      .cards-row { grid-template-columns: 40% 60%; }
+    }
+
+    .app-card {
+      background: #fff;
+      border-radius: 0.6rem;
+      box-shadow: 0 8px 22px rgba(15,23,42,0.06);
+      border: 1px solid rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .left-card .card-body {
+      padding: 1.25rem;
+      overflow: auto;
+    }
+
+    .psp-table th, .psp-table td { white-space: nowrap; vertical-align: middle; }
+    .psp-footer { padding: 0.5rem 1.25rem; color: #6b7280; font-size: 12px; }
+
+    /* --- Gauge Styles --- */
+    .gauge-circle-bg { stroke: #e5e7eb; }
+    .gauge-circle-fill { transition: stroke-dashoffset 1s ease-out; transform: rotate(144deg); transform-origin: 50% 50%; }
+
+    /* Scrollbar tweak */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+    /* ----------------------
+       Page entry animations
+       ---------------------- */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeInUp 700ms cubic-bezier(.18,.85,.32,1) forwards;
+    }
+
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stagger helpers - small delays so boxes appear one-by-one */
+    .fade-delay-05 { animation-delay: 0.05s; }
+    .fade-delay-1  { animation-delay: 0.10s; }
+    .fade-delay-15 { animation-delay: 0.15s; }
+    .fade-delay-2  { animation-delay: 0.20s; }
+    .fade-delay-25 { animation-delay: 0.25s; }
+    .fade-delay-3  { animation-delay: 0.30s; }
+
+    /* keep images contained */
+    .icon-gif { object-fit: contain; display: inline-block; }
+  </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+  {% include "partials/navbar.html" %}
+
+  {{ srldc_data|default:"null"|json_script:"srldc-data" }}
+
+  <div class="page-content">
+    <div class="max-w-7xl mx-auto h-full px-6">
+      <div class="flex gap-6 h-full">
+
+        <aside class="w-16 hidden lg:block" aria-label="Sidebar">
+          {% include "partials/sidebar.html" %}
+        </aside>
+
+        <main class="flex-1 h-full">
+          <div class="cards-row h-full">
+
+            <!-- LEFT TABLE CARD (animated) -->
+            <section class="left-card app-card fade-in">
+              <header class="px-6 py-5 border-b flex-shrink-0">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h1 class="text-2xl font-semibold">PSP Reports</h1>
+                    <p class="text-sm text-gray-500 mt-1">Plant breakdown for the selected state &amp; date</p>
+                  </div>
+                  <div class="text-sm text-gray-600 text-right">
+                    {% if selected_state %}<div>State: <span class="font-medium">{{ selected_state }}</span></div>{% endif %}
+                    {% if selected_date %}<div>Date: <span class="font-medium">{{ selected_date }}</span></div>{% endif %}
+                  </div>
+                </div>
+              </header>
+
+              <div class="card-body">
+                <div class="mb-4">
+                  <form method="GET" id="psp-filter-form" class="flex flex-col md:flex-row gap-3 items-start md:items-center">
+                    <input type="hidden" id="state_input" name="state" value="{{ selected_state|default:'' }}" />
+                    <input id="date_input" name="date" type="text" class="w-full md:w-44 p-3 border rounded-md bg-gray-50 text-sm" placeholder="Select Date" value="{{ selected_date|default:'' }}" aria-label="Select report date" />
+                    <button type="submit" id="viewBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm">VIEW</button>
+                    <button type="button" id="refreshBtn" class="px-3 py-2 border rounded-md text-sm">Refresh</button>
+                  </form>
+                </div>
+
+                <div>
+                  <table class="min-w-full divide-y divide-gray-200 psp-table">
+                    <thead class="bg-blue-50">
+                      <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-600">S.No</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-600">Plant</th>
+                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-600">MU</th>
+                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-600 w-32">Contribution %</th>
+                      </tr>
+                    </thead>
+                    <tbody id="psp-tbody" class="bg-white divide-y divide-gray-100">
+                      <tr><td colspan="4" class="p-6 text-center text-gray-400">Loading...</td></tr>
+                    </tbody>
+                  </table>
+                  <div id="psp-footer" class="psp-footer"></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- RIGHT CARD (animated) -->
+            <section class="right-card app-card bg-gray-50 fade-in fade-delay-05">
+               <div class="flex flex-col h-full p-4 gap-4 overflow-auto">
+
+                <div class="flex-1 flex gap-4 min-h-[320px]">
+
+                    <!-- left small gauge column -->
+                    <div class="w-40 flex flex-col gap-4 justify-center">
+                        <div class="bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center h-[220px] fade-in fade-delay-1">
+                            <img src="{% static 'images/thermal.gif' %}" class="w-10 h-10 mb-1 icon-gif" alt="thermal-icon">
+                            <div class="relative w-24 h-24 gauge-container" data-id="thermal" data-max="100" data-color="text-red-500"></div>
+                            <div class="text-[10px] font-bold uppercase mt-[-10px]">Thermal</div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center h-[220px] fade-in fade-delay-15">
+                            <img src="{% static 'images/hydro.gif' %}" class="w-10 h-10 mb-1 icon-gif" alt="hydro-icon">
+                            <div class="relative w-24 h-24 gauge-container" data-id="hydro" data-max="50" data-color="text-blue-500"></div>
+                            <div class="text-[10px] font-bold uppercase mt-[-10px]">Hydro</div>
+                        </div>
+                    </div>
+
+                    <!-- MAP BOX -->
+                    <div class="flex-1 bg-gray rounded-xl shadow-sm border p-1 relative flex flex-col justify-center h-[430px] fade-in fade-delay-2">
+                         <div class="absolute top-2 left-3 z-10">
+                            <h3 class="text-sm font-bold text-gray-700">TAMILNADU</h3>
+                            <p class="text-xs text-gray-500" id="map-date-label">Power Supply Position</p>
+                         </div>
+                         <div id="tn-map" class="w-full h-64"></div>
+                    </div>
+
+                    <!-- right small gauge column -->
+                    <div class="w-40 flex flex-col gap-4 justify-center">
+                        <div class="bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center h-[220px] fade-in fade-delay-25">
+                             <img src="{% static 'images/wind.gif' %}" class="w-10 h-10 mb-1 icon-gif" alt="wind-icon">
+                             <div class="relative w-24 h-24 gauge-container" data-id="wind" data-max="100" data-color="text-green-500"></div>
+                             <div class="text-[10px] font-bold uppercase mt-[-10px]">Wind</div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center h-[220px] fade-in fade-delay-3">
+                             <img src="{% static 'images/solar.gif' %}" class="w-10 h-10 mb-1 icon-gif" alt="solar-icon">
+                             <div class="relative w-24 h-24 gauge-container" data-id="solar" data-max="100" data-color="text-amber-500"></div>
+                             <div class="text-[10px] font-bold uppercase mt-[-10px]">Solar</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- bottom small row -->
+                <div class="h-32 flex gap-3">
+                    <div class="flex-1 bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center relative fade-in fade-delay-1">
+                        <div class="text-indigo-500 mb-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                        <div class="relative w-20 h-20 gauge-container" data-id="gas_naptha_diesel" data-max="50" data-color="text-indigo-500"></div>
+                        <div class="text-[9px] font-bold  uppercase mt-[-8px]">Gas</div>
+                    </div>
+
+                    <div class="flex-1 bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center relative fade-in fade-delay-15">
+                        <div class="text-gray-500 mb-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg></div>
+                        <div class="relative w-20 h-20 gauge-container" data-id="others" data-max="50" data-color="text-gray-500"></div>
+                        <div class="text-[9px] font-bold  uppercase mt-[-8px]">Others</div>
+                    </div>
+
+                    <div class="flex-1 bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center relative fade-in fade-delay-2">
+                        <div class="text-pink-500 mb-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                        <div class="relative w-20 h-20 gauge-container" data-id="central_share" data-max="300" data-color="text-pink-500"></div>
+                        <div class="text-[9px] font-bold  uppercase mt-[-8px]">Central</div>
+                    </div>
+
+                    <div class="flex-1 bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center relative fade-in fade-delay-25">
+                        <div class="text-blue-600 mb-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
+                        <div class="relative w-20 h-20 gauge-container" data-id="demand" data-max="400" data-color="text-blue-600"></div>
+                        <div class="text-[9px] font-bold uppercase mt-[-8px]">Demand</div>
+                    </div>
+
+                    <div class="flex-1 bg-white rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center relative fade-in fade-delay-3">
+                        <div class="text-red-600 mb-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
+                        <div class="relative w-20 h-20 gauge-container" data-id="shortage" data-max="50" data-color="text-red-600"></div>
+                        <div class="text-[9px] font-bold  uppercase mt-[-8px]">Shortage</div>
+                    </div>
+                </div>
+
+              </div>
+            </section>
+
+            <script src="https://d3js.org/d3.v7.min.js"></script>
+            <script src="https://unpkg.com/topojson-client@3"></script>
+
+            <script>
+            (function(){
+              async function initTamilNaduMap() {
+                const DATA_URL = "/static/data/tamilnadu.json";
+                const container = document.getElementById("tn-map");
+                if (!container) return;
+                container.innerHTML = '';
+                const width = Math.max(320, container.clientWidth);
+                const height = Math.max(200, container.clientHeight);
+                const svg = d3.select(container).append("svg")
+                  .attr("width", "100%").attr("height", "100%")
+                  .attr("viewBox", `0 0 ${width} ${height}`)
+                  .attr("preserveAspectRatio", "xMidYMid meet");
+                try {
+                  const res = await fetch(DATA_URL);
+                  if(!res.ok) return;
+                  const json = await res.json();
+                  let geo = json;
+                  if (json.type === "Topology" && json.objects) {
+                     const k = Object.keys(json.objects)[0];
+                     geo = topojson.feature(json, json.objects[k]);
+                  }
+                  function isTamilNaduFeature(feature) {
+                    const props = feature.properties || {};
+                    const possible = [props.NAME_1, props.NAME, props.STATE_NAME, props.st_nm, props.STATE, props.st_name, props.DISTRICT];
+                    const joined = possible.filter(Boolean).join(" ").toLowerCase();
+                    return joined.includes("tamil") || joined.includes("tn");
+                  }
+                  const feature = (geo.features || []).find(isTamilNaduFeature) || ((geo.features || []).length === 1 ? geo.features[0] : null);
+                  if(feature) {
+                      const projection = d3.geoMercator().fitSize([width - 20, height - 20], feature);
+                      const path = d3.geoPath().projection(projection);
+                      svg.append("path").datum(feature).attr("d", path).attr("fill", "#e0f2fe").attr("stroke", "#3b82f6").attr("stroke-width", 1.5);
+                  }
+                } catch(e) {}
+              }
+              initTamilNaduMap();
+              window.addEventListener('resize', () => { setTimeout(initTamilNaduMap, 500); });
+            })();
+            </script>
+
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    const API_URL = "/api/srldc/";
+    const POLL_MS = 5 * 60 * 1000;
+    const tbody = document.getElementById("psp-tbody");
+    const footer = document.getElementById("psp-footer");
+    const dateInput = document.getElementById("date_input");
+    const stateInput = document.getElementById("state_input");
+    const form = document.getElementById("psp-filter-form");
+    const mapDateLabel = document.getElementById("map-date-label");
+
+    // --- Core Helpers ---
+    function normalize(s) {
+      if (!s) return '';
+      return String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    function formatNumber(v) {
+      if (v === null || v === undefined || v === '') return '';
+      const n = Number(v);
+      if (Number.isNaN(n)) return v;
+      return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function normalizeObjKeys(obj) {
+      if (!obj || typeof obj !== 'object') return obj;
+      const out = {};
+      for (const key of Object.keys(obj)) {
+        const k = String(key).trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+        out[k] = obj[key];
+      }
+      return out;
+    }
+
+    // --- 1. GAUGE VISUAL RENDERER ---
+    function renderGauge(container, value, maxVal, colorClass) {
+        container.innerHTML = '';
+        const pct = Math.min(100, Math.max(0, (value / maxVal) * 100));
+        const radius = 40;
+        const circumference = 2 * Math.PI * radius;
+        const visiblePortion = 0.70;
+
+        const html = `
+        <svg class="w-full h-full" viewBox="0 0 100 100">
+            <circle class="gauge-circle-bg text-gray-100 stroke-current"
+                    stroke-width="8" cx="50" cy="50" r="${radius}" fill="transparent"
+                    stroke-dasharray="${circumference * visiblePortion} ${circumference}"
+                    transform="rotate(144 50 50)" stroke-linecap="round"></circle>
+            <circle class="gauge-circle-fill ${colorClass} stroke-current"
+                    stroke-width="8" cx="50" cy="50" r="${radius}" fill="transparent"
+                    stroke-dasharray="${circumference * visiblePortion} ${circumference}"
+                    stroke-dashoffset="${circumference * visiblePortion * (1 - pct/100)}"
+                    transform="rotate(144 50 50)" stroke-linecap="round"></circle>
+            <text x="50" y="55" text-anchor="middle" class="text-xl font-bold fill-gray-800" style="font-size: 16px;">${formatNumber(Number(value) || 0)}</text>
+            <text x="50" y="70" text-anchor="middle" class="text-[8px] fill-gray-400">MU</text>
+        </svg>
+        `;
+        container.innerHTML = html;
+    }
+
+    // --- 2. UPDATE GAUGES LOGIC (THE BRIDGE) ---
+    function updateGauges(proc) {
+        const p = normalizeObjKeys(proc || {});
+        const containers = document.querySelectorAll('.gauge-container');
+        containers.forEach(el => {
+            const id = el.dataset.id;
+            const max = Number(el.dataset.max) || 100;
+            const color = el.dataset.color || 'text-blue-500';
+
+            let val = 0;
+            if (p) {
+                if (id === 'central_share') {
+                     val = Number(p.central_share ?? p.drawal ?? p.availability ?? p.net_sch ?? 0);
+                } else if (id === 'demand') {
+                     val = Number(p.demand_met ?? p.drawal ?? p.net_sch ?? p.demand ?? 0);
+                } else {
+                     const cleanId = id.replace(/_/g,'');
+                     val = Number(p[id] ?? p[cleanId] ?? 0);
+                }
+            }
+            if (isNaN(val)) val = 0;
+            renderGauge(el, val, max, color);
+        });
+    }
+
+    // --- 3. TABLE BUILDER + GAUGE TRIGGER ---
+    const PLANT_COLORS = {
+      'thermal': { bar: 'bg-red-500', bg: 'bg-red-50', border: 'border-red-100' },
+      'hydro': { bar: 'bg-blue-500', bg: 'bg-blue-50', border: 'border-blue-100' },
+      'gas_naptha_diesel': { bar: 'bg-indigo-500', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+      'wind': { bar: 'bg-cyan-500', bg: 'bg-cyan-50', border: 'border-cyan-100' },
+      'solar': { bar: 'bg-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
+      'others': { bar: 'bg-gray-500', bg: 'bg-gray-50', border: 'border-gray-100' },
+      'central_share': { bar: 'bg-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-100' }
+    };
+    const DEFAULT_COLOR = { bar: 'bg-blue-500', bg: 'bg-blue-50', border: 'border-blue-100' };
+
+    function getProgressBarHtml(pct, colorOpts) {
+      if (pct === null) return '';
+      const { bar, bg, border } = colorOpts || DEFAULT_COLOR;
+      const width = pct > 0 && pct < 1 ? 1 : pct.toFixed(2);
+      return `
+        <div class="relative w-full h-7 ${bg} rounded-md overflow-hidden border ${border}">
+          <div class="absolute top-0 left-0 h-full ${bar} opacity-90 transition-all duration-500 ease-out" style="width: ${width}%"></div>
+          <div class="absolute inset-0 flex items-center justify-center z-10 text-xs font-semibold text-gray-800" style="text-shadow: 0 0 2px rgba(255,255,255,0.7);">
+            ${pct.toFixed(2)} %
+          </div>
+        </div>
+      `;
+    }
+
+    function buildRowsFromProcessor(proc) {
+      const p = normalizeObjKeys(proc || {});
+      updateGauges(p);
+      if(mapDateLabel && p) mapDateLabel.textContent = `Date: ${p.report_date || p.date || ''}`;
+
+      if (!p) return '<tr><td colspan="4" class="p-6 text-center text-gray-500">No processor data</td></tr>';
+
+      const demand = Number(p.demand_met ?? p.drawal ?? p.net_sch ?? 0) || 0;
+      const PLANT_ORDER = [
+        ['thermal','Thermal'], ['hydro','Hydro'], ['gas_naptha_diesel','Gas/Naptha/Diesel'],
+        ['wind','Wind'], ['solar','Solar'], ['others','Others']
+      ];
+      let html = '', idx=1;
+
+      for (const [k,label] of PLANT_ORDER) {
+        const raw = p[k] ?? p[k.replace(/_/g,'')];
+        const mu = (raw === null || raw === undefined) ? '' : Number(raw);
+        const pct = (demand && mu !== '' && !Number.isNaN(mu)) ? (mu/demand)*100 : null;
+        const colors = PLANT_COLORS[k] || DEFAULT_COLOR;
+
+        html += `
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3">${idx++}</td>
+            <td class="px-4 py-3">${label}</td>
+            <td class="px-4 py-3 text-right">${mu!==''?formatNumber(mu):''}</td>
+            <td class="px-4 py-2 w-36">${getProgressBarHtml(pct, colors)}</td>
+          </tr>`;
+      }
+
+      const centralVal = Number(p.drawal ?? p.availability ?? p.net_sch ?? 0);
+      const centralPct = demand ? ((centralVal/demand)*100) : null;
+      const centralColors = PLANT_COLORS['central_share'] || DEFAULT_COLOR;
+
+      html += `
+        <tr class="bg-gray-100">
+          <td class="px-4 py-3">${idx++}</td>
+          <td class="px-4 py-3 font-medium">Central Share</td>
+          <td class="px-4 py-3 text-right">${centralVal?formatNumber(centralVal):''}</td>
+          <td class="px-4 py-2 w-36">${getProgressBarHtml(centralPct, centralColors)}</td>
+        </tr>`;
+
+      html += `
+        <tr class="bg-gray-800 text-white">
+          <td class="px-4 py-3">${idx++}</td>
+          <td class="px-4 py-3 font-medium">Demand</td>
+          <td class="px-4 py-3 text-right text-gray-100">${demand?formatNumber(demand):''}</td>
+          <td class="px-4 py-3"></td>
+        </tr>`;
+
+      const shortageVal = Number(p.shortage ?? 0);
+      const shortagePct = demand ? ((shortageVal/demand)*100).toFixed(2)+' %' : '';
+      html += `
+        <tr>
+          <td class="px-4 py-3">${idx++}</td>
+          <td class="px-4 py-3 font-medium">Shortage</td>
+          <td class="px-4 py-3 text-right">${formatNumber(shortageVal)}</td>
+          <td class="px-4 py-3 text-right">${shortagePct}</td>
+        </tr>`;
+      return html;
+    }
+
+    // --- 4. DATA FETCHING (FROM WORKING CODE) ---
+    function arrayFromJson(json) {
+      if (!json) return [];
+      if (Array.isArray(json)) return json;
+      const possibleArrays = ['processor','data','table','table_a','table_c','rows','results','items'];
+      for (const key of possibleArrays) {
+        if (json[key]) {
+          if (Array.isArray(json[key])) return json[key];
+          if (typeof json[key] === 'object') {
+            try { return Object.values(json[key]); } catch(e){ }
+          }
+        }
+      }
+      if (typeof json === 'object') return [json];
+      return [];
+    }
+
+    function normalizeKeyObj(obj) {
+      if (!obj || typeof obj !== 'object') return obj;
+      const out = {};
+      for (const k of Object.keys(obj)) {
+        const nk = String(k).trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+        out[nk] = obj[k];
+      }
+      return out;
+    }
+
+    function normalizeDateStr(s) {
+      if (!s) return '';
+      const t = String(s);
+      const m = t.match(/(\d{4}-\d{2}-\d{2})/);
+      if (m) return m[1];
+      const d = new Date(t);
+      if (!isNaN(d)) return d.toISOString().split('T')[0];
+      return t.toLowerCase();
+    }
+
+    function findEntryByStateAndDate(arr, wantStateNorm, wantDateStr) {
+      if (!arr || !arr.length) return null;
+      const wantDateNorm = normalizeDateStr(wantDateStr || '');
+      for (const raw of arr) {
+        const p = normalizeKeyObj(raw);
+        const stateCandidates = [p.state, p.st_nm, p.st_name, p.state_name, p.name, p.location, p.region].filter(Boolean).map(x=>String(x).toLowerCase());
+        const reportCandidates = [p.report_date, p.reportdate, p.date, p.rdate, p.dt, p.timestamp].filter(Boolean);
+        const pDate = reportCandidates.map(normalizeDateStr).find(Boolean) || '';
+        const sNormalized = stateCandidates.join(' ');
+        const stateMatch = !wantStateNorm || (sNormalized && sNormalized.includes(wantStateNorm));
+        const dateMatch = !wantDateNorm || (pDate && (pDate.includes(wantDateNorm) || wantDateNorm.includes(pDate)));
+        if (dateMatch && stateMatch) return p;
+      }
+      return null;
+    }
+
+    async function fetchProcessorFromApi(dateVal) {
+      const url = new URL(API_URL, window.location.origin);
+      url.searchParams.set('state', (stateInput && stateInput.value) || '');
+      url.searchParams.set('date', dateVal || '');
+      try {
+        const res = await fetch(url.toString(), { method: 'GET', credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+        const text = await res.text();
+        console.log('API fetch', url.toString(), 'status', res.status, 'bodyPreview', text && text.slice ? text.slice(0,300) : text);
+        if (!res.ok) return null;
+        try { return JSON.parse(text); } catch (e) {
+          try { return JSON.parse(text.trim().replace(/^\)\]\}',?/, '')); } catch (ee) { console.warn('Failed to parse API JSON', ee); return null; }
+        }
+      } catch (err) { console.error('fetchProcessorFromApi error', err); return null; }
+    }
+
+    async function updateTable(forceDate) {
+      if (footer) footer.textContent = 'Loading...';
+      const wantDate = (forceDate || (dateInput && dateInput.value) || '').toString();
+      const wantState = normalize((stateInput && stateInput.value) || '');
+      console.log('updateTable: wantState=', wantState, 'wantDate=', wantDate);
+
+      const el = document.getElementById('srldc-data');
+      if (el) {
+        try {
+          const serverRaw = JSON.parse(el.textContent);
+          console.log('server srldc_data preview:', serverRaw && (Array.isArray(serverRaw) ? serverRaw.slice(0,3) : serverRaw));
+          const arr = arrayFromJson(serverRaw);
+          const match = findEntryByStateAndDate(arr, wantState, wantDate);
+          if (match) {
+            tbody.innerHTML = buildRowsFromProcessor(match);
+            if (footer) footer.innerHTML = `Showing report for ${match.report_date || match.date || ''}`;
+            return true;
+          } else { console.log('No match in server data for date/state'); }
+        } catch (e) { console.warn('Failed to parse server srldc_data or no server data', e); }
+      } else { console.log('No #srldc-data element found in DOM'); }
+
+      const apiJson = await fetchProcessorFromApi(wantDate);
+      if (!apiJson) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-400">No data found</td></tr>';
+        updateGauges(null);
+        footer.textContent = 'No data found';
+        return false;
+      }
+
+      const arr2 = arrayFromJson(apiJson);
+      const match2 = findEntryByStateAndDate(arr2, wantState, wantDate);
+      if (match2) {
+        tbody.innerHTML = buildRowsFromProcessor(match2);
+        if (footer) footer.innerHTML = `Showing report for ${match2.report_date || match2.date || ''}`;
+        return true;
+      } else {
+        console.log('No matching entry in API results. API returned:', arr2.length, 'items');
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-400">No data found</td></tr>';
+        updateGauges(null);
+        footer.textContent = 'No data found';
+        return false;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputEl = document.getElementById('date_input');
+      let serverDateVal = (inputEl && inputEl.value) ? String(inputEl.value).trim() : '';
+      if (!serverDateVal) {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        serverDateVal = d.toISOString().split('T')[0];
+        if (inputEl) inputEl.value = serverDateVal;
+      }
+      flatpickr("#date_input", { dateFormat: "Y-m-d", allowInput: true, defaultDate: serverDateVal });
+
+      updateTable();
+      setInterval(() => updateTable(), POLL_MS);
+
+      const refreshBtn = document.getElementById('refreshBtn');
+      if (refreshBtn) refreshBtn.addEventListener('click', () => updateTable());
+
+      if (form) {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          updateTable(dateInput.value);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

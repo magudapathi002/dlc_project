@@ -152,7 +152,7 @@ class Command(BaseCommand):
                         json_file_name = json_files[0] # Assume only one JSON per folder
                         try:
                             with open(json_file_name, 'r', encoding='utf-8') as f:
-                                data = json.load(f)
+                                data = json
                             
                             inner_data = data.get(region, data)
                             restructured_data = {'date': report_date, **inner_data} # Use report_date

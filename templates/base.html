@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- your head, tailwind CDN or compiled css etc. -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}My App{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-gray-50">
+
+  {% include 'partials/navbar.html' %}
+
+  {% include 'partials/sidebar.html' %}
+
+  <!-- MAIN: no left margin required (sidebar overlays top only) -->
+  <main class="main-content min-h-screen">
+    <div class="pt-20">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </main>
+
+</body>
+
+</html>

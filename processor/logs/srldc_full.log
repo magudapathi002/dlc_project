@@ -1,0 +1,46 @@
+2025-12-09 14:50:04,406 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-09_14-50-04
+2025-12-09 14:50:04,407 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/08-12-2025-psp.pdf
+2025-12-09 14:50:10,818 - INFO - ✅ Successfully downloaded: srldc_09122025.pdf to downloads\SRLDC\report_2025-12-09_14-50-04
+2025-12-09 14:50:10,820 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-09 14:50:13,473 - INFO - ✅ Tabula found 8 tables.
+2025-12-09 14:50:13,501 - INFO - Renamed columns (2A): ['state', 'thermal', 'hydro', 'gas_naptha_diesel', 'wind', 'solar', 'others', 'net_sch', 'drawal', 'ui', 'availability', 'demand_met', 'shortage']
+2025-12-09 14:50:13,960 - INFO - --- RAW DataFrame for Table 2(C) before renaming ---
+2025-12-09 14:50:13,982 - INFO -     State Maximum Demand Met of the day      Time Shortage during maximum demand Requirement at maximum demand  ... Demand Met at maximum Requirement Min Demand Met Time.2    ACE_MAX Time.3
+3      AP                         9,744     09:27                              0                         9,744  ...                             9,744         604.63  06:01    -413.95  01:05
+4     KAR                        15,854     10:00                              -                        15,854  ...                            15,854       1,152.19  09:01  -1,682.82  16:01
+5     KER                         4,582     18:30                              -                         4,582  ...                             4,582         185.98  05:31    -317.76  14:59
+6   PONDY                           404     18:15                              0                           404  ...                               404          53.15  11:46     -22.67  06:09
+7      TN                        16,398     18:30                              0                        16,398  ...                            16,398        1,321.5  06:16    -936.73  17:01
+8      TG                        12,479     07:59                              0                        12,479  ...                            12,479         792.65  17:15    -588.73  03:15
+9  Region                        55,026  11:57:58                              0                        55,026  ...                            55,026       4,187.35  08:28    -957.46  16:25
+
+[7 rows x 13 columns]
+2025-12-09 14:50:13,983 - INFO - Columns present in Table 2C after renaming: ['state', 'max_demand', 'time', 'shortage_max_demand', 'req_max_demand', 'max_req_day', 'time_max_req', 'shortage_max_req', 'demand_max_req', 'ace_min', 'time_ace_min', 'ace_max', 'time_ace_max']
+2025-12-09 14:50:14,187 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-09 14:50:14,522 - INFO - Report DATE (3B extraction): 2025-12-08
+2025-12-09 14:50:14,522 - INFO - Reporting DATETIME (3B extraction): 2025-12-09 19:00
+2025-12-09 14:50:17,696 - WARNING - 3B old-pattern returned no data; trying new row-scanner pattern...
+2025-12-09 14:50:20,391 - INFO - 3B Central Rows: 17; JV Rows: 4
+2025-12-09 15:01:34,545 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-09_15-01-34
+2025-12-09 15:01:34,545 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/08-12-2025-psp.pdf
+2025-12-09 15:01:35,112 - INFO - ✅ Successfully downloaded: srldc_09122025.pdf to downloads\SRLDC\report_2025-12-09_15-01-34
+2025-12-09 15:01:35,114 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-09 15:01:38,114 - INFO - ✅ Tabula found 8 tables.
+2025-12-09 15:01:38,129 - INFO - Renamed columns (2A): ['state', 'thermal', 'hydro', 'gas_naptha_diesel', 'wind', 'solar', 'others', 'net_sch', 'drawal', 'ui', 'availability', 'demand_met', 'shortage']
+2025-12-09 15:01:38,333 - INFO - --- RAW DataFrame for Table 2(C) before renaming ---
+2025-12-09 15:01:38,346 - INFO -     State Maximum Demand Met of the day      Time Shortage during maximum demand Requirement at maximum demand  ... Demand Met at maximum Requirement Min Demand Met Time.2    ACE_MAX Time.3
+3      AP                         9,744     09:27                              0                         9,744  ...                             9,744         604.63  06:01    -413.95  01:05
+4     KAR                        15,854     10:00                              -                        15,854  ...                            15,854       1,152.19  09:01  -1,682.82  16:01
+5     KER                         4,582     18:30                              -                         4,582  ...                             4,582         185.98  05:31    -317.76  14:59
+6   PONDY                           404     18:15                              0                           404  ...                               404          53.15  11:46     -22.67  06:09
+7      TN                        16,398     18:30                              0                        16,398  ...                            16,398        1,321.5  06:16    -936.73  17:01
+8      TG                        12,479     07:59                              0                        12,479  ...                            12,479         792.65  17:15    -588.73  03:15
+9  Region                        55,026  11:57:58                              0                        55,026  ...                            55,026       4,187.35  08:28    -957.46  16:25
+
+[7 rows x 13 columns]
+2025-12-09 15:01:38,346 - INFO - Columns present in Table 2C after renaming: ['state', 'max_demand', 'time', 'shortage_max_demand', 'req_max_demand', 'max_req_day', 'time_max_req', 'shortage_max_req', 'demand_max_req', 'ace_min', 'time_ace_min', 'ace_max', 'time_ace_max']
+2025-12-09 15:01:38,393 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-09 15:01:38,736 - INFO - Report DATE (3B extraction): 2025-12-08
+2025-12-09 15:01:38,736 - INFO - Reporting DATETIME (3B extraction): 2025-12-09 19:00
+2025-12-09 15:01:41,949 - WARNING - 3B old-pattern returned no data; trying new row-scanner pattern...
+2025-12-09 15:01:44,670 - INFO - 3B Central Rows: 17; JV Rows: 4

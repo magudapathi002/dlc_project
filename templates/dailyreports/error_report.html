@@ -1,0 +1,958 @@
+  {% load static %}
+  <!doctype html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Error Reports </title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <style>
+      /* small custom adjustments used by new bottom templates */
+      .table-cell-pad { padding: .45rem .55rem; }
+      .thick-border { border: 3px solid #000; }
+      .heading-bg { background: #f8e9a8; } /* pale yellow heading */
+      .stamp-yellow { background: #ffef9a; }
+      .stamp-orange { background: #ffd59e; }
+      .stamp-red { background: #f8b4b4; }
+      /* keep vertical date styling used earlier */
+      .writing-mode-vertical-rl { writing-mode: vertical-rl; transform: rotate(180deg); }
+
+      /* small helper to hide <col> via class (JS toggles style) */
+      col.hidden-col { display: none; }
+    </style>
+  </head>
+
+  <body class="bg-gray-100 text-gray-800">
+
+    <!-- Top navbar -->
+    {% include "partials/navbar.html" %}
+
+    <!-- Main max-width container -->
+    <div class="mt-10 p-4 w-full">
+
+      <!-- Layout: sidebar + main -->
+      <div class="flex gap-6">
+
+        <!-- Sidebar (hidden on small screens) -->
+        <aside class="w-64 hidden lg:block" aria-label="Sidebar">
+          {% include "partials/sidebar.html" %}
+        </aside>
+
+        <!-- Main content area -->
+        <main class="flex-1">
+
+          <div class="grid grid-cols-1 lg:grid-cols-10 gap-6">
+
+            <!-- LEFT: Main card (spans 8/10 on large screens) -->
+            <section class="lg:col-span-10">
+              <div class="bg-white shadow-md rounded-lg overflow-hidden">
+
+                <!-- Header -->
+                <header class="flex items-center justify-between p-6 border-b">
+                  <div>
+                    <h1 class="text-2xl font-semibold">Error Reports</h1>
+                    <p class="text-sm text-gray-500">Select a date and view state-wise report</p>
+                  </div>
+
+                  <div class="text-right text-sm text-gray-600">
+                    {% if selected_state %}
+                      <div>State: <span class="font-medium">{{ selected_state }}</span></div>
+                    {% endif %}
+                    {% if selected_date %}
+                      <div>Date: <span class="font-medium">{{ selected_date }}</span></div>
+                    {% endif %}
+                  </div>
+                </header>
+
+                <!-- Controls -->
+                <div class="p-6">
+                  <form method="GET" class="flex flex-col md:flex-row md:items-center gap-4" role="search" aria-label="Select date and view">
+                    <label for="date_input" class="sr-only">Select Date</label>
+
+                    <input
+                      id="date_input"
+                      name="date"
+                      type="text"
+                      class="w-full md:w-64 p-3 border rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      placeholder="Choose a date"
+                      {% if selected_date %} value="{{ selected_date }}" {% endif %}
+                      autocomplete="off"
+                    />
+
+                    <!-- Filter select: preserve selected option using Django -->
+                    <select
+                      id="filterTypeSelect"
+                      name="filter_type"
+                      class="px-3 py-2 border rounded-md bg-gray-50 text-gray-700 text-sm
+                             focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      aria-label="Filter type">
+                      <option value="ALL" {% if filter_type == "ALL" or not filter_type %}selected{% endif %}>ALL</option>
+                      <option value="AMR_ACTUAL" {% if filter_type == "AMR_ACTUAL" %}selected{% endif %}>AMR ACTUAL</option>
+                      <option value="TN_ACTUAL" {% if filter_type == "TN_ACTUAL" %}selected{% endif %}>TN ACTUAL</option>
+                    </select>
+
+                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition" aria-label="View reports">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                      </svg>
+                      VIEW
+                    </button>
+
+                    <button type="button" id="refreshBtn" class="ml-auto md:ml-0 inline-flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-gray-700 hover:bg-gray-50" aria-label="Refresh data">
+                      Refresh
+                    </button>
+                  </form>
+
+                <!-- Table (REPLACED with compact Tailwind template) -->
+                {# ---------- compact Tailwind-only error_report block ---------- #}
+  <div id="report-view" class="p-4 border-t">
+    <!-- center and allow responsive sizing -->
+  <div class="border border-black bg-white shadow-md w-full max-w-5xl mx-auto">
+
+
+      <!-- Top header band -->
+      <div class="bg-green-300 text-center py-1 border-b border-black">
+        <h2 class="font-bold text-sm">Error Report</h2>
+      </div>
+
+      <div style="overflow:auto; max-height:420px;">
+        <table class="w-full table-fixed border-collapse text-[10px]" role="table" aria-label="Error report table">
+          <colgroup>
+            <col class="col-date" style="width:34px" />    <!-- small vertical Date column -->
+            <col class="col-time" style="width:62px" />    <!-- Time Block -->
+            <col class="col-forecast" style="width:95px" />    <!-- Forecast (MW) -->
+            <col class="col-tneb col-tneb-actual" style="width:95px" />    <!-- TNEB Actual (MW) -->
+            <col class="col-amr col-amr-actual" style="width:95px" />    <!-- AMR Actual (MW) -->
+            <col class="col-devmw" style="width:95px" />    <!-- TNEB Deviation (MW) -->
+            <col class="col-devpct" style="width:95px" />    <!-- TNEB Deviation (%) -->
+            <col class="col-amrpct" style="width:95px" />    <!-- AMR Deviation (%) -->
+          </colgroup>
+
+          <thead>
+            <tr class="bg-yellow-100 border-b border-black">
+              <th class="px-1 py-1 border-r border-black text-[10px]">Date</th>
+              <th class="px-1 py-1 border-r border-black text-[10px]">Time <br>Block</th>
+              <th class="px-1 py-1 border-r border-black text-[10px]">Forecast <br>(MW)</th>
+              <th class="px-1 py-1 border-r border-black text-[10px]">TNEB Actual <br>(MW)</th>
+              <th class="px-1 py-1 border-r border-black text-[10px]">AMR Actual <br>(MW)</th>
+              <th class="px-1 py-1 border-r border-black text-[10px]">TNEB Dev <br>(MW))</th>
+              <th class="px-1 py-1 border-r border-black text-[10px]">TNEB Dev (%)</th>
+              <th class="px-1 py-1 text-[10px]">AMR Dev (%)</th>
+            </tr>
+          </thead>
+
+          <tbody id="error-report-tbody">
+            {% for hour in hours %}
+              <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-50{% endif %}">
+                {% if forloop.first %}
+                  <td rowspan="{{ hours|length }}"
+                      class="writing-mode-vertical-rl rotate-180 bg-pink-100 border-r border-black px-1 py-1 font-semibold text-center text-[10px]">
+                    {% if selected_date %}{{ selected_date }}{% else %}&nbsp;{% endif %}
+                  </td>
+                {% endif %}
+
+                <td class="px-1 py-1 border-r border-black text-center text-[10px]">{{ hour }}:00</td>
+                <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+                <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+                <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+                <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+                <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+                <td class="px-1 py-1 text-right text-[10px]">&nbsp;</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+          <tfoot>
+            <tr class="bg-blue-100 border-t border-black">
+              <td colspan="2" class="px-1 py-1 border-r border-black text-center font-semibold text-[10px]">Total</td>
+              <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+              <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+              <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+              <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+              <td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>
+              <td class="px-1 py-1 text-right text-[10px]">&nbsp;</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="mt-2 text-xs text-gray-500 px-2 pb-2">Compact template — adjust width class <code>w-[700px]</code> or padding classes to make it smaller/larger.</div>
+    </div>
+  </div>
+  {# ---------- end compact table block ---------- #}
+
+              </div>
+            </section>
+
+            <!-- RIGHT: You can add a right-side panel here if needed -->
+            <aside class="lg:col-span-2 hidden lg:block" aria-label="Right panel">
+              <!-- placeholder for additional widgets / summary -->
+            </aside>
+
+          </div> <!-- end grid -->
+
+          <!-- Place where child templates can inject page-specific content -->
+          {% block content %}{% endblock %}
+
+          <!-- ================= NEW BOTTOM SECTION: Two stacked DSM-style templates ================= -->
+          <!-- This block is appended at the bottom of main content — template-only (no values). -->
+          <section class="mt-8">
+            <div class="max-w-5xl mx-auto space-y-6">
+
+              <!-- Report Card 1: TNEB Actual (template-only) -->
+              <article class="bg-white border-2 border-gray-300 rounded shadow-sm overflow-hidden">
+                <header class="flex items-center justify-between px-4 py-3 thick-border heading-bg">
+                  <div class="text-sm font-semibold">Shift Wise DSM - BASED ON TNEB ACTUAL</div>
+                  <div class="text-sm">24-Nov-2025</div>
+                </header>
+
+                <div class="p-4">
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse text-sm">
+                      <thead>
+                        <tr class="bg-gray-100">
+                          <th class="table-cell-pad border px-2 text-left">Intra Day (Dev/FC)</th>
+                          <th class="table-cell-pad border text-center">A</th>
+                          <th class="table-cell-pad border text-center">DSM Charges ₹</th>
+                          <th class="table-cell-pad border text-center">B</th>
+                          <th class="table-cell-pad border text-center">DSM Charges ₹</th>
+                          <th class="table-cell-pad border text-center">C</th>
+                          <th class="table-cell-pad border text-center">DSM Charges ₹</th>
+                          <th class="table-cell-pad border text-center">Total</th>
+                          <th class="table-cell-pad border text-center">DSM Charges ₹</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <!-- Row: <=15% -->
+                        <tr class="bg-green-50">
+                          <td class="table-cell-pad border font-medium">&lt;=15%</td>
+                          <td class="table-cell-pad border text-center"><!-- A CELL --></td>
+                          <td class="table-cell-pad border text-right"><!-- A DSM --></td>
+                          <td class="table-cell-pad border text-center"><!-- B CELL --></td>
+                          <td class="table-cell-pad border text-right"><!-- B DSM --></td>
+                          <td class="table-cell-pad border text-center"><!-- C CELL --></td>
+                          <td class="table-cell-pad border text-right"><!-- C DSM --></td>
+                          <td class="table-cell-pad border text-center"><!-- TOTAL COUNT --></td>
+                          <td class="table-cell-pad border text-right"><!-- TOTAL DSM --></td>
+                        </tr>
+
+                        <!-- Row: >15% but <=20% -->
+                        <tr class="bg-green-100">
+                          <td class="table-cell-pad border font-medium">&gt;15% but &lt;=20%</td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                        </tr>
+
+                        <!-- Row: >20% but <=30% -->
+                        <tr class="bg-yellow-50">
+                          <td class="table-cell-pad border font-medium">&gt;20% but &lt;=30%</td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                        </tr>
+
+                        <!-- Row: >30% -->
+                        <tr class="bg-red-50">
+                          <td class="table-cell-pad border font-medium">&gt;30%</td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                        </tr>
+
+                        <!-- Total row -->
+                        <tr class="font-semibold bg-gray-50">
+                          <td class="table-cell-pad border">Total</td>
+                          <td class="table-cell-pad border text-center"><!-- sum A --></td>
+                          <td class="table-cell-pad border text-right"><!-- sum A DSM --></td>
+                          <td class="table-cell-pad border text-center"><!-- sum B --></td>
+                          <td class="table-cell-pad border text-right"><!-- sum B DSM --></td>
+                          <td class="table-cell-pad border text-center"><!-- sum C --></td>
+                          <td class="table-cell-pad border text-right"><!-- sum C DSM --></td>
+                          <td class="table-cell-pad border text-center"><!-- GRAND TOTAL COUNT --></td>
+                          <td class="table-cell-pad border text-right"><!-- GRAND TOTAL DSM --></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Right aligned small summary blocks -->
+                  <div class="mt-3 flex flex-col sm:flex-row sm:justify-end gap-3">
+                    <div class="px-3 py-2 border rounded-sm stamp-yellow text-sm">
+                      <div class="text-xs">Total Gen in MU</div>
+                      <div class="font-medium"><!-- Total Gen --></div>
+                    </div>
+                    <div class="px-3 py-2 border rounded-sm stamp-yellow text-sm">
+                      <div class="text-xs">DSM Paise per Kwh</div>
+                      <div class="font-medium"><!-- DSM Paise --></div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Report Card 2: AMR Actual (template-only) -->
+              <article class="bg-white border-2 border-gray-300 rounded shadow-sm overflow-hidden">
+                <header class="flex items-center justify-between px-4 py-3 thick-border heading-bg">
+                  <div class="text-sm font-semibold">Shift Wise DSM - BASED ON AMR ACTUAL</div>
+                  <div class="text-sm">24-Nov-2025</div>
+                </header>
+
+                <div class="p-4">
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse text-sm">
+                      <thead>
+                        <tr class="bg-gray-100">
+                          <th class="table-cell-pad border px-2 text-left">Intra Day (Dev/FC)</th>
+                          <th class="table-cell-pad border text-center">A</th>
+                          <th class="table-cell-pad border text-center">DSM Charges ₹</th>
+                          <th class="table-cell-pad border text-center">B</th>
+                          <th class="table-cell-pad border text-center">DSM Charges ₹</th>
+                          <th class="table-cell-pad border text-center">C</th>
+                          <th class="table-cell-pad border text-center">DSM Charges ₹</th>
+                          <th class="table-cell-pad border text-center">Total</th>
+                          <th class="table-cell-pad border text-center">DSM Charges ₹</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <tr class="bg-green-50">
+                          <td class="table-cell-pad border font-medium"> <=15%</td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                        </tr>
+
+                        <tr class="bg-green-100">
+                          <td class="table-cell-pad border font-medium">&gt;15% but &lt;=20%</td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                        </tr>
+
+                        <tr class="bg-yellow-50">
+                          <td class="table-cell-pad border font-medium">&gt;20% but &lt;=30%</td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                        </tr>
+
+                        <tr class="bg-red-50">
+                          <td class="table-cell-pad border font-medium">&gt;30%</td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                        </tr>
+
+                        <tr class="font-semibold bg-gray-50">
+                          <td class="table-cell-pad border">Total</td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                          <td class="table-cell-pad border text-center"></td>
+                          <td class="table-cell-pad border text-right"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- summary blocks -->
+                  <div class="mt-3 flex flex-col sm:flex-row sm:justify-end gap-3">
+                    <div class="px-3 py-2 border rounded-sm stamp-yellow text-sm">
+                      <div class="text-xs">Total Gen in MU</div>
+                      <div class="font-medium"><!-- Total Gen --></div>
+                    </div>
+                    <div class="px-3 py-2 border rounded-sm stamp-yellow text-sm">
+                      <div class="text-xs">DSM Paise per Kwh</div>
+                      <div class="font-medium"><!-- DSM Paise --></div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+          </section>
+          <!-- ================= END NEW BOTTOM SECTION ================= -->
+
+        </main> <!-- end main content area -->
+
+      </div> <!-- end flex: sidebar + main -->
+
+    </div> <!-- end max-width container -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Pass server values via data attributes on a small helper element -->
+    <div id="page-data"
+         data-api-url="{{ data_api_url|default:'' }}"
+         data-selected-state="{{ selected_state|default:'' }}"
+         data-selected-date="{{ selected_date|default:'' }}"
+         data-selected-filter="{{ filter_type|default:'ALL' }}"
+         style="display:none"></div>
+
+    <script>
+      // flatpickr init
+      flatpickr("#date_input", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+      });
+
+      // read server-provided values (server can set `data_api_url`)
+      const pageData = document.getElementById('page-data');
+      const dataApiUrlFromServer = pageData?.dataset?.apiUrl ?? '';
+      const selectedState = pageData?.dataset?.selectedState ?? '';
+      const selectedDate  = pageData?.dataset?.selectedDate ?? '';
+      let currentFilter = pageData?.dataset?.selectedFilter ?? 'ALL';
+
+      // If you want to set dataApiUrl in-template, use `data_api_url` context var.
+      // If not set, behavior is unchanged (client will not call API).
+      let dataApiUrl = dataApiUrlFromServer || ""; // default remains empty until you set it on server
+
+      const refreshBtn = document.getElementById('refreshBtn');
+      const filterSelect = document.getElementById('filterTypeSelect');
+
+      // Helper to map filter -> columns to hide/show
+      // We will toggle the <col> elements by their class names.
+      function applyFilterColumns(filter) {
+        currentFilter = filter || 'ALL';
+        // find col elements live
+        const colTneb = document.querySelector('col.col-tneb-actual');
+        const colAmr = document.querySelector('col.col-amr-actual');
+        if (!colTneb || !colAmr) return;
+        // Default: show both
+        if (filter === 'ALL') {
+          colTneb.classList.remove('hidden-col');
+          colAmr.classList.remove('hidden-col');
+        } else if (filter === 'AMR_ACTUAL') {
+          // hide TNEB actual, show AMR
+          colTneb.classList.add('hidden-col');
+          colAmr.classList.remove('hidden-col');
+        } else if (filter === 'TN_ACTUAL') {
+          // show TNEB, hide AMR
+          colTneb.classList.remove('hidden-col');
+          colAmr.classList.add('hidden-col');
+        } else {
+          colTneb.classList.remove('hidden-col');
+          colAmr.classList.remove('hidden-col');
+        }
+      }
+
+       function renderEmptyRows() {
+
+
+      const tbody = document.getElementById('error-report-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      const hours = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"];
+      hours.forEach((h, idx) => {
+        const tr = document.createElement('tr');
+        if (idx % 2 === 0) tr.classList.add('bg-gray-50');
+
+        // If first row, insert the vertical date cell with rowspan
+        let html = '';
+        if (idx === 0) {
+          // use selectedDate from server (page-data) or blank
+          const pageData = document.getElementById('page-data');
+          const dateText = pageData?.dataset?.selectedDate || '&nbsp;';
+          html += `<td rowspan="${hours.length}" class="writing-mode-vertical-rl rotate-180 bg-pink-100 border-r border-black px-1 py-1 font-semibold text-center text-[10px]">${dateText}</td>`;
+        }
+
+        html += `<td class="px-1 py-1 border-r border-black text-center text-[10px]">${h}:00</td>`;
+        html += `<td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>`; // forecast
+        html += `<td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>`; // tneb actual
+        html += `<td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>`; // amr actual
+        html += `<td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>`; // dev mw
+        html += `<td class="px-1 py-1 border-r border-black text-right text-[10px]">&nbsp;</td>`; // dev pct
+        html += `<td class="px-1 py-1 text-right text-[10px]">&nbsp;</td>`; // amr pct
+
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+      });
+      applyFilterColumns(currentFilter);
+    }
+
+
+      function renderRows(dataRows) {
+        const tbody = document.getElementById('error-report-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        dataRows.forEach((r, idx) => {
+          const tr = document.createElement('tr');
+          if (idx % 2 === 0) tr.classList.add('bg-gray-50');
+
+          let html = '';
+          if (idx === 0) {
+            // include vertical date cell with rowspan
+            const pageData = document.getElementById('page-data');
+            const dateText = pageData?.dataset?.selectedDate || (r.date || '&nbsp;');
+            html += `<td rowspan="${dataRows.length}" class="writing-mode-vertical-rl rotate-180 bg-pink-100 border-r border-black px-1 py-1 font-semibold text-center text-[10px]">${dateText}</td>`;
+          }
+
+          const timeCell = `<td class="px-1 py-1 border-r border-black text-center text-[10px]">${r.time ?? (String(idx+1).padStart(2,'0') + ':00')}</td>`;
+          const forecast = `<td class="px-1 py-1 border-r border-black text-right text-[10px]">${r.forecast ?? ''}</td>`;
+          const tnebActual = `<td class="px-1 py-1 border-r border-black text-right text-[10px]">${r.tneb_actual ?? ''}</td>`;
+          const amrActual = `<td class="px-1 py-1 border-r border-black text-right text-[10px]">${r.amr_actual ?? ''}</td>`;
+
+          const devMw = `<td class="px-1 py-1 border-r border-black text-right text-[10px]">${r.dev_mw ?? ''}</td>`;
+          const devPct = `<td class="px-1 py-1 border-r border-black text-right text-[10px]">${r.dev_pct ?? ''}</td>`;
+          const amrPct = `<td class="px-1 py-1 text-right text-[10px]">${r.amr_pct ?? ''}</td>`;
+
+          tr.innerHTML = html + timeCell + forecast + tnebActual + amrActual + devMw + devPct + amrPct;
+          tbody.appendChild(tr);
+        });
+        applyFilterColumns(currentFilter);
+      }
+
+
+      async function fetchAndPopulate() {
+        // if no API configured or date/state not set, just render empty rows
+        if (!dataApiUrl) { renderEmptyRows(); return; }
+        if (!selectedState || !selectedDate) { renderEmptyRows(); return; }
+
+        const url = new URL(dataApiUrl, window.location.origin);
+        url.searchParams.set('state', selectedState);
+        url.searchParams.set('date', selectedDate);
+
+        try {
+          const res = await fetch(url.toString(), { method: 'GET', headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
+          if (!res.ok) { renderEmptyRows(); return; }
+          const data = await res.json();
+          if (!Array.isArray(data) || data.length === 0) { renderEmptyRows(); return; }
+          renderRows(data);
+        } catch (err) { console.error(err); renderEmptyRows(); }
+      }
+
+      // Hook events
+      refreshBtn?.addEventListener('click', fetchAndPopulate);
+      filterSelect?.addEventListener('change', (e) => {
+        const f = e.target.value;
+        applyFilterColumns(f);
+        currentFilter = f;
+      });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        applyFilterColumns(currentFilter);
+        if (dataApiUrlFromServer) dataApiUrl = dataApiUrlFromServer;
+        fetchAndPopulate();
+      });
+    </script>
+
+    <!-- ========== AMR & TN VIEW SWITCHER SCRIPT (patched + empty rows) ========== -->
+    <script>
+    (function () {
+      const form = document.querySelector('form[role="search"]'); // your search form
+      const filterSelect = document.getElementById('filterTypeSelect');
+      const viewContainer = document.getElementById('report-view'); // stable container
+
+      if (!form || !filterSelect || !viewContainer) {
+        console.warn('View switcher: required elements not found. Script inactive.');
+        return;
+      }
+
+      // Save original compact HTML so we can restore it when user selects ALL
+      const originalCompactHtml = viewContainer.innerHTML;
+
+      // thresholds for coloring deviation (modify if you want)
+      const THRESHOLDS = {
+        greenMax: 10,   // < 10 => green
+        orangeMax: 20,  // >=10 && <20 => orange
+        redMin: 20      // >= 20 => red
+      };
+
+      function parseNum(str) {
+        if (str == null) return NaN;
+        const cleaned = String(str).replace(/[^\d.-]/g, '');
+        if (cleaned.trim() === '') return NaN;
+        return parseFloat(cleaned);
+      }
+
+      // Read rows from the currently-rendered compact table tbody (#error-report-tbody)
+      function readServerRows() {
+        const tbody = document.getElementById('error-report-tbody');
+        if (!tbody) return [];
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const data = [];
+
+        rows.forEach((tr) => {
+          const tds = Array.from(tr.querySelectorAll('td'));
+          let skipFirstDate = false;
+          if (tds.length && tds[0].classList.contains('writing-mode-vertical-rl')) {
+            skipFirstDate = true;
+          }
+          const offset = skipFirstDate ? 1 : 0;
+          const timeText = (tds[offset] && tds[offset].textContent.trim()) || '';
+          const forecastText = (tds[offset + 1] && tds[offset + 1].textContent.trim()) || '';
+          const tnebActualText = (tds[offset + 2] && tds[offset + 2].textContent.trim()) || '';
+          const amrActualText = (tds[offset + 3] && tds[offset + 3].textContent.trim()) || '';
+          const devMwText = (tds[offset + 4] && tds[offset + 4].textContent.trim()) || '';
+          const devPctText = (tds[offset + 5] && tds[offset + 5].textContent.trim()) || '';
+          const amrPctText = (tds[offset + 6] && tds[offset + 6].textContent.trim()) || '';
+
+          data.push({
+            time: timeText,
+            forecast_raw: forecastText,
+            tneb_actual_raw: tnebActualText,
+            amr_actual_raw: amrActualText,
+            dev_mw_raw: devMwText,
+            dev_pct_raw: devPctText,
+            amr_pct_raw: amrPctText,
+            forecast: parseNum(forecastText),
+            tneb_actual: parseNum(tnebActualText),
+            amr_actual: parseNum(amrActualText),
+            dev_mw: parseNum(devMwText),
+            dev_pct: parseNum(devPctText),
+            amr_pct: parseNum(amrPctText)
+          });
+        });
+
+        return data;
+      }
+
+      function deviationClass(val) {
+        if (isNaN(val)) return 'bg-green-200';
+        if (val >= THRESHOLDS.redMin) return 'bg-red-400 text-white';
+        if (val >= THRESHOLDS.greenMax) return 'bg-orange-300';
+        return 'bg-green-400 text-white';
+      }
+
+      // helper: create 24 empty rows data (01..24)
+      function generateEmptyRowsData() {
+        const rows = [];
+        for (let i = 1; i <= 24; i++) {
+          const hh = String(i).padStart(2, '0');
+          rows.push({
+            time: `${hh}:00`,
+            forecast_raw: '',
+            tneb_actual_raw: '',
+            amr_actual_raw: '',
+            dev_mw_raw: '',
+            dev_pct_raw: '',
+            amr_pct_raw: '',
+            forecast: NaN,
+            tneb_actual: NaN,
+            amr_actual: NaN,
+            dev_mw: NaN,
+            dev_pct: NaN,
+            amr_pct: NaN
+          });
+        }
+        return rows;
+      }
+
+      // AMR builder (existing)
+      function buildAmrTableHtml(rowsData, selectedDateText) {
+        const tableStyle = `border-collapse: collapse; width:100%; font-size:12px; text-align:right;`;
+        let html = `<div class="amr-wrapper" style="padding:8px;">
+          <div style="border:2px solid #000; max-width:900px; margin:0 auto; background:#fff;">
+            <div style="background:#9bd39b; text-align:center; padding:6px; border-bottom:2px solid #000;">
+              <strong>Error Report</strong>
+            </div>
+            <div style="overflow:auto; max-height:540px;">
+              <table role="table" style="${tableStyle}">
+                <colgroup>
+                  <col style="width:120px" />     <!-- date (vertical) -->
+                  <col style="width:90px" />      <!-- time -->
+                  <col style="width:120px" />     <!-- forecast -->
+                  <col style="width:120px" />     <!-- AMR Actual -->
+                  <col style="width:120px" />     <!-- AMR Deviation (%) -->
+                </colgroup>
+
+                <thead>
+                  <tr>
+                    <th style="background:#f8cfa8; border:1px solid #000; padding:6px; text-align:center;">Date</th>
+                    <th style="background:#f8cfa8; border:1px solid #000; padding:6px; text-align:center;">Time Block</th>
+                    <th style="background:#f8cfa8; border:1px solid #000; padding:6px; text-align:center;">Forecast (MW)</th>
+                    <th style="background:#f8cfa8; border:1px solid #000; padding:6px; text-align:center;">AMR Actual (MW)</th>
+                    <th style="background:#f8cfa8; border:1px solid #000; padding:6px; text-align:center;">AMR Deviation (%)</th>
+                  </tr>
+                </thead>
+
+                <tbody>`;
+
+        rowsData.forEach((r, idx) => {
+          let dateCellHtml = '';
+          if (idx === 0) {
+            const dateVal = selectedDateText || '&nbsp;';
+            dateCellHtml = `<td rowSpan="${rowsData.length}" style="background:#ffd8c8; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:600; padding:18px 8px;">${dateVal}</td>`;
+          }
+          const forecastDisplay = (!isNaN(r.forecast) ? r.forecast.toLocaleString() : (r.forecast_raw || '&nbsp;'));
+          const amrDisplay = (!isNaN(r.amr_actual) ? r.amr_actual.toLocaleString() : (r.amr_actual_raw || '&nbsp;'));
+
+          let devPctValue = r.dev_pct;
+          if (isNaN(devPctValue)) {
+            if (!isNaN(r.forecast) && !isNaN(r.amr_actual) && r.forecast !== 0) {
+              devPctValue = (Math.abs(r.forecast - r.amr_actual) / r.forecast) * 100;
+              devPctValue = Math.round(devPctValue * 100) / 100;
+            }
+          }
+          const devText = !isNaN(devPctValue) ? devPctValue.toFixed(2) : (r.dev_pct_raw || '&nbsp;');
+          const devClass = deviationClass(devPctValue);
+
+          html += `<tr>
+            ${dateCellHtml}
+            <td style="border:1px solid #000; padding:6px; text-align:center; background:#f7e6c8;">${r.time || '&nbsp;'}</td>
+            <td style="border:1px solid #000; padding:6px; text-align:right; background:#dbe6ff;">${forecastDisplay}</td>
+            <td style="border:1px solid #000; padding:6px; text-align:right; background:#dbe6ff;">${amrDisplay}</td>
+            <td style="border:1px solid #000; padding:6px; text-align:right;" class="${devClass}">${devText}</td>
+          </tr>`;
+        });
+
+        const sumForecast = rowsData.reduce((s, x) => s + (isNaN(x.forecast) ? 0 : x.forecast), 0);
+        const sumAmr = rowsData.reduce((s, x) => s + (isNaN(x.amr_actual) ? 0 : x.amr_actual), 0);
+        const avgDev = rowsData.length
+          ? (rowsData.reduce((s, x) => s + (isNaN(x.dev_pct) ? 0 : x.dev_pct), 0) /
+             (rowsData.reduce((c, x) => c + (!isNaN(x.dev_pct) ? 1 : 0), 0) || 1))
+          : NaN;
+
+        html += `</tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" style="border:1px solid #000; padding:8px; font-weight:700; background:#efefef; text-align:left;">Total</td>
+              <td style="border:1px solid #000; padding:8px; font-weight:700; text-align:right; background:#dbe6ff;">${isNaN(sumForecast) ? '&nbsp;' : sumForecast.toLocaleString()}</td>
+              <td style="border:1px solid #000; padding:8px; font-weight:700; text-align:right; background:#dbe6ff;">${isNaN(sumAmr) ? '&nbsp;' : sumAmr.toLocaleString()}</td>
+              <td style="border:1px solid #000; padding:8px; font-weight:700; text-align:right;">${!isNaN(avgDev) ? avgDev.toFixed(2) : '&nbsp;'}</td>
+            </tr>
+          </tfoot>
+        </table>
+        </div>
+        <div style="padding:6px; font-size:12px; color:#555; text-align:center;">AMR view — colored deviations (green/orange/red)</div>
+      </div></div>`;
+
+        return html;
+      }
+
+      // --------- TN builder (new) ---------
+      function buildTnTableHtml(rowsData, selectedDateText) {
+        const tableStyle = `border-collapse: collapse; width:100%; font-size:12px; text-align:right;`;
+        let html = `<div class="tn-wrapper" style="padding:8px;">
+          <div style="border:3px solid #111; max-width:1000px; margin:0 auto; background:#fff;">
+            <div style="background:#f0d67a; text-align:center; padding:6px; border-bottom:3px solid #111;">
+              <strong>Error Report</strong>
+            </div>
+            <div style="overflow:auto; max-height:620px;">
+              <table role="table" style="${tableStyle}; min-width:900px;">
+                <colgroup>
+                  <col style="width:150px" />   <!-- date (vertical) -->
+                  <col style="width:90px" />    <!-- time -->
+                  <col style="width:120px" />   <!-- forecast -->
+                  <col style="width:120px" />   <!-- TNEB Actual -->
+                  <col style="width:140px" />   <!-- TNEB Dev (MW) -->
+                  <col style="width:120px" />   <!-- TNEB Dev (%) -->
+                </colgroup>
+
+                <thead>
+                  <tr>
+                    <th style="background:#f8e0b0; border:1px solid #000; padding:6px; text-align:center;">Date</th>
+                    <th style="background:#f8e0b0; border:1px solid #000; padding:6px; text-align:center;">Time Block</th>
+                    <th style="background:#f8e0b0; border:1px solid #000; padding:6px; text-align:center;">Forecast (MW)</th>
+                    <th style="background:#f8e0b0; border:1px solid #000; padding:6px; text-align:center;">TNEB Actual (MW)</th>
+                    <th style="background:#f8e0b0; border:1px solid #000; padding:6px; text-align:center;">TNEB Deviation (MW)</th>
+                    <th style="background:#f8e0b0; border:1px solid #000; padding:6px; text-align:center;">TNEB Deviation (%)</th>
+                  </tr>
+                </thead>
+
+                <tbody>`;
+
+        rowsData.forEach((r, idx) => {
+          let dateCellHtml = '';
+          if (idx === 0) {
+            const dateVal = selectedDateText || '&nbsp;';
+            dateCellHtml = `<td rowSpan="${rowsData.length}" style="background:#ffd6c4; border:2px solid #000; text-align:center; vertical-align:middle; font-weight:700; padding:20px 8px;">${dateVal}</td>`;
+          }
+
+          const forecastDisplay = (!isNaN(r.forecast) ? r.forecast.toLocaleString() : (r.forecast_raw || '&nbsp;'));
+          const tnebDisplay = (!isNaN(r.tneb_actual) ? r.tneb_actual.toLocaleString() : (r.tneb_actual_raw || '&nbsp;'));
+
+          // prefer provided dev_mw or compute (tneb - forecast)
+          let devMwValue = r.dev_mw;
+          if (isNaN(devMwValue)) {
+            if (!isNaN(r.tneb_actual) && !isNaN(r.forecast)) {
+              devMwValue = r.tneb_actual - r.forecast;
+              devMwValue = Math.round(devMwValue * 100) / 100;
+            }
+          }
+
+          // prefer provided dev_pct or compute
+          let devPctValue = r.dev_pct;
+          if (isNaN(devPctValue)) {
+            if (!isNaN(devMwValue) && !isNaN(r.forecast) && r.forecast !== 0) {
+              devPctValue = (Math.abs(devMwValue) / r.forecast) * 100;
+              devPctValue = Math.round(devPctValue * 100) / 100;
+            }
+          }
+
+          const devMwText = !isNaN(devMwValue) ? (devMwValue.toFixed(2)) : (r.dev_mw_raw || '&nbsp;');
+          const devPctText = !isNaN(devPctValue) ? (devPctValue.toFixed(2)) : (r.dev_pct_raw || '&nbsp;');
+
+          // color TNEB deviation bar: negative (green), small positive (orange), large positive (red)
+          let devClass = 'background:#c7f0c7; color:#055605;'; // default greenish
+          if (!isNaN(devPctValue)) {
+            if (devPctValue >= THRESHOLDS.redMin) devClass = 'background:#e85656; color:#fff;';
+            else if (devPctValue >= THRESHOLDS.greenMax) devClass = 'background:#f6b45b; color:#000;';
+          }
+
+          html += `<tr>
+            ${dateCellHtml}
+            <td style="border:1px solid #000; padding:6px; text-align:center; background:#f7e6c8;">${r.time || '&nbsp;'}</td>
+            <td style="border:1px solid #000; padding:6px; text-align:right; background:#dbe6ff;">${forecastDisplay}</td>
+            <td style="border:1px solid #000; padding:6px; text-align:right; background:#dbe6ff;">${tnebDisplay}</td>
+            <td style="border:1px solid #000; padding:6px; text-align:right; ${devClass}">${devMwText}</td>
+            <td style="border:1px solid #000; padding:6px; text-align:right; ${devClass}">${devPctText}</td>
+          </tr>`;
+        });
+
+        // totals
+        const sumForecast = rowsData.reduce((s, x) => s + (isNaN(x.forecast) ? 0 : x.forecast), 0);
+        const sumTneb = rowsData.reduce((s, x) => s + (isNaN(x.tneb_actual) ? 0 : x.tneb_actual), 0);
+        const avgDevPct = rowsData.length
+          ? (rowsData.reduce((s, x) => s + (isNaN(x.dev_pct) ? 0 : x.dev_pct), 0) /
+             (rowsData.reduce((c, x) => c + (!isNaN(x.dev_pct) ? 1 : 0), 0) || 1))
+          : NaN;
+
+        html += `</tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" style="border:1px solid #000; padding:8px; font-weight:700; background:#efefef; text-align:left;">Total</td>
+              <td style="border:1px solid #000; padding:8px; font-weight:700; text-align:right; background:#dbe6ff;">${isNaN(sumForecast) ? '&nbsp;' : sumForecast.toLocaleString()}</td>
+              <td style="border:1px solid #000; padding:8px; font-weight:700; text-align:right; background:#dbe6ff;">${isNaN(sumTneb) ? '&nbsp;' : sumTneb.toLocaleString()}</td>
+              <td style="border:1px solid #000; padding:8px; font-weight:700; text-align:right;">${!isNaN(avgDevPct) ? avgDevPct.toFixed(2) : '&nbsp;'}</td>
+              <td style="border:1px solid #000; padding:8px; font-weight:700; text-align:right;">&nbsp;</td>
+            </tr>
+          </tfoot>
+        </table>
+        </div>
+        <div style="padding:6px; font-size:12px; color:#555; text-align:center;">TN view — TNEB deviations colored to match screenshot.</div>
+      </div></div>`;
+
+        return html;
+      }
+      // --------- end TN builder ---------
+
+      // Render functions now read rows fresh and set viewContainer.innerHTML (no node replacement)
+      function renderAmrView() {
+        let rowsData = readServerRows();
+        // if no rows available, create empty 24 rows
+        if (!rowsData || rowsData.length === 0) rowsData = generateEmptyRowsData();
+        let dateText = '';
+        const firstRow = document.getElementById('error-report-tbody')?.querySelector('tr');
+        if (firstRow) {
+          const dateCell = firstRow.querySelector('td.writing-mode-vertical-rl, td[style*="writing-mode"], td[style*="rotate"]');
+          if (dateCell) dateText = dateCell.textContent.trim();
+          const pageData = document.getElementById('page-data');
+          if ((!dateText || dateText === '') && pageData) {
+            dateText = pageData.dataset?.selectedDate || '';
+          }
+        }
+        const newHtml = buildAmrTableHtml(rowsData, dateText);
+        viewContainer.innerHTML = newHtml;
+      }
+
+      function renderTnView() {
+        let rowsData = readServerRows();
+        // if no rows available, create empty 24 rows
+        if (!rowsData || rowsData.length === 0) rowsData = generateEmptyRowsData();
+        let dateText = '';
+        const firstRow = document.getElementById('error-report-tbody')?.querySelector('tr');
+        if (firstRow) {
+          const dateCell = firstRow.querySelector('td.writing-mode-vertical-rl, td[style*="writing-mode"], td[style*="rotate"]');
+          if (dateCell) dateText = dateCell.textContent.trim();
+          const pageData = document.getElementById('page-data');
+          if ((!dateText || dateText === '') && pageData) {
+            dateText = pageData.dataset?.selectedDate || '';
+          }
+        }
+        const newHtml = buildTnTableHtml(rowsData, dateText);
+        viewContainer.innerHTML = newHtml;
+      }
+
+      // Restore original compact table (used when user chooses ALL)
+      function restoreCompactView() {
+        viewContainer.innerHTML = originalCompactHtml;
+        // repopulate rows and re-apply column visibility
+        // small timeout to allow DOM to settle
+        setTimeout(() => {
+          if (typeof renderEmptyRows === 'function') renderEmptyRows();
+          applyFilterColumns(currentFilter);
+        }, 30);
+      }
+
+      // Hook change event so switching the select updates the view immediately
+      filterSelect.addEventListener('change', function (ev) {
+        const v = ev.target.value;
+        if (v === 'AMR_ACTUAL') renderAmrView();
+        else if (v === 'TN_ACTUAL') renderTnView();
+        else restoreCompactView();
+      });
+
+      // Hook the submit event: when user clicks VIEW (form submit)
+      form.addEventListener('submit', function (ev) {
+        const currentFilter = filterSelect.value;
+        if (currentFilter === 'AMR_ACTUAL') {
+          ev.preventDefault();
+          renderAmrView();
+          setTimeout(() => {
+            const el = document.querySelector('.amr-wrapper');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 50);
+        } else if (currentFilter === 'TN_ACTUAL') {
+          ev.preventDefault();
+          renderTnView();
+          setTimeout(() => {
+            const el = document.querySelector('.tn-wrapper');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 50);
+        } else {
+          // allow normal submit for ALL (server will render)
+        }
+      });
+
+    })();
+    </script>
+
+  </body>
+  </html>

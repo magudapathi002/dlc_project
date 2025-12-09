@@ -1,0 +1,364 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Daily Comparison</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen font-sans">
+
+  {% include "partials/navbar.html" %}
+
+  <!-- main wrapper: moved a little left (lg:ml-56) so sidebar will overlap main by ~2rem -->
+  <main class="max-w-7xl px-4 sm:px-6 lg:px-8 mt-6 pb-12 lg:ml-56">
+
+    <div class="flex gap-6">
+
+      <!-- Sidebar: fixed, high z-index so it overlays the main content.
+           added lg:shadow-2xl to make the overlay clearer -->
+      <aside id="mainSidebar" class="hidden lg:block w-64 fixed left-0 top-20 overflow-auto z-50 bg-white lg:shadow-2xl transition-all duration-300">
+        {% include "partials/sidebar.html" %}
+      </aside>
+
+      <!-- Make the main content positioned and z-0 so the sidebar overlays it -->
+      <section class="flex-1 min-w-0 relative z-0">
+        <div class="w-full">
+            <main class="w-full">
+              <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-b border-gray-200">
+                  <div class="mb-4 sm:mb-0">
+                    <h1 class="text-xl font-bold text-gray-800">Daily Comparison</h1>
+                    <p class="text-sm text-gray-500">Select date and view state-wise report</p>
+                  </div>
+                  <div class="text-right text-sm text-gray-600">
+                    {% if selected_state %}<div>State: <span class="font-medium text-black">{{ selected_state }}</span></div>{% endif %}
+                    {% if selected_date %}<div>Date: <span class="font-medium text-black">{{ selected_date }}</span></div>{% endif %}
+                  </div>
+                </div>
+
+                <div class="p-4 bg-gray-50 border-b border-gray-200">
+                  <form method="GET" id="dateForm" class="flex flex-col md:flex-row md:items-center gap-3">
+                    <div class="w-full md:w-48">
+                      <input
+                        type="date"
+                        id="date_input"
+                        name="date"
+                        class="w-full p-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+                        value="{{ request.GET.date|default:'' }}"
+                      />
+                    </div>
+                    <div class="flex gap-2 items-center">
+                      <button type="submit" class="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition shadow-sm">
+                        VIEW
+                      </button>
+                      <button type="button" id="exportCsvBtn" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white rounded-md text-sm text-gray-700 hover:bg-gray-50 font-medium shadow-sm transition">
+                        Export Excel
+                      </button>
+                      <button type="button" id="refreshBtn" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white rounded-md text-sm text-gray-700 hover:bg-gray-50 font-medium shadow-sm transition">
+                        Refresh
+                      </button>
+                      <button type="button" id="downloadBtn" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 bg-green rounded-md text-sm text-gray-700 hover:bg-green-100 font-medium shadow-sm transition">
+                        Download PNG
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="w-full col-span-full">
+                  <div class="bg-white">
+
+                    <div class="p-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                             <img src="{% static 'images/logo.png' %}" alt="Leap Green Energy" class="h-10 object-contain">
+                             <div>
+                                <h2 class="text-lg font-bold text-[#072a12] uppercase">TN - Daily Wind Power Generation Updates</h2>
+                                <div class="text-sm text-gray-500 mt-0.5">{{ selected_date|default:"-- -- -- -- --" }}</div>
+                             </div>
+                        </div>
+                        <div class="text-sm">
+                           <div class="font-bold bg-yellow-400 px-3 py-1 rounded text-black shadow-sm">
+                             {{ selected_date|default:'24-NOV-2025' }}
+                           </div>
+                        </div>
+                    </div>
+
+                    <div class="p-2 bg-white">
+                        <div class="relative h-[500px] w-full">
+                            <canvas id="windChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 border-t border-gray-200 bg-gray-50">
+
+                        <div class="rounded-lg overflow-hidden border border-gray-300 bg-white shadow-sm">
+                            <table class="w-full text-sm text-center">
+                                <thead class="bg-[#90ee90] text-black font-bold border-b border-gray-300">
+                                    <tr>
+                                        <th class="p-3 border-r border-gray-300" rowspan="2">Absolute Error</th>
+                                        <th class="p-3 border-b border-gray-300" colspan="2">(Act-Sch)/Sch</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="p-3 border-r border-gray-300">No. of Slots</th>
+                                        <th class="p-3">%</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr class="bg-yellow-50 hover:bg-yellow-100 transition">
+                                        <td class="p-3 font-medium text-left pl-4 border-r border-gray-200"><=15%</td>
+                                        <td class="p-3 border-r border-gray-200">46</td>
+                                        <td class="p-3">47.9%</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-3 font-medium text-left pl-4 border-r border-gray-200">>15% but <=20%</td>
+                                        <td class="p-3 border-r border-gray-200">8</td>
+                                        <td class="p-3">8.3%</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-3 font-medium text-left pl-4 border-r border-gray-200">>20% but <=30%</td>
+                                        <td class="p-3 border-r border-gray-200">14</td>
+                                        <td class="p-3">14.6%</td>
+                                    </tr>
+                                    <tr class="bg-red-50 hover:bg-red-100 transition">
+                                        <td class="p-3 font-medium text-left pl-4 border-r border-gray-200">>30%</td>
+                                        <td class="p-3 border-r border-gray-200">28</td>
+                                        <td class="p-3">29.2%</td>
+                                    </tr>
+                                    <tr class="font-bold bg-gray-100 border-t border-gray-300">
+                                        <td class="p-3 text-left pl-4 border-r border-gray-300">Total</td>
+                                        <td class="p-3 border-r border-gray-300" colspan="2">96</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="rounded-lg overflow-hidden border border-gray-300 bg-white shadow-sm">
+                            <div class="bg-[#90ee90] p-3 text-center text-black font-bold border-b border-gray-300 text-xs uppercase tracking-wide">
+                                * Provisional DSM Charges as on {{ selected_date|default:'27-Nov-25' }}
+                            </div>
+                            <table class="w-full text-sm text-center">
+                                <thead class="bg-[#90ee90] text-black font-bold border-b border-gray-300">
+                                    <tr>
+                                        <th class="p-3 border-r border-gray-300">Period</th>
+                                        <th class="p-3 border-r border-gray-300">Total Charges (Rs.)</th>
+                                        <th class="p-3">DSM Charges per Unit (Paise)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-3 font-bold bg-gray-50 border-r border-gray-200">DAY</td>
+                                        <td class="p-3 border-r border-gray-200">10,93,469</td>
+                                        <td class="p-3">6.89</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-3 font-bold bg-gray-50 border-r border-gray-200">MTD</td>
+                                        <td class="p-3 border-r border-gray-200">3,17,93,159</td>
+                                        <td class="p-3">10.944</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-3 font-bold bg-gray-50 border-r border-gray-200">YTD</td>
+                                        <td class="p-3 border-r border-gray-200">26,33,35,631</td>
+                                        <td class="p-3">2.129</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="p-3 text-xs text-gray-500 bg-white border-t border-gray-200">
+                                <p class="flex items-center gap-1"><span class="text-red-500">*</span> For Internal reference only</p>
+                                <p class="flex items-center gap-1"><span class="text-red-500">*</span> SLDC not yet provided the calculations</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="p-3 text-xs text-gray-500 border-t border-gray-200 bg-gray-100 flex items-center justify-center">
+                        Tip: Choose date then click <strong class="ml-1">VIEW</strong> to fetch state data.
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </main>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // --- 1. GENERATE 96 TIME SLOTS (00:00-00:15, etc) ---
+    function generateTimeSlots() {
+        const slots = [];
+        for (let i = 0; i < 96; i++) {
+            const startMinutes = i * 15;
+            const endMinutes = (i + 1) * 15;
+
+            // Helper to format HH:MM
+            const format = (mins) => {
+                const h = Math.floor(mins / 60) % 24;
+                const m = mins % 60;
+                return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            };
+            // Label format: "00:00-00:15"
+            slots.push(`${format(startMinutes)}-${format(endMinutes)}`);
+        }
+        return slots;
+    }
+
+    // --- 2. GENERATE DUMMY DATA FOR DEMO (96 points) ---
+    // (Remove this function when connecting real API data)
+    function generateRandomData(min, max) {
+        return Array.from({ length: 96 }, () => Math.floor(Math.random() * (max - min + 1) + min));
+    }
+
+    // --- 3. CHART CONFIGURATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('windChart').getContext('2d');
+
+      const timeLabels = generateTimeSlots();
+
+      const windChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [
+            {
+              label: 'Wind Forecast',
+              data: generateRandomData(600, 1200), // Dummy data
+              borderColor: '#22c55e', // Green
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              borderWidth: 1.5,
+              pointRadius: 0, // Hide points for clean line
+              pointHoverRadius: 4,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'Actual Generation',
+              data: generateRandomData(500, 1100), // Dummy data
+              borderColor: '#db2777', // Pink/Red
+              backgroundColor: 'rgba(219, 39, 119, 0.1)',
+              borderWidth: 1.5,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              tension: 0.4,
+              fill: false
+            },
+            {
+              label: 'Schedule',
+              data: generateRandomData(550, 1300), // Dummy data
+              borderColor: '#3b82f6', // Blue
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              borderWidth: 1.5,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              tension: 0.4,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                  color: '#374151',
+                  usePointStyle: true,
+                  padding: 20,
+                  font: { size: 12 }
+              }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                titleColor: '#1f2937',
+                bodyColor: '#1f2937',
+                borderColor: '#e5e7eb',
+                borderWidth: 1,
+                padding: 10,
+                displayColors: true
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                  color: '#4b5563',
+                  font: { size: 10 },
+                  autoSkip: true,
+                  maxTicksLimit: 32, // Shows roughly 2 labels per hour to fit space
+                  maxRotation: 90,   // Vertical Text as per your image
+                  minRotation: 90
+              }
+            },
+            y: {
+              grid: { color: 'rgba(0, 0, 0, 0.05)' },
+              ticks: { color: '#4b5563' },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+
+    // --- EXISTING FUNCTIONALITY ---
+    const dataApiUrl = "";
+    const selectedState = "{{ selected_state|default:''|escapejs }}";
+    const refreshBtn = document.getElementById('refreshBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+    function getFormParams() {
+      return {
+        date: document.getElementById('date_input') ? document.getElementById('date_input').value : ''
+      };
+    }
+
+    async function fetchAndPopulate() {
+      if (!dataApiUrl || !selectedState) return;
+      const { date } = getFormParams();
+      if (!date) return;
+
+      const url = new URL(dataApiUrl, window.location.origin);
+      url.searchParams.set('state', selectedState);
+      url.searchParams.set('date', date);
+
+      try {
+        const res = await fetch(url.toString(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
+        if (!res.ok) return;
+        const data = await res.json();
+        console.log("Data received:", data);
+        // TODO: Update chart datasets with real `data.values` here
+      } catch (e) { console.error(e); }
+    }
+
+    // Mobile sidebar toggle logic
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mainSidebar = document.getElementById('mainSidebar');
+    if (sidebarToggle && mainSidebar) {
+      sidebarToggle.addEventListener('click', () => {
+        mainSidebar.classList.toggle('hidden');
+        mainSidebar.classList.toggle('block');
+        mainSidebar.classList.toggle('absolute');
+        mainSidebar.classList.toggle('z-50');
+        mainSidebar.classList.toggle('left-0');
+        mainSidebar.classList.toggle('bg-white');
+      });
+    }
+
+    if (refreshBtn) refreshBtn.addEventListener('click', fetchAndPopulate);
+    fetchAndPopulate();
+  </script>
+
+  {% block content %}{% endblock %}
+</body>
+</html>

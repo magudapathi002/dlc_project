@@ -20,9 +20,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'django_filters',
-
+    # 'django_filters',
+    'accounts',
     'processor',
+    'dashboard',
 ]
 
 
@@ -50,20 +51,24 @@ ROOT_URLCONF = 'DLC_processing.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # Project-level templates dir
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # any other processors...
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'DLC_processing.wsgi.application'
-
+LOGIN_REDIRECT_URL = '/dashboard/'   # change as you like
+LOGOUT_REDIRECT_URL = '/login/'
 
 DATABASES = {
     'default': {
@@ -123,3 +128,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+#
+# LOGIN_REDIRECT_URL = '/dashboard/'  # change as you like
+# LOGIN_URL = '/login/'
