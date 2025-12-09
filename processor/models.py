@@ -265,3 +265,40 @@ class Wrldc2CData(models.Model):
         verbose_name = "Table 2C Data"
         verbose_name_plural = "Table 2C Data"
         unique_together = ('report_date', 'state')
+
+
+class SRLDC3BData(models.Model):
+    report_date = models.DateField(null=True, blank=True)
+    reporting_datetime = models.DateTimeField(null=True, blank=True)
+
+    station = models.TextField()
+
+    installed_capacity_mw = models.IntegerField(null=True, blank=True)
+    peak_1900_mw = models.IntegerField(null=True, blank=True)
+    offpeak_0300_mw = models.IntegerField(null=True, blank=True)
+    day_peak_mw = models.IntegerField(null=True, blank=True)
+    day_peak_hrs = models.CharField(max_length=64, null=True, blank=True)
+
+    # OLD FORMAT → stores remapped values here
+    day_energy_mu = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True)
+    avg_mw = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True)
+
+    # NEW FORMAT STILL NEEDS THESE
+    min_generation_mw = models.DecimalField(max_digits=12, decimal_places=3, null=True, blank=True)
+    min_generation_hrs = models.CharField(max_length=64, null=True, blank=True)
+
+    gross_energy_mu = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True)
+    net_energy_mu = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True)
+
+    row_type = models.CharField(max_length=32, null=True, blank=True)
+    source_page = models.IntegerField(null=True, blank=True)
+    source_table_index = models.IntegerField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('report_date', 'station')
+
+    def __str__(self):
+        return f"{self.station} - {self.report_date}"

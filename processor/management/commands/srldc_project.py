@@ -1,12 +1,25 @@
-import requests
-import datetime
-import os
-from tabula.io import read_pdf
-import pandas as pd
-import json
+#!/usr/bin/env python3
 import logging
+import os
+import re
+import json
+import datetime
+import traceback
+import requests
+import pdfplumber
+from datetime import datetime as _dt, timedelta
+from decimal import Decimal, InvalidOperation
+
+import pandas as pd
+from tabula.io import read_pdf
+
 from django.core.management.base import BaseCommand, CommandError
-from ...models import Srldc2AData, Srldc2CData
+from django.conf import settings
+from django.db import transaction
+
+# ---- Models: ensure these names match your app models ----
+from processor.models import Srldc2AData, Srldc2CData, SRLDC3BData
+# ---- SSL adapter used by your tabula downloader session (keeps legacy support) ----
 import ssl
 from requests.adapters import HTTPAdapter
 from urllib3.util.ssl_ import create_urllib3_context
@@ -32,165 +45,109 @@ class LegacySSLAdapter(HTTPAdapter):
             ssl_context=ctx
         )
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-class Command(BaseCommand):
-    def add_arguments(self, parser):
-        parser.add_argument(
-            '--date',
-            type=str,
-            help='Date for which to run the report, format: DD-MM-YYYY',
-            required=False
-        )
+# ----------------- Shared helpers -----------------
+def clean_cell(c):
+    if c is None:
+        return ""
+    return re.sub(r"\s+", " ", str(c)).strip()
 
-    def write(self, message, level='info'):
-        self.stdout.write(message)
-        if level == 'info':
-            self.logger.info(message)
-        elif level == 'warning':
-            self.logger.warning(message)
-        elif level == 'error':
-            self.logger.error(message)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'logs')
-        os.makedirs(log_dir, exist_ok=True)
-        log_file = os.path.join(log_dir, 'srldc.log')
-        self.logger = logging.getLogger('srldc_logger')
-        self.logger.setLevel(logging.INFO)
-        if not self.logger.hasHandlers():
-            handler = logging.FileHandler(log_file, encoding='utf-8')
-            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-            handler.setFormatter(formatter)
-            self.logger.addHandler(handler)
+def first_cell_text(row):
+    return clean_cell(row[0]).upper() if row and len(row) > 0 else ""
 
-    help = 'Download today\'s SRLDC report and extract tables 2(A) and 2(C) to a single JSON file and save to DB'
 
-    # List of expected state names for validation
+def looks_like_station_text(s):
+    if not s:
+        return False
+    s = s.strip()
+    # It should have some letters, and not be just numbers or symbols
+    return bool(re.search(r"[A-Za-z]", s)) and not re.fullmatch(r"[-\d\.\,]+", s)
+
+
+def parse_int_safe(s):
+    s = (s or "").strip()
+    if not s or s in ["--", "-"]:
+        return None
+    s = s.replace(",", "")
+    try:
+        return int(float(s))
+    except:
+        return None
+
+
+def parse_float_safe(s):
+    s = (s or "").strip()
+    if not s or s in ["--", "-"]:
+        return None
+    try:
+        return float(s.replace(",", ""))
+    except:
+        return None
+
+
+def _try_parse_date_token(tok):
+    if not tok:
+        return None
+    tok = str(tok).strip()
+    tok_norm = re.sub(r"[,\s]+", " ", tok.replace("/", "-")).strip()
+    fmts = ["%d-%b-%Y", "%d-%B-%Y", "%d-%m-%Y", "%Y-%m-%d", "%d %b %Y", "%d %B %Y", "%d-%b-%y", "%d-%m-%y"]
+    for fmt in fmts:
+        try:
+            if "%b" in fmt or "%B" in fmt:
+                dt = _dt.strptime(tok_norm.title(), fmt)
+            else:
+                dt = _dt.strptime(tok_norm, fmt)
+            return dt.date()
+        except Exception:
+            continue
+    m = re.search(r"([0-3]?\d)[^\dA-Z]+([A-Z]{3,9})[^\dA-Z]+(\d{4})", tok.upper())
+    if m:
+        day, mon, year = m.group(1), m.group(2).title(), m.group(3)
+        try:
+            for fmt in ("%b", "%B"):
+                try:
+                    mon_num = _dt.strptime(mon, fmt).month
+                    return _dt(int(year), mon_num, int(day)).date()
+                except Exception:
+                    pass
+        except Exception:
+            pass
+    return None
+
+
+def _try_parse_datetime_tokens(date_tok, time_tok):
+    if not date_tok:
+        return None
+    date_obj = _try_parse_date_token(date_tok)
+    if not date_obj:
+        return None
+    if not time_tok:
+        return datetime.datetime.combine(date_obj, datetime.time())
+    time_str = re.sub(r"[^\d:]", "", str(time_tok))
+    m = re.search(r"([0-2]?\d)[:\.]([0-5]\d)", time_str)
+    if m:
+        hour = int(m.group(1))
+        minute = int(m.group(2))
+        try:
+            return _dt(date_obj.year, date_obj.month, date_obj.day, hour, minute)
+        except Exception:
+            return None
+    return None
+
+
+# ---------------- Tabula-based 2A/2C extractor (from your original script) ----------------
+class TabulaExtractor:
     SOUTH_INDIAN_STATES = [
         "ANDHRA PRADESH", "KARNATAKA", "KERALA", "PONDICHERRY", "TAMILNADU", "TELANGANA", "REGION"
     ]
-    # For Table 2C, states might be abbreviated or slightly different
     SOUTH_INDIAN_STATES_2C = [
         "AP", "KAR", "KER", "PONDY", "TN", "TG", "REGION"
     ]
 
-    def extract_subtable_by_markers(self, df, start_marker, end_marker=None, header_row_count=0, debug_table_name="Unknown Table"):
-        """
-        Extracts a sub-table from a DataFrame based on start and optional end markers.
-        Handles multi-level headers by explicitly taking a specified number of rows after the start marker
-        as header rows and combining them intelligently.
-
-        Args:
-            df (pd.DataFrame): The DataFrame to search within.
-            start_marker (str): The regex pattern to identify the start of the sub-table (usually the table title).
-            end_marker (str, optional): The regex pattern to identify the end of the sub-table.
-                                        If None, extracts from start_marker to the end of the DataFrame.
-            header_row_count (int): The number of rows immediately following the start_marker (or actual data start)
-                                    that constitute the header. These rows will be combined to form column names.
-            debug_table_name (str): A name for the table being processed, used in debug prints.
-
-        Returns:
-            tuple: (pd.DataFrame or None, list or None): The extracted sub-table and its column names,
-            or (None, None) if the start marker is not found.
-        """
-        start_idx = None
-        end_idx = None
-        new_columns = None
-
-        for i, row in df.iterrows():
-            row_str_series = row.astype(str).str.strip().str.replace(r'\s+', ' ', regex=True)
-            if row_str_series.str.contains(start_marker, regex=True, na=False, case=False).any():
-                start_idx = i
-                break
-
-        if start_idx is None:
-            self.write(self.style.WARNING(f"⚠️ Start marker '{start_marker}' not found for {debug_table_name}."), level='warning')
-            return None, None
-
-        if end_marker:
-            for i in range(start_idx + 1, len(df)):
-                row_str_series = df.iloc[i].astype(str).str.strip().str.replace(r'\s+', ' ', regex=True)
-                if row_str_series.str.contains(end_marker, regex=True, na=False, case=False).any():
-                    end_idx = i
-                    break
-
-        if end_idx is not None:
-            raw_sub_df = df.iloc[start_idx:end_idx].copy().reset_index(drop=True)
-        else:
-            raw_sub_df = df.iloc[start_idx:].copy().reset_index(drop=True)
-
-        data_start_row_in_raw_sub_df = 1 + header_row_count
-
-        if header_row_count > 0 and len(raw_sub_df) >= data_start_row_in_raw_sub_df:
-            headers_df = raw_sub_df.iloc[1 : data_start_row_in_raw_sub_df]
-            new_columns = []
-            if debug_table_name == "Table 2(A)":
-                new_columns = [
-                    'STATE',
-                    'THERMAL',
-                    'HYDRO',
-                    'GAS/DIESEL/NAPTHA',    
-                    'WIND',
-                    'SOLAR',
-                    'OTHERS',
-                    'Net SCH (Net Mu)',
-                    'Drawal (Net Mu)',
-                    'UI (Net Mu)',
-                    'Availability (Net MU)',
-                    'Demand Met (Net MU)',
-                    'Shortage # (Net MU)'
-                ]
-            elif debug_table_name == "Table 2(C)":
-                new_columns = [
-                    'State',
-                    'Maximum Demand Met of the day',
-                    'Time',
-                    'Shortage during maximum demand',
-                    'Requirement at maximum demand',
-                    'Maximum requirement of the day',
-                    'Time.1',
-                    'Shortage during maximum requirement',
-                    'Demand Met at maximum Requirement',
-                    'Min Demand Met',  # This will map to ace_min
-                    'Time.2',          # This will map to time_ace_min
-                    'ACE_MAX',
-                    'Time.3',
-                    # Removed 'ACE_MIN' and 'Time.4' as they don't exist in extracted DF
-                ]
-            else:
-                self.write(self.style.WARNING(f"⚠️ Custom header combination logic not defined for {debug_table_name}. Falling back to generic combination."), level='warning')
-                raw_top_header = headers_df.iloc[0].astype(str).str.replace('\n', ' ', regex=False).str.strip().fillna('')
-                raw_bottom_header = headers_df.iloc[1].astype(str).str.replace('\n', ' ', regex=False).str.strip().fillna('')
-                for idx in range(raw_top_header.shape[0]):
-                    t_col = raw_top_header.iloc[idx].strip()
-                    b_col = raw_bottom_header.iloc[idx].strip()
-                    if not t_col and not b_col:
-                        new_columns.append(f"Unnamed_{idx}")
-                    elif not b_col:
-                        new_columns.append(t_col)
-                    elif not t_col:
-                        new_columns.append(b_col)
-                    elif not b_col.startswith(t_col):
-                        new_columns.append(f"{t_col} {b_col}".strip())
-                    else:
-                        new_columns.append(b_col)
-
-            if new_columns is not None:
-                sub_df_data = raw_sub_df.iloc[data_start_row_in_raw_sub_df:].copy()
-                sub_df_data = sub_df_data.reindex(columns=list(sub_df_data.columns) + [col for col in new_columns if col not in sub_df_data.columns])
-                sub_df_data = sub_df_data.iloc[:, :len(new_columns)]
-                sub_df_data.columns = new_columns
-                sub_df_data = sub_df_data.loc[:, ~sub_df_data.columns.duplicated(keep='first')]
-                sub_df_data.columns = sub_df_data.columns.astype(str).str.strip()
-                sub_df_data.columns = sub_df_data.columns.str.replace(r'\s*\r\s*', ' ', regex=True).str.strip()
-                sub_df_data = sub_df_data.dropna(axis=0, how='all')
-                return sub_df_data.dropna(axis=1, how='all'), new_columns
-            else:
-                return raw_sub_df.iloc[1:].dropna(axis=1, how='all'), None
-        else:
-            return raw_sub_df.iloc[1:].dropna(axis=1, how='all'), None
+    def __init__(self, write_fn, logger):
+        self.write = write_fn
+        self.logger = logger
 
     def _safe_float(self, value):
         if pd.isna(value) or value is None:
@@ -216,297 +173,635 @@ class Command(BaseCommand):
         s_val = s_val.replace('\r', ' ')
         return s_val
 
-    def extract_tables_from_pdf(self, pdf_path, output_dir, report_date):
-        self.logger.info("🔍 Extracting tables from PDF...")
+    def extract_subtable_by_markers(self, df, start_marker, end_marker=None, header_row_count=0,
+                                    debug_table_name="Unknown Table"):
+        start_idx = None
+        end_idx = None
+        new_columns = None
 
+        for i, row in df.iterrows():
+            row_str_series = row.astype(str).str.strip().str.replace(r'\s+', ' ', regex=True)
+            if row_str_series.str.contains(start_marker, regex=True, na=False, case=False).any():
+                start_idx = i
+                break
+
+        if start_idx is None:
+            self.write(self.style_warning(f"⚠️ Start marker '{start_marker}' not found for {debug_table_name}."),
+                       level='warning')
+            return None, None
+
+        if end_marker:
+            for i in range(start_idx + 1, len(df)):
+                row_str_series = df.iloc[i].astype(str).str.strip().str.replace(r'\s+', ' ', regex=True)
+                if row_str_series.str.contains(end_marker, regex=True, na=False, case=False).any():
+                    end_idx = i
+                    break
+
+        if end_idx is not None:
+            raw_sub_df = df.iloc[start_idx:end_idx].copy().reset_index(drop=True)
+        else:
+            raw_sub_df = df.iloc[start_idx:].copy().reset_index(drop=True)
+
+        data_start_row_in_raw_sub_df = 1 + header_row_count
+
+        if header_row_count > 0 and len(raw_sub_df) >= data_start_row_in_raw_sub_df:
+            headers_df = raw_sub_df.iloc[1: data_start_row_in_raw_sub_df]
+            new_columns = []
+            if debug_table_name == "Table 2(A)":
+                new_columns = [
+                    'STATE',
+                    'THERMAL',
+                    'HYDRO',
+                    'GAS/DIESEL/NAPTHA',
+                    'WIND',
+                    'SOLAR',
+                    'OTHERS',
+                    'Net SCH (Net Mu)',
+                    'Drawal (Net Mu)',
+                    'UI (Net Mu)',
+                    'Availability (Net MU)',
+                    'Demand Met (Net MU)',
+                    'Shortage # (Net MU)'
+                ]
+            elif debug_table_name == "Table 2(C)":
+                new_columns = [
+                    'State',
+                    'Maximum Demand Met of the day',
+                    'Time',
+                    'Shortage during maximum demand',
+                    'Requirement at maximum demand',
+                    'Maximum requirement of the day',
+                    'Time.1',
+                    'Shortage during maximum requirement',
+                    'Demand Met at maximum Requirement',
+                    'Min Demand Met',
+                    'Time.2',
+                    'ACE_MAX',
+                    'Time.3',
+                ]
+            else:
+                # generic fallback combining two-row header
+                raw_top_header = headers_df.iloc[0].astype(str).str.replace('\n', ' ', regex=False).str.strip().fillna(
+                    '')
+                raw_bottom_header = headers_df.iloc[1].astype(str).str.replace('\n', ' ',
+                                                                               regex=False).str.strip().fillna('')
+                for idx in range(raw_top_header.shape[0]):
+                    t_col = raw_top_header.iloc[idx].strip()
+                    b_col = raw_bottom_header.iloc[idx].strip()
+                    if not t_col and not b_col:
+                        new_columns.append(f"Unnamed_{idx}")
+                    elif not b_col:
+                        new_columns.append(t_col)
+                    elif not t_col:
+                        new_columns.append(b_col)
+                    elif not b_col.startswith(t_col):
+                        new_columns.append(f"{t_col} {b_col}".strip())
+                    else:
+                        new_columns.append(b_col)
+
+            if new_columns is not None:
+                sub_df_data = raw_sub_df.iloc[data_start_row_in_raw_sub_df:].copy()
+                sub_df_data = sub_df_data.reindex(
+                    columns=list(sub_df_data.columns) + [col for col in new_columns if col not in sub_df_data.columns])
+                sub_df_data = sub_df_data.iloc[:, :len(new_columns)]
+                sub_df_data.columns = new_columns
+                sub_df_data = sub_df_data.loc[:, ~sub_df_data.columns.duplicated(keep='first')]
+                sub_df_data.columns = sub_df_data.columns.astype(str).str.strip()
+                sub_df_data.columns = sub_df_data.columns.str.replace(r'\s*\r\s*', ' ', regex=True).str.strip()
+                sub_df_data = sub_df_data.dropna(axis=0, how='all')
+                return sub_df_data.dropna(axis=1, how='all'), new_columns
+            else:
+                return raw_sub_df.iloc[1:].dropna(axis=1, how='all'), None
+        else:
+            return raw_sub_df.iloc[1:].dropna(axis=1, how='all'), None
+
+    # small helper to adapt style methods used above
+    def style_warning(self, msg):
+        return msg
+
+
+# ---------------- pdfplumber-based 3B extractor (from your 3B script) ----------------
+# Markers used by 3B logic
+START_MARKER_3B = r"CENTRAL\s+SECTOR"
+JV_MARKER_3B = r"JOINT\s+VENTURE"
+END_MARKER_3B = r"TOTAL\s+JV"
+
+
+def is_start_row_3b(text): return bool(re.search(START_MARKER_3B, text, flags=re.IGNORECASE))
+
+
+def is_jv_row_3b(text): return bool(re.search(JV_MARKER_3B, text, flags=re.IGNORECASE))
+
+
+def is_end_row_3b(text): return bool(re.search(END_MARKER_3B, text, flags=re.IGNORECASE))
+
+
+# Date extraction helpers (both old/new pattern) - copied from your 3B script
+def extract_report_dates_old(pdf_path):
+    res = {
+        "report_date_for": None,
+        "report_date_of_reporting": None,
+        "reporting_datetime_of_reporting": None,
+        "report_date": None,
+        "reporting_datetime": None
+    }
+
+    with pdfplumber.open(pdf_path) as pdf:
+        first_page = pdf.pages[0]
+        page_text = first_page.extract_text() or ""
         try:
-            tables = read_pdf(
-                pdf_path,
-                pages='all',
-                multiple_tables=True,
-                pandas_options={'header': None},
-                lattice=True
-            )
-        except Exception as e:
-            raise CommandError(f"❌ Tabula extraction failed: {e}")
+            page_words = first_page.extract_words(use_text_flow=True)
+        except Exception:
+            page_words = first_page.extract_words() if hasattr(first_page, "extract_words") else []
 
-        if not tables:
-            raise CommandError("❌ No tables found in the PDF.")
+    txt = page_text
 
-        self.write(self.style.SUCCESS(f"✅ Found {len(tables)} tables."))
-        self.logger.info(f"✅ Found {len(tables)} tables.")
+    for_pattern = re.compile(
+        r"FOR(\d{1,2}[-/][A-Za-z]{3,9}[-/]\d{4}|\d{1,2}[-/]\d{1,2}[-/]\d{4})",
+        flags=re.IGNORECASE
+    )
 
-        all_content_df = pd.concat(tables, ignore_index=True)
-        all_content_df_cleaned = all_content_df.dropna(axis=0, how='all')
+    for_matches = list(for_pattern.finditer(txt))
+    if for_matches:
+        m = for_matches[0]
+        token = m.group(1)
+        dt_for = _try_parse_date_token(token)
+        if dt_for:
+            # res["report_date_for"] = dt_for.isoformat()
+            res["report_date"] = dt_for.isoformat()
+            print(dt_for, "qwertyuiop")
 
-        combined_json_data = {}
+    m_explicit = re.search(
+        r"DATE\s+OF\s+REPORTING\s*[:\-]?\s*([0-3]?\d[-/][A-Za-z]{3,9}[-/]\d{4}|[0-3]?\d[-/]\d{1,2}[-/]\d{4}|[0-3]?\d[^\n]{0,20}\d{4})(?:\s*(?:AT|@)?\s*([0-2]?\d[:\.]?[0-5]?\d[^\s]*))?",
+        txt, flags=re.IGNORECASE)
+    explicit_date_obj = None
+    explicit_dt = None
+    if m_explicit:
+        dt_token = m_explicit.group(1)
+        explicit_date_obj = _try_parse_date_token(dt_token)
+        time_tok = m_explicit.group(2) if m_explicit.lastindex and m_explicit.lastindex >= 2 else None
+        if explicit_date_obj:
+            res["report_date_of_reporting"] = explicit_date_obj.isoformat()
+            if time_tok:
+                explicit_dt = _try_parse_datetime_tokens(dt_token, time_tok)
+                if explicit_dt:
+                    res["reporting_datetime_of_reporting"] = explicit_dt.strftime("%Y-%m-%d %H:%M")
+                    res["reporting_datetime"] = res["reporting_datetime_of_reporting"]
 
-        # --- Extract Table 2(A) ---
-        sub_2A, headers_2A = self.extract_subtable_by_markers(
-            all_content_df_cleaned,
-            start_marker=r".*2\s*\(A\)State['’]?s\s*Load\s*Deails\s*\(At\s*State\s*Periphery\)\s*in\s*MUs.*",
-            end_marker=r".*2\s*\(B\)\s*State['’]?s\s*Demand\s*Met\s*in\s*MWs\s*and\s*day\s*energy\s*forecast\s*and\s*deviation\s*particulars.*",
-            header_row_count=2,
-            debug_table_name="Table 2(A)"
-        )
+    if not explicit_date_obj and page_words:
+        wlist = [(i, w.get("text", ""), w.get("x0", 0), w.get("x1", 0), w.get("top", 0), w) for i, w in
+                 enumerate(page_words)]
+        texts_lower = [w[1].lower() for w in wlist]
 
-        if sub_2A is not None:
-            column_mapping_2A = {
-                'STATE': 'state',
-                'THERMAL': 'thermal',
-                'HYDRO': 'hydro',
-                'GAS/DIESEL/NAPTHA': 'gas_naptha_diesel',
-                'SOLAR': 'solar',
-                'WIND': 'wind',
-                'OTHERS': 'others',
-                'Net SCH (Net Mu)': 'net_sch',
-                'Drawal (Net Mu)': 'drawal',
-                'UI (Net Mu)': 'ui',
-                'Availability (Net MU)': 'availability',
-                'Demand Met (Net MU)': 'demand_met',
-                'Shortage # (Net MU)': 'shortage',
-            }
-            sub_2A_renamed = sub_2A.rename(columns={k: v for k, v in column_mapping_2A.items() if k in sub_2A.columns})
-            self.write(f"Renamed columns: {sub_2A_renamed.columns.tolist()}")
-            self.logger.info(f"Renamed columns: {sub_2A_renamed.columns.tolist()}")
-            self.write(f"Shape after rename: {sub_2A_renamed.shape}")
-            self.logger.info(f"Shape after rename: {sub_2A_renamed.shape}")
-            if 'state' in sub_2A_renamed.columns:
-                normalized_states = [s.strip().upper() for s in self.SOUTH_INDIAN_STATES]
-                sub_2A_filtered = sub_2A_renamed[
-                    sub_2A_renamed['state'].astype(str)
-                                         .str.strip()
-                                         .str.upper()
-                                         .str.replace(r'\s+', ' ', regex=True)
-                                         .str.replace('–', '-', regex=False)
-                                         .isin(normalized_states)
-                ].copy()
-
-                if sub_2A_filtered.empty and not sub_2A_renamed.empty:
-                    self.write(self.style.WARNING("⚠️ Exact state name matching failed for Table 2A. Attempting a more lenient match."), level='warning')
-                    sub_2A_filtered = sub_2A_renamed[
-                        sub_2A_renamed['state'].astype(str)
-                                             .str.strip()
-                                             .str.upper()
-                                             .str.contains('ANDHRA PRADESH|KARNATAKA|KERALA|PONDICHERRY|TAMILNADU|TELANGANA|REGION', case=False, na=False)
-                    ].copy()
-                self.write(f"States found for Table 2A after filtering: {sub_2A_filtered['state'].tolist()}")
-                self.logger.info(f"States found for Table 2A after filtering: {sub_2A_filtered['state'].tolist()}")
-            else:
-                self.write(self.style.WARNING("⚠️ 'state' column not found in Table 2(A) after rename. Skipping row filtering."), level='warning')
-                sub_2A_filtered = sub_2A_renamed.copy()
-
-            model_fields_2A = list(column_mapping_2A.values())
-            sub_2A_final = sub_2A_filtered[[col for col in model_fields_2A if col in sub_2A_filtered.columns]]
-            sub_2A_final = sub_2A_final.dropna(subset=['state']).copy()
-            combined_json_data['srldc_table_2A'] = sub_2A_final.to_dict(orient='records')
-            self.write(self.style.SUCCESS(f"✅ Table 2(A) extracted for combined JSON."))
-
-            for index, row_data in sub_2A_final.iterrows():
-                state_name = self._safe_string(row_data.get('state'))
-                if state_name:
-                    try:
-                        obj, created = Srldc2AData.objects.update_or_create(
-                            report_date=report_date,
-                            state=state_name,
-                            defaults={
-                                'thermal': self._safe_float(row_data.get('thermal')),
-                                'hydro': self._safe_float(row_data.get('hydro')),
-                                'gas_naptha_diesel': self._safe_float(row_data.get('gas_naptha_diesel')),
-                                'solar': self._safe_float(row_data.get('solar')),
-                                'wind': self._safe_float(row_data.get('wind')),
-                                'others': self._safe_float(row_data.get('others')),
-                                # 'total': self._safe_float(row_data.get('total')),
-                                'net_sch': self._safe_float(row_data.get('net_sch')),
-                                'drawal': self._safe_float(row_data.get('drawal')),
-                                'ui': self._safe_float(row_data.get('ui')),
-                                'availability': self._safe_float(row_data.get('availability')),
-                                'demand_met': self._safe_float(row_data.get('demand_met')),
-                                'shortage': self._safe_float(row_data.get('shortage')),
-                            }
-                        )
-                        if created:
-                            self.write(self.style.SUCCESS(f"➕ Created Table 2A entry for {report_date} - {state_name}"))
-                            self.logger.info(f"➕ Created Table 2A entry for {report_date} - {state_name}")
-                        else:
-                            self.write(self.style.SUCCESS(f"🔄 Updated Table 2A entry for {report_date} - {state_name}"))
-                            self.logger.info(f"🔄 Updated Table 2A entry for {report_date} - {state_name}")
-                    except Exception as e:
-                        self.write(self.style.ERROR(f"❌ Error saving Table 2A row to DB (State: {state_name}): {e}"), level='error')
-                        self.logger.error(f"❌ Error saving Table 2A row to DB (State: {state_name}): {e}")
-            self.write(self.style.SUCCESS(f"✅ Table 2(A) data saved to database."))
-            self.logger.info(f"✅ Table 2(A) data saved to database.")
-        else:
-            self.write(self.style.WARNING("⚠️ Table 2(A) not found or extraction failed."), level='warning')
-
-        # --- Extract Table 2(C) ---
-        sub_2C, headers_2C = self.extract_subtable_by_markers(
-            all_content_df_cleaned,
-            start_marker=r"2\s*\(C\)\s*State's\s*Demand\s*Met\s*in\s*MWs.*",
-            end_marker=r"3\s*\(A\)\s*StateEntities\s*Generation:",
-            header_row_count=2,
-            debug_table_name="Table 2(C)"
-        )
-        if sub_2C is not None:
-            self.write("--- RAW DataFrame for Table 2(C) before renaming ---")
-            self.logger.info("--- RAW DataFrame for Table 2(C) before renaming ---")
-            self.write(str(sub_2C))
-            self.logger.info(str(sub_2C))
-            self.write("-----------------------------------------------------")
-            self.logger.info("-----------------------------------------------------")
-
-            # Debug lines still here (optional)
-            self.write("Raw columns in Table 2(C): " + str(sub_2C.columns.tolist()))
-            self.logger.info("Raw columns in Table 2(C): " + str(sub_2C.columns.tolist()))
-            if not sub_2C.empty:
-                self.write("Sample first row data in Table 2(C):")
-                self.logger.info("Sample first row data in Table 2(C):")
-                sample_row = sub_2C.iloc[0].to_dict()
-                for k, v in sample_row.items():
-                    self.write(f"  Column: '{k}' => Value: '{v}'")
-                    self.logger.info(f"  Column: '{k}' => Value: '{v}'")
-            else:
-                self.stdout.write("Table 2(C) extracted DataFrame is empty.")
-
-            # UPDATED mapping here with corrected column mapping
-            column_mapping_2C = {
-                'State': 'state',
-                'Maximum Demand Met of the day': 'max_demand',
-                'Time': 'time',
-                'Shortage during maximum demand': 'shortage_max_demand',
-                'Requirement at maximum demand': 'req_max_demand',
-                'Demand Met at maximum Requirement': 'demand_max_req',
-                'Time.1': 'time_max_req',
-                'Shortage during maximum requirement': 'shortage_max_req',
-                'Maximum requirement of the day': 'max_req_day',
-                'Min Demand Met': 'ace_min',      # Corrected mapping
-                'Time.2': 'time_ace_min',         # Corrected mapping
-                'ACE_MAX': 'ace_max',
-                'Time.3': 'time_ace_max',
-                # Removed ACE_MIN and Time.4 from mapping, do not exist in extracted data
-            }
-            sub_2C_renamed = sub_2C.rename(columns={k: v for k, v in column_mapping_2C.items() if k in sub_2C.columns})
-            self.stdout.write(f"Columns present in Table 2C after renaming: {sub_2C_renamed.columns.tolist()}")
-            self.logger.info(f"Columns present in Table 2C after renaming: {sub_2C_renamed.columns.tolist()}")
-            if 'state' in sub_2C_renamed.columns:
-                normalized_states_2C = [s.strip().upper() for s in self.SOUTH_INDIAN_STATES_2C]
-                sub_2C_filtered = sub_2C_renamed[
-                    sub_2C_renamed['state'].astype(str)
-                                         .str.strip()
-                                         .str.upper()
-                                         .str.replace(r'\s+', ' ', regex=True)
-                                         .str.replace('–', '-', regex=False)
-                                         .isin(normalized_states_2C)
-                ].copy()
-
-                if sub_2C_filtered.empty and not sub_2C_renamed.empty:
-                    self.stdout.write(self.style.WARNING("⚠️ Exact state name matching failed for Table 2C. Attempting a more lenient match."))
-                    sub_2C_filtered = sub_2C_renamed[
-                        sub_2C_renamed['state'].astype(str)
-                                             .str.strip()
-                                             .str.upper()
-                                             .str.contains('AP|KAR|KER|PONDY|TN|TG|REGION', case=False, na=False)
-                    ].copy()
-                self.stdout.write(f"States found for Table 2C after filtering: {sub_2C_filtered['state'].tolist()}")
-                self.logger.info(f"States found for Table 2C after filtering: {sub_2C_filtered['state'].tolist()}")
-            else:
-                self.stdout.write(self.style.WARNING("⚠️ 'state' column not found in Table 2(C) after rename. Skipping row filtering."))
-                sub_2C_filtered = sub_2C_renamed.copy()
-
-            model_fields_2C = list(column_mapping_2C.values())
-            sub_2C_final = sub_2C_filtered[[col for col in model_fields_2C if col in sub_2C_filtered.columns]]
-            sub_2C_final = sub_2C_final.dropna(subset=['state']).copy()
-
-            combined_json_data['srldc_table_2C'] = sub_2C_final.to_dict(orient='records')
-            self.stdout.write(self.style.SUCCESS(f"✅ Table 2(C) extracted for combined JSON."))
-
-            for index, row_data in sub_2C_final.iterrows():
-                state_name = self._safe_string(row_data.get('state'))
-                if state_name:
-                    try:
-                        ace_min_val = None
-                        time_ace_min_val = None
-
-                        if 'ace_min' in sub_2C_final.columns:
-                            ace_min_val = self._safe_float(row_data.get('ace_min'))
-
-                        if 'time_ace_min' in sub_2C_final.columns:
-                            time_ace_min_val = self._safe_string(row_data.get('time_ace_min'))
-
-                        obj, created = Srldc2CData.objects.update_or_create(
-                            report_date=report_date,
-                            state=state_name,
-                            defaults={
-                                'max_demand': self._safe_float(row_data.get('max_demand')),
-                                'time': self._safe_string(row_data.get('time')),
-                                'shortage_max_demand': self._safe_float(row_data.get('shortage_max_demand')),
-                                'req_max_demand': self._safe_float(row_data.get('req_max_demand')),
-                                'demand_max_req': self._safe_float(row_data.get('demand_max_req')),
-                                'max_req_day': self._safe_float(row_data.get('max_req_day')),
-                                'time_max_req': self._safe_string(row_data.get('time_max_requirement')),
-                                'shortage_max_req': self._safe_float(row_data.get('shortage_max_req')),
-                                'ace_max': self._safe_float(row_data.get('ace_max')),
-                                'time_ace_max': self._safe_string(row_data.get('time_ace_max')),
-                                'ace_min': ace_min_val,
-                                'time_ace_min': time_ace_min_val,
-                            }
-                        )
-                        if created:
-                            self.stdout.write(self.style.SUCCESS(f"➕ Created Table 2C entry for {report_date} - {state_name}"))
-                            self.logger.info(f"➕ Created Table 2C entry for {report_date} - {state_name}")
-                        else:
-                            self.stdout.write(self.style.SUCCESS(f"🔄 Updated Table 2C entry for {report_date} - {state_name}"))
-                            self.logger.info(f"🔄 Updated Table 2C entry for {report_date} - {state_name}")
-                    except Exception as e:
-                        self.stdout.write(self.style.ERROR(f"❌ Error saving Table 2C row to DB (State: {state_name}): {e}"))
-                        self.logger.error(f"❌ Error saving Table 2C row to DB (State: {state_name}): {e}")
-            
-            # ------- Print ace_min and time_ace_min for all states as aligned table -------
-            self.stdout.write(self.style.HTTP_INFO("\n--- ACE MIN and Time for Each State (Table 2C) ---"))
-            self.stdout.write(f"{'STATE':<12} | {'ACE MIN':>10} | {'TIME':>8}")
-            self.stdout.write("-" * 36)
-            for index, row_data in sub_2C_final.iterrows():
-                state_name = self._safe_string(row_data.get('state')) or '-'
-                ace_min_val = self._safe_float(row_data.get('ace_min')) if 'ace_min' in sub_2C_final.columns else None
-                time_ace_min_val = self._safe_string(row_data.get('time_ace_min')) if 'time_ace_min' in sub_2C_final.columns else None
-                ace_min_str = f"{ace_min_val:.2f}" if ace_min_val is not None else "-"
-                time_str = time_ace_min_val or "-"
-                self.stdout.write(f"{state_name:<12} | {ace_min_str:>10} | {time_str:>8}")
-            # -------------------------------------------------------------------
-
-            self.stdout.write(self.style.SUCCESS(f"✅ Table 2(C) data saved to database."))
-            self.logger.info(f"✅ Table 2(C) data saved to database.")
-        else:
-            self.stdout.write(self.style.WARNING("⚠️ Table 2(C) not found or extraction failed."))
-
-        if combined_json_data:
-            # Try to derive JSON filename from folder name (to match PDF naming derived from folder)
-            folder_basename = os.path.basename(output_dir).replace('report_', '')  # e.g., '2025-11-11_10-07-00'
-            folder_date_part = folder_basename.split('_')[0] if folder_basename else None    # '2025-11-11'
-            try:
-                if folder_date_part:
-                    json_date_str = datetime.datetime.strptime(folder_date_part, '%Y-%m-%d').strftime('%d%m%Y')
+        for i in range(len(texts_lower)):
+            if texts_lower[i] == "date":
+                window = texts_lower[i:i + 8]
+                if "reporting" in window:
+                    rel = window.index("reporting")
+                    reporting_idx = i + rel
                 else:
-                    json_date_str = report_date.strftime('%d%m%Y')
-            except Exception:
-                # fallback: if report_date isn't a date object convert to string and try to parse
-                try:
-                    json_date_str = datetime.datetime.fromisoformat(str(report_date)).strftime('%d%m%Y')
-                except Exception:
-                    json_date_str = datetime.datetime.now().strftime('%d%m%Y')
+                    continue
+                label_word = wlist[reporting_idx]
+                label_top = label_word[4]
+                label_right = label_word[3]
+                candidates = [w for w in wlist if abs(w[4] - label_top) < 12 and w[2] > label_right]
+                candidates = sorted(candidates, key=lambda x: x[2])
+                explicit_date_obj = None
+                explicit_dt = None
+                for cand in candidates[:10]:
+                    ct = cand[1]
+                    mdate = re.search(r"([0-3]?\d[-/][A-Za-z]{3,9}[-/]\d{4})", ct, flags=re.IGNORECASE)
+                    if not mdate:
+                        mdate = re.search(r"([0-3]?\d[-/]\d{1,2}[-/]\d{4})", ct)
+                    if mdate:
+                        dt_tok = mdate.group(1)
+                        explicit_date_obj = _try_parse_date_token(dt_tok)
+                        for cand2 in candidates[:10]:
+                            ct2 = cand2[1]
+                            mtime = re.search(r"([0-2]?\d[:\.]([0-5]\d))", ct2)
+                            if mtime:
+                                explicit_dt = _try_parse_datetime_tokens(dt_tok, mtime.group(1))
+                                break
+                        break
+                if explicit_date_obj:
+                    res["report_date_of_reporting"] = explicit_date_obj.isoformat()
+                    if explicit_dt:
+                        res["reporting_datetime_of_reporting"] = explicit_dt.strftime("%Y-%m-%d %H:%M")
+                        res["reporting_datetime"] = res["reporting_datetime_of_reporting"]
+                    break
 
-            combined_json_path = os.path.join(output_dir, f'srldc_{json_date_str}.json')
-            with open(combined_json_path, 'w', encoding='utf-8') as f:
-                json.dump(combined_json_data, f, indent=4, ensure_ascii=False)
-            self.stdout.write(self.style.SUCCESS(f"✅ Combined tables saved to: {combined_json_path}"))
-            self.logger.info(f"✅ Combined tables saved to: {combined_json_path}")
+    if not res["report_date_of_reporting"]:
+        m_generic = re.search(r"(DATE[^A-Z0-9\n]{0,10}OF[^A-Z0-9\n]{0,10}REPORTING|DATE[^A-Z0-9\n]{0,10}REPORTING)",
+                              txt, flags=re.IGNORECASE)
+        if m_generic:
+            tail = txt[m_generic.end(): m_generic.end() + 200]
+            mdate = re.search(r"([0-3]?\d[-/][A-Za-z]{3,9}[-/]\d{4}|[0-3]?\d[-/]\d{1,2}[-/]\d{4})", tail,
+                              flags=re.IGNORECASE)
+            if mdate:
+                dt_tok = mdate.group(1)
+                explicit_date_obj = _try_parse_date_token(dt_tok)
+                if explicit_date_obj:
+                    res["report_date_of_reporting"] = explicit_date_obj.isoformat()
+                    mtime = re.search(r"(?:AT|@)?\s*([0-2]?\d[:\.]([0-5]\d))", tail, flags=re.IGNORECASE)
+                    if mtime:
+                        explicit_dt = _try_parse_datetime_tokens(dt_tok, mtime.group(1))
+                        if explicit_dt:
+                            res["reporting_datetime_of_reporting"] = explicit_dt.strftime("%Y-%m-%d %H:%M")
+                            res["reporting_datetime"] = res["reporting_datetime_of_reporting"]
+
+    if not res["report_date"]:
+        if res.get("report_date_for"):
+            res["report_date"] = res["report_date_for"]
+        elif res.get("report_date_of_reporting"):
+            res["report_date"] = res["report_date_of_reporting"]
+
+    return res
+
+
+def extract_report_dates_new(pdf_path):
+    res = {
+        "report_date_for": None,
+        "report_date_of_reporting": None,
+        "reporting_datetime_of_reporting": None,
+        "report_date": None,
+        "reporting_datetime": None
+    }
+
+    with pdfplumber.open(pdf_path) as pdf:
+        first_page = pdf.pages[0]
+        page_text = first_page.extract_text() or ""
+        try:
+            page_words = first_page.extract_words(use_text_flow=True)
+        except Exception:
+            page_words = first_page.extract_words() if hasattr(first_page, "extract_words") else []
+
+    txt = page_text
+
+    m_explicit = re.search(
+        r"DATE\s+OF\s+REPORTING\s*[:\-]?\s*([0-3]?\d[^\n]{0,40}?\d{4})(?:\s*(?:AT|@)?\s*([0-2]?\d[:\.]?[0-5]?\d[^\s]*))?",
+        txt, flags=re.IGNORECASE)
+    explicit_date_obj = None
+    explicit_dt = None
+    if m_explicit:
+        dt_token = m_explicit.group(1)
+        explicit_date_obj = _try_parse_date_token(dt_token)
+        time_tok = m_explicit.group(2) if m_explicit.lastindex and m_explicit.lastindex >= 2 else None
+        if explicit_date_obj:
+            res["report_date_of_reporting"] = explicit_date_obj.isoformat()
+            res["reporting_datetime"] = None
+            if time_tok:
+                explicit_dt = _try_parse_datetime_tokens(dt_token, time_tok)
+                if explicit_dt:
+                    res["reporting_datetime_of_reporting"] = explicit_dt.strftime("%Y-%m-%d %H:%M")
+                    res["reporting_datetime"] = res["reporting_datetime_of_reporting"]
+
+        for_matches = re.compile(
+            r"FOR(\d{1,2}[-/][A-Za-z]{3,9}[-/]\d{4}|\d{1,2}[-/]\d{1,2}[-/]\d{4})",
+            flags=re.IGNORECASE
+        )
+
+    if for_matches:
+        m = for_matches[0]
+        token = m.group(1)
+        dt_for = _try_parse_date_token(token)
+        if dt_for:
+            res["report_date_for"] = dt_for.isoformat()
+            res["report_date"] = dt_for.isoformat()
+
+    if not explicit_date_obj and page_words:
+        wlist = [(i, w.get("text", ""), float(w.get("x0", 0)), float(w.get("x1", 0)), float(w.get("top", 0)), w)
+                 for i, w in enumerate(page_words)]
+        texts_lower = [w[1].lower() for w in wlist]
+
+        for idx in range(len(texts_lower)):
+            if texts_lower[idx] == "date":
+                window = texts_lower[idx: idx + 8]
+                if "reporting" in window:
+                    rel = window.index("reporting")
+                    reporting_idx = idx + rel
+                else:
+                    continue
+                label_word = wlist[reporting_idx]
+                label_top = label_word[4]
+                label_right = label_word[3]
+                candidates = [w for w in wlist if abs(w[4] - label_top) < 12 and w[2] > label_right]
+                candidates = sorted(candidates, key=lambda x: x[2])
+                explicit_date_obj = None
+                explicit_dt = None
+                for cand in candidates[:12]:
+                    ct = cand[1]
+                    mdate = re.search(r"([0-3]?\d[-/][A-Za-z]{3,9}[-/]\d{4})", ct, flags=re.IGNORECASE)
+                    if not mdate:
+                        mdate = re.search(r"([0-3]?\d[-/]\d{1,2}[-/]\d{4})", ct)
+                    if mdate:
+                        dt_tok = mdate.group(1)
+                        explicit_date_obj = _try_parse_date_token(dt_tok)
+                        for cand2 in candidates[:12]:
+                            ct2 = cand2[1]
+                            mtime = re.search(r"([0-2]?\d[:\.]([0-5]\d))", ct2)
+                            if mtime:
+                                explicit_dt = _try_parse_datetime_tokens(dt_tok, mtime.group(1))
+                                break
+                        break
+                if explicit_date_obj:
+                    res["report_date_of_reporting"] = explicit_date_obj.isoformat()
+                    if explicit_dt:
+                        res["reporting_datetime_of_reporting"] = explicit_dt.strftime("%Y-%m-%d %H:%M")
+                        res["reporting_datetime"] = res["reporting_datetime_of_reporting"]
+                    break
+
+    if not res["report_date_for"]:
+        m_for2 = re.search(
+            r"(?:POWER\s+SUPPLY\s+POSITION[^\n]{0,80}FOR|FOR\s+THE\s+DAY|FOR\s+)[^\n]{0,80}([0-3]?\d[-/][A-Za-z]{3,9}[-/]\d{4}|[0-3]?\d[-/]\d{1,2}[-/]\d{4})",
+            txt, flags=re.IGNORECASE)
+        if m_for2:
+            tok = m_for2.group(1)
+            dt_for = _try_parse_date_token(tok)
+            if dt_for:
+                res["report_date_for"] = dt_for.isoformat()
+                res["report_date"] = dt_for.isoformat()
+
+    if not res["report_date"] and res["report_date_of_reporting"]:
+        res["report_date"] = res["report_date_of_reporting"]
+
+    return res
+
+
+def extract_report_dates(pdf_path):
+    old_res = extract_report_dates_old(pdf_path)
+    if old_res.get("report_date_for") or old_res.get("report_date_of_reporting"):
+        return old_res
+    new_res = extract_report_dates_new(pdf_path)
+    return new_res
+
+
+# 3B row extraction (OLD/NEW pattern scanning)
+def extract_two_tables_3b(pdf_path, report_info):
+    tables_dict = {"report_date": report_info.get('report_date'),
+                   "reporting_datetime": report_info.get('reporting_datetime'), "central_sector": [],
+                   "joint_venture": []}
+    current_table = None
+    finished = False
+
+    with pdfplumber.open(pdf_path) as pdf:
+        for pno, page in enumerate(pdf.pages, start=1):
+            tables = page.extract_tables() or []
+            for t_idx, table in enumerate(tables, start=1):
+                rows = [[clean_cell(c) for c in r] for r in table]
+                if not rows:
+                    continue
+                maxcols = max(len(r) for r in rows)
+                rows = [r + [""] * (maxcols - len(r)) for r in rows]
+
+                for r in rows:
+                    first = first_cell_text(r)
+                    if not current_table and is_start_row_3b(first):
+                        current_table = "central_sector"
+                        continue
+                    if current_table != "joint_venture" and is_jv_row_3b(first):
+                        current_table = "joint_venture"
+                        continue
+                    if not current_table:
+                        continue
+                    if is_end_row_3b(first):
+                        tables_dict[current_table].append((pno, t_idx, r))
+                        finished = True
+                        break
+                    tables_dict[current_table].append((pno, t_idx, r))
+                if finished:
+                    return tables_dict
+    return tables_dict
+
+
+def extract_tables_new_pattern_3b(pdf_path):
+    tables_dict = {"central_sector": [], "joint_venture": []}
+    is_capturing = False
+    current_section = "central_sector"
+
+    with pdfplumber.open(pdf_path) as pdf:
+        for pno, page in enumerate(pdf.pages, start=1):
+            if pno < 2:
+                continue
+            tables = page.extract_tables() or []
+            for t_idx, table in enumerate(tables, start=1):
+                rows = [[clean_cell(c) for c in r] for r in table]
+                if not rows:
+                    continue
+                maxcols = max(len(r) for r in rows)
+                rows = [r + [""] * (maxcols - len(r)) for r in rows]
+                for r in rows:
+                    row_text_full = " ".join(r).upper()
+                    row_text_nospace_upper = row_text_full.replace(" ", "").upper()
+                    first_col = clean_cell(r[0]).upper()
+                    first_col_nospace = clean_cell(r[0]).replace(" ", "").upper()
+
+                    if "REGIONAL" in row_text_full and "ENTITIES" in row_text_full and "GENERATION" in row_text_full:
+                        is_capturing = True
+                        current_section = "central_sector"
+                        continue
+                    if first_col == "ISGS":
+                        is_capturing = True
+                        current_section = "central_sector"
+                        continue
+                    if "JOINT VENTURE" in row_text_full or "JOINT_VENTURE" in row_text_full or (
+                            "JOINT" in row_text_full and "VENTURE" in row_text_full):
+                        is_capturing = True
+                        current_section = "joint_venture"
+                        other_cells = [clean_cell(c).strip() for c in r[1:]]
+                        if all(not oc for oc in other_cells):
+                            continue
+                    if "IPPUNDEROPENACCESS" in row_text_nospace_upper:
+                        is_capturing = False
+                        continue
+                    if is_capturing:
+                        if "STATION" in row_text_full and "CAPACITY" in row_text_full:
+                            continue
+                        if "INST." in row_text_full and "CAPACITY" in row_text_full:
+                            continue
+                        if first_col_nospace in ("JOINTVENTURE", "JOINT_VENTURE", "JOINTVENTURE:"):
+                            other_cells = [clean_cell(c).strip() for c in r[1:]]
+                            if all(not oc for oc in other_cells):
+                                continue
+                        if looks_like_station_text(r[0]):
+                            tables_dict[current_section].append((pno, t_idx, r))
+
+    return tables_dict
+
+
+def normalize_rows_for_table_3b(rows_with_meta, report_info=None):
+    """
+    Extracts all columns from SRLDC 3(B) including:
+    - Installed, Peak, Offpeak
+    - Day Peak MW + Hrs
+    - Min Generation MW + Hrs  (if present)
+    - Day Energy: Gross Gen (MU), Net Gen (MU)
+    - Avg MW
+
+    IMPORTANT:
+    For TOTAL rows where Min Generation columns are blank, the numbers after
+    index 5 belong to Day Energy (Gross, Net, Avg). We detect this and avoid
+    mis-mapping them into min_generation_mw.
+    """
+    report_info = report_info or {}
+    recs = []
+
+    for page, tbl_idx, r in rows_with_meta:
+
+        # -------- FIND STATION NAME ----------
+        station_index = None
+        for i, c in enumerate(r):
+            if looks_like_station_text(c):
+                station_index = i
+                break
+        if station_index is None:
+            continue
+
+        station = clean_cell(r[station_index]).strip()
+        tail = r[station_index + 1:]
+        tail_clean = [clean_cell(x) for x in tail]
+
+        def safe_int(idx):
+            return parse_int_safe(tail_clean[idx]) if idx < len(tail_clean) else None
+
+        def safe_str(idx):
+            return tail_clean[idx] if idx < len(tail_clean) else ""
+
+        # ---- FIXED POSITIONS ----
+        installed_capacity = safe_int(0)
+        peak_1900 = safe_int(1)
+        offpeak_0300 = safe_int(2)
+        day_peak_mw = safe_int(3)
+        day_peak_hrs = safe_str(4)
+
+        # ---- TRY TO FIND MIN GENERATION (MW + HRS) ----
+        min_generation_mw = None
+        min_generation_hrs = None
+
+        idx = 5  # start looking after day_peak_hrs
+
+        # first numeric candidate = min generation MW
+        while idx < len(tail_clean):
+            v = parse_float_safe(tail_clean[idx])
+            if v is not None:
+                min_generation_mw = v
+                idx += 1
+                break
+            idx += 1
+
+        # next time-like token = min generation Hrs
+        while idx < len(tail_clean) and min_generation_mw is not None:
+            tok = tail_clean[idx]
+
+            # time detection (HH:MM) or just hour
+            if re.match(r"^\d{1,2}:\d{2}$", tok):
+                min_generation_hrs = tok
+                idx += 1
+                break
+            if re.match(r"^\d{1,2}$", tok):
+                min_generation_hrs = tok
+                idx += 1
+                break
+            idx += 1
+
+        # ---------- DECIDE WHERE DAY ENERGY STARTS ----------
+        # If we did NOT find both MW and Hrs for Min Gen, assume this row
+        # has *no* Min Gen block (typical TOTAL rows) and roll back.
+        if not (min_generation_mw is not None and min_generation_hrs is not None):
+            energy_start_idx = 5
+            min_generation_mw = None
+            min_generation_hrs = None
         else:
-            self.stdout.write(self.style.WARNING("⚠️ No tables were successfully extracted to create a combined JSON file."))
-            self.logger.warning("⚠️ No tables were successfully extracted to create a combined JSON file.")
+            energy_start_idx = idx
 
-    def download_latest_srldc_pdf(self, base_url="https://www.srldc.in/var/ftp/reports/psp/", base_download_dir="downloads", given_date=None):
-        project_name = "SRLDC"  # Add project name here
+        # ---------- EXTRACT GROSS, NET, AVG ----------
+        remaining = tail_clean[energy_start_idx:]
 
+        numeric_values = []
+        for cell in remaining:
+            num = parse_float_safe(cell)
+            if num is not None:
+                numeric_values.append(num)
+
+        gross_energy_mu = None
+        net_energy_mu = None
+        avg_mw = None
+
+        # EXPECTED ORDER: [Gross MU, Net MU, Avg MW]
+        if len(numeric_values) >= 3:
+            gross_energy_mu = numeric_values[0]
+            net_energy_mu = numeric_values[1]
+            avg_mw = numeric_values[2]
+        elif len(numeric_values) == 2:
+            gross_energy_mu = numeric_values[0]
+            net_energy_mu = numeric_values[1]
+        elif len(numeric_values) == 1:
+            net_energy_mu = numeric_values[0]
+
+        row_type = "TOTAL" if station.upper().startswith("TOTAL") else "GENERATOR"
+
+        recs.append({
+            "station": station,
+            "installed_capacity_mw": installed_capacity,
+            "peak_1900_mw": peak_1900,
+            "offpeak_0300_mw": offpeak_0300,
+            "day_peak_mw": day_peak_mw,
+            "day_peak_hrs": day_peak_hrs,
+            "min_generation_mw": min_generation_mw,
+            "min_generation_hrs": min_generation_hrs,
+            "gross_energy_mu": gross_energy_mu,
+            "net_energy_mu": net_energy_mu,
+            "avg_mw": avg_mw,
+            "row_type": row_type,
+            "source_page": page,
+            "source_table_index": tbl_idx,
+        })
+
+    return recs
+
+
+
+
+# ---------------- Combined Command ----------------
+class Command(BaseCommand):
+    help = "Download SRLDC PSP PDF, extract tables 2(A), 2(C) (tabula) and 3(B) (pdfplumber), save JSON & DB"
+
+    def add_arguments(self, parser):
+        parser.add_argument('--date', type=str, help='Date for which to run the report, format: YYYY-MM-DD',
+                            required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # logger setup
+        log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'logs')
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, 'srldc_full.log')
+        self.logger = logging.getLogger('srldc_full_logger')
+        self.logger.setLevel(logging.INFO)
+        if not self.logger.hasHandlers():
+            handler = logging.FileHandler(log_file, encoding='utf-8')
+            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            handler.setFormatter(formatter)
+            self.logger.addHandler(handler)
+
+        # helpers
+        self.tabula_extractor = TabulaExtractor(self.write, self.logger)
+
+    def write(self, message, level='info'):
+        try:
+            self.stdout.write(message)
+        except Exception:
+            print(message)
+        if level == 'info':
+            self.logger.info(message)
+        elif level == 'warning':
+            self.logger.warning(message)
+        elif level == 'error':
+            self.logger.error(message)
+
+    # Reuse the download_latest_srldc_pdf from your tabula script (keeps same naming)
+    def download_latest_srldc_pdf(self, base_url="https://www.srldc.in/var/ftp/reports/psp/",
+                                  base_download_dir="downloads", given_date=None):
+        project_name = "SRLDC"
         base_download_dir = os.path.join(base_download_dir, project_name)
         os.makedirs(base_download_dir, exist_ok=True)
 
@@ -516,47 +811,35 @@ class Command(BaseCommand):
 
         IST = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
 
-        # Convert given_date if provided, else use current IST datetime
         if given_date:
             today = datetime.datetime.strptime(given_date, "%Y-%m-%d").replace(tzinfo=IST) - datetime.timedelta(days=1)
         else:
             today = datetime.datetime.now(datetime.timezone.utc).astimezone(IST) - datetime.timedelta(days=1)
 
-        print("qwerty", today)
-        dates_to_try = [today, today - datetime.timedelta(days=1)]
-        print("Dates to try for downloading report:", dates_to_try)
-
         current_date = today
-        # for current_date in dates_to_try:
         year = current_date.year
         month_abbr = current_date.strftime('%b').capitalize()
         day = current_date.day
 
         directory_path_on_server = f"{year}/{month_abbr}{str(year)[-2:]}/"
         file_name_on_server = f"{day:02d}-{current_date.month:02d}-{year}-psp.pdf"
-        print(f"Trying to download report for date: {file_name_on_server}")
 
         full_url = f"{base_url}{directory_path_on_server}{file_name_on_server}"
 
-        # Always include time for folder naming, even if date is provided
         if given_date:
             now_str = f"{given_date}_{datetime.datetime.now().strftime('%H-%M-%S')}"
         else:
             now_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
-        # Folder name uses now_str (timestamped)
         report_dir = os.path.join(base_download_dir, f"report_{now_str}")
         os.makedirs(report_dir, exist_ok=True)
-        self.stdout.write(f"📁 Checking/Created report directory: {report_dir}")
+        self.write(f"📁 Checking/Created report directory: {report_dir}")
 
-        # --- Rename behavior based on folder timestamp while keeping original logic ---
-        # Use the folder date (YYYY-MM-DD from now_str) to create file date in DDMMYYYY format
-        folder_date_part = now_str.split('_')[0] if now_str else None  # '2025-11-11'
+        folder_date_part = now_str.split('_')[0] if now_str else None
         try:
             if folder_date_part:
                 file_date_str = datetime.datetime.strptime(folder_date_part, '%Y-%m-%d').strftime('%d%m%Y')
             else:
-                # fallback to current_date (original logic)
                 file_date_str = current_date.strftime('%d%m%Y')
         except Exception:
             file_date_str = current_date.strftime('%d%m%Y')
@@ -565,61 +848,403 @@ class Command(BaseCommand):
         local_file_path = os.path.join(report_dir, local_pdf_filename)
 
         if os.path.exists(local_file_path):
-            self.stdout.write(self.style.NOTICE(f"📄 PDF already exists locally for {current_date.strftime('%d-%m-%Y')} at {local_file_path}. Skipping download."))
-            self.logger.info(f"📄 PDF already exists locally for {current_date.strftime('%d-%m-%Y')} at {local_file_path}. Skipping download.")
+            self.write(self.style.NOTICE(
+                f"📄 PDF already exists locally for {current_date.strftime('%d-%m-%Y')} at {local_file_path}. Skipping download."))
             pdf_path = local_file_path
             report_date = current_date.date()
             return pdf_path, report_date, report_dir
 
-        self.stdout.write(f"🌐 Attempting to download from: {full_url}")
-        self.logger.info(f"🌐 Attempting to download from: {full_url}")
-
+        self.write(f"🌐 Attempting to download from: {full_url}")
         try:
             session = requests.Session()
             session.mount('https://', LegacySSLAdapter())
-            response = session.get(full_url, stream=True)
+            response = session.get(full_url, stream=True, timeout=60)
             response.raise_for_status()
             with open(local_file_path, 'wb') as pdf_file:
                 for chunk in response.iter_content(chunk_size=8192):
                     pdf_file.write(chunk)
-            self.stdout.write(self.style.SUCCESS(f"✅ Successfully downloaded: {local_pdf_filename} to {report_dir}"))
-            self.logger.info(f"✅ Successfully downloaded: {local_pdf_filename} to {report_dir}")
+            self.write(self.style.SUCCESS(f"✅ Successfully downloaded: {local_pdf_filename} to {report_dir}"))
             pdf_path = local_file_path
             report_date = current_date.date()
             return pdf_path, report_date, report_dir
-
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                self.stdout.write(self.style.WARNING(f"⚠️ File not found for {current_date.strftime('%d-%m-%Y')} at {full_url}. Trying next date if available."))
-                self.logger.warning(f"⚠️ File not found for {current_date.strftime('%d-%m-%Y')} at {full_url}. Trying next date if available.")
-                if os.path.exists(report_dir) and not os.listdir(report_dir):
-                    os.rmdir(report_dir)
+                self.write(
+                    self.style.WARNING(f"⚠️ File not found for {current_date.strftime('%d-%m-%Y')} at {full_url}."))
             else:
-                self.stdout.write(self.style.ERROR(f"❌ HTTP Error {e.response.status_code} while downloading {file_name_on_server}: {e}"))
-                self.logger.error(f"❌ HTTP Error {e.response.status_code} while downloading {file_name_on_server}: {e}")
-        except requests.exceptions.RequestException as e:
-            self.stdout.write(self.style.ERROR(f"❌ An unexpected error occurred during download: {e}"))
-            self.logger.error(f"❌ An unexpected error occurred during download: {e}")
+                self.write(self.style.ERROR(
+                    f"❌ HTTP Error {e.response.status_code} while downloading {file_name_on_server}: {e}"))
+        except Exception as e:
+            self.write(self.style.ERROR(f"❌ An unexpected error occurred during download: {e}"))
 
-        self.stdout.write(self.style.ERROR("❌ Failed to download the latest PSP report after trying all attempts."))
-        self.logger.error("❌ Failed to download the latest PSP report after trying all attempts.")
         return None, None, None
 
-    def handle(self, *args, **options):
-        if "JAVA_HOME" not in os.environ:
-            self.stdout.write(self.style.WARNING("JAVA_HOME environment variable not set. tabula-py may fail."))
-            self.logger.warning("JAVA_HOME environment variable not set. tabula-py may fail.")
+    # small wrappers mirroring Django style utilities used earlier
+    def style(self, kind):
+        class S:
+            def __init__(self, k): self.k = k
 
-        # Capture the report_date returned by download_latest_srldc_pdf so JSON & DB use the same date
+            def SUCCESS(self, m): return m
+
+            def WARNING(self, m): return m
+
+            def ERROR(self, m): return m
+
+            def NOTICE(self, m): return m
+
+        return S(kind)
+
+    # expose convenience methods used in TabulaExtractor
+    def style_warning(self, msg):
+        return msg
+
+    def handle(self, *args, **options):
+        # download pdf (same logic as your tabula script)
         pdf_path, report_date, report_output_dir = self.download_latest_srldc_pdf(given_date=options.get('date'))
 
-        # If download returned None or failed, warn and exit
         if pdf_path is None:
-            self.stdout.write(self.style.WARNING("No PDF report was successfully downloaded or found locally. Exiting."))
-            self.logger.warning("No PDF report was successfully downloaded or found locally. Exiting.")
+            self.write(self.style.ERROR("No PDF report was successfully downloaded or found locally. Exiting."),
+                       level='error')
             return
 
-        # Pass the report_date returned by the downloader into extract_tables_from_pdf
-        self.extract_tables_from_pdf(pdf_path, report_output_dir, report_date)
-        self.stdout.write(self.style.SUCCESS(f"Finished processing. Files saved in: {report_output_dir}"))
-        self.logger.info(f"Finished processing. Files saved in: {report_output_dir}")
+        # ------------------ 1) Run Tabula-based 2A/2C extraction ------------------
+        try:
+            # call the tabula extractor (similar to your original extract_tables_from_pdf)
+            self.write("🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...", level='info')
+            # read all tables using tabula
+            tables = read_pdf(
+                pdf_path,
+                pages='all',
+                multiple_tables=True,
+                pandas_options={'header': None},
+                lattice=True
+            )
+            if not tables:
+                self.write("❌ Tabula found no tables in PDF.", level='warning')
+            else:
+                self.write(f"✅ Tabula found {len(tables)} tables.", level='info')
+
+                all_content_df = pd.concat(tables, ignore_index=True)
+                all_content_df_cleaned = all_content_df.dropna(axis=0, how='all')
+
+                combined_json_data = {}
+
+                # 2(A)
+                sub_2A, headers_2A = self.tabula_extractor.extract_subtable_by_markers(
+                    all_content_df_cleaned,
+                    start_marker=r".*2\s*\(A\)State['’]?s\s*Load\s*Deails\s*\(At\s*State\s*Periphery\)\s*in\s*MUs.*",
+                    end_marker=r".*2\s*\(B\)\s*State['’]?s\s*Demand\s*Met\s*in\s*MWs\s*and\s*day\s*energy\s*forecast\s*and\s*deviation\s*particulars.*",
+                    header_row_count=2,
+                    debug_table_name="Table 2(A)"
+                )
+
+                if sub_2A is not None:
+                    column_mapping_2A = {
+                        'STATE': 'state',
+                        'THERMAL': 'thermal',
+                        'HYDRO': 'hydro',
+                        'GAS/DIESEL/NAPTHA': 'gas_naptha_diesel',
+                        'SOLAR': 'solar',
+                        'WIND': 'wind',
+                        'OTHERS': 'others',
+                        'Net SCH (Net Mu)': 'net_sch',
+                        'Drawal (Net Mu)': 'drawal',
+                        'UI (Net Mu)': 'ui',
+                        'Availability (Net MU)': 'availability',
+                        'Demand Met (Net MU)': 'demand_met',
+                        'Shortage # (Net MU)': 'shortage',
+                    }
+                    sub_2A_renamed = sub_2A.rename(
+                        columns={k: v for k, v in column_mapping_2A.items() if k in sub_2A.columns})
+                    self.write(f"Renamed columns (2A): {sub_2A_renamed.columns.tolist()}", level='info')
+
+                    if 'state' in sub_2A_renamed.columns:
+                        normalized_states = [s.strip().upper() for s in TabulaExtractor.SOUTH_INDIAN_STATES]
+                        sub_2A_filtered = sub_2A_renamed[
+                            sub_2A_renamed['state'].astype(str)
+                            .str.strip()
+                            .str.upper()
+                            .str.replace(r'\s+', ' ', regex=True)
+                            .str.replace('–', '-', regex=False)
+                            .isin(normalized_states)
+                        ].copy()
+
+                        if sub_2A_filtered.empty and not sub_2A_renamed.empty:
+                            self.write("⚠️ Exact state name matching failed for Table 2A. Trying lenient match.",
+                                       level='warning')
+                            sub_2A_filtered = sub_2A_renamed[
+                                sub_2A_renamed['state'].astype(str)
+                                .str.strip()
+                                .str.upper()
+                                .str.contains('ANDHRA PRADESH|KARNATAKA|KERALA|PONDICHERRY|TAMILNADU|TELANGANA|REGION',
+                                              case=False, na=False)
+                            ].copy()
+                    else:
+                        self.write("⚠️ 'state' column not found in Table 2(A) after rename. Skipping filtering.",
+                                   level='warning')
+                        sub_2A_filtered = sub_2A_renamed.copy()
+
+                    model_fields_2A = list(column_mapping_2A.values())
+                    sub_2A_final = sub_2A_filtered[[col for col in model_fields_2A if col in sub_2A_filtered.columns]]
+                    sub_2A_final = sub_2A_final.dropna(subset=['state']).copy()
+                    combined_json_data['srldc_table_2A'] = sub_2A_final.to_dict(orient='records')
+                    self.write("✅ Table 2(A) extracted for combined JSON.", level='success')
+
+                    # save to DB
+                    for index, row_data in sub_2A_final.iterrows():
+                        state_name = self.tabula_extractor._safe_string(row_data.get('state'))
+                        if state_name:
+                            try:
+                                obj, created = Srldc2AData.objects.update_or_create(
+                                    report_date=report_date,
+                                    state=state_name,
+                                    defaults={
+                                        'thermal': self.tabula_extractor._safe_float(row_data.get('thermal')),
+                                        'hydro': self.tabula_extractor._safe_float(row_data.get('hydro')),
+                                        'gas_naptha_diesel': self.tabula_extractor._safe_float(
+                                            row_data.get('gas_naptha_diesel')),
+                                        'solar': self.tabula_extractor._safe_float(row_data.get('solar')),
+                                        'wind': self.tabula_extractor._safe_float(row_data.get('wind')),
+                                        'others': self.tabula_extractor._safe_float(row_data.get('others')),
+                                        'net_sch': self.tabula_extractor._safe_float(row_data.get('net_sch')),
+                                        'drawal': self.tabula_extractor._safe_float(row_data.get('drawal')),
+                                        'ui': self.tabula_extractor._safe_float(row_data.get('ui')),
+                                        'availability': self.tabula_extractor._safe_float(row_data.get('availability')),
+                                        'demand_met': self.tabula_extractor._safe_float(row_data.get('demand_met')),
+                                        'shortage': self.tabula_extractor._safe_float(row_data.get('shortage')),
+                                    }
+                                )
+                            except Exception as e:
+                                self.write(f"❌ Error saving Table 2A row to DB (State: {state_name}): {e}",
+                                           level='error')
+
+                else:
+                    self.write("⚠️ Table 2(A) not found or extraction failed.", level='warning')
+
+                # 2(C)
+                sub_2C, headers_2C = self.tabula_extractor.extract_subtable_by_markers(
+                    all_content_df_cleaned,
+                    start_marker=r"2\s*\(C\)\s*State's\s*Demand\s*Met\s*in\s*MWs.*",
+                    end_marker=r"3\s*\(A\)\s*StateEntities\s*Generation:",
+                    header_row_count=2,
+                    debug_table_name="Table 2(C)"
+                )
+                if sub_2C is not None:
+                    self.write("--- RAW DataFrame for Table 2(C) before renaming ---", level='info')
+                    self.write(str(sub_2C), level='info')
+                    column_mapping_2C = {
+                        'State': 'state',
+                        'Maximum Demand Met of the day': 'max_demand',
+                        'Time': 'time',
+                        'Shortage during maximum demand': 'shortage_max_demand',
+                        'Requirement at maximum demand': 'req_max_demand',
+                        'Demand Met at maximum Requirement': 'demand_max_req',
+                        'Time.1': 'time_max_req',
+                        'Shortage during maximum requirement': 'shortage_max_req',
+                        'Maximum requirement of the day': 'max_req_day',
+                        'Min Demand Met': 'ace_min',
+                        'Time.2': 'time_ace_min',
+                        'ACE_MAX': 'ace_max',
+                        'Time.3': 'time_ace_max',
+                    }
+                    sub_2C_renamed = sub_2C.rename(
+                        columns={k: v for k, v in column_mapping_2C.items() if k in sub_2C.columns})
+                    self.write(f"Columns present in Table 2C after renaming: {sub_2C_renamed.columns.tolist()}",
+                               level='info')
+
+                    if 'state' in sub_2C_renamed.columns:
+                        normalized_states_2C = [s.strip().upper() for s in TabulaExtractor.SOUTH_INDIAN_STATES_2C]
+                        sub_2C_filtered = sub_2C_renamed[
+                            sub_2C_renamed['state'].astype(str)
+                            .str.strip()
+                            .str.upper()
+                            .str.replace(r'\s+', ' ', regex=True)
+                            .str.replace('–', '-', regex=False)
+                            .isin(normalized_states_2C)
+                        ].copy()
+
+                        if sub_2C_filtered.empty and not sub_2C_renamed.empty:
+                            self.write("⚠️ Exact state name matching failed for Table 2C. Trying lenient match.",
+                                       level='warning')
+                            sub_2C_filtered = sub_2C_renamed[
+                                sub_2C_renamed['state'].astype(str)
+                                .str.strip()
+                                .str.upper()
+                                .str.contains('AP|KAR|KER|PONDY|TN|TG|REGION', case=False, na=False)
+                            ].copy()
+                    else:
+                        self.write("⚠️ 'state' column not found in Table 2(C) after rename. Skipping row filtering.",
+                                   level='warning')
+                        sub_2C_filtered = sub_2C_renamed.copy()
+
+                    model_fields_2C = list(column_mapping_2C.values())
+                    sub_2C_final = sub_2C_filtered[[col for col in model_fields_2C if col in sub_2C_filtered.columns]]
+                    sub_2C_final = sub_2C_final.dropna(subset=['state']).copy()
+                    combined_json_data['srldc_table_2C'] = sub_2C_final.to_dict(orient='records')
+                    self.write("✅ Table 2(C) extracted for combined JSON.", level='success')
+
+                    # Save to DB
+                    for index, row_data in sub_2C_final.iterrows():
+                        state_name = self.tabula_extractor._safe_string(row_data.get('state'))
+                        if state_name:
+                            try:
+                                ace_min_val = None
+                                time_ace_min_val = None
+                                if 'ace_min' in sub_2C_final.columns:
+                                    ace_min_val = self.tabula_extractor._safe_float(row_data.get('ace_min'))
+                                if 'time_ace_min' in sub_2C_final.columns:
+                                    time_ace_min_val = self.tabula_extractor._safe_string(row_data.get('time_ace_min'))
+
+                                obj, created = Srldc2CData.objects.update_or_create(
+                                    report_date=report_date,
+                                    state=state_name,
+                                    defaults={
+                                        'max_demand': self.tabula_extractor._safe_float(row_data.get('max_demand')),
+                                        'time': self.tabula_extractor._safe_string(row_data.get('time')),
+                                        'shortage_max_demand': self.tabula_extractor._safe_float(
+                                            row_data.get('shortage_max_demand')),
+                                        'req_max_demand': self.tabula_extractor._safe_float(
+                                            row_data.get('req_max_demand')),
+                                        'demand_max_req': self.tabula_extractor._safe_float(
+                                            row_data.get('demand_max_req')),
+                                        'max_req_day': self.tabula_extractor._safe_float(row_data.get('max_req_day')),
+                                        'time_max_req': self.tabula_extractor._safe_string(
+                                            row_data.get('time_max_req')),
+                                        'shortage_max_req': self.tabula_extractor._safe_float(
+                                            row_data.get('shortage_max_req')),
+                                        'ace_max': self.tabula_extractor._safe_float(row_data.get('ace_max')),
+                                        'time_ace_max': self.tabula_extractor._safe_string(
+                                            row_data.get('time_ace_max')),
+                                        'ace_min': ace_min_val,
+                                        'time_ace_min': time_ace_min_val,
+                                    }
+                                )
+                            except Exception as e:
+                                self.write(f"❌ Error saving Table 2C row to DB (State: {state_name}): {e}",
+                                           level='error')
+                else:
+                    self.write("⚠️ Table 2(C) not found or extraction failed.", level='warning')
+
+                # NOTE: removed separate combined 2A/2C JSON write here — will save single combined JSON after 3B extraction
+
+        except Exception as e:
+            self.write(f"❌ Tabula extraction failed: {e}", level='error')
+            self.write(traceback.format_exc(), level='error')
+
+        # ------------------ 2) Run pdfplumber-based 3B extractor ------------------
+        try:
+            self.write("🔍 Running pdfplumber-based extraction for Table 3(B)...", level='info')
+            # extract dates using pdfplumber helper (used by 3B code)
+            report_info = extract_report_dates(pdf_path)
+            self.write(f"Report DATE (3B extraction): {report_info.get('report_date')}", level='info')
+            self.write(f"Reporting DATETIME (3B extraction): {report_info.get('reporting_datetime')}", level='info')
+
+            tables_3b = extract_two_tables_3b(pdf_path, report_info)
+            # If none found, fallback to row-scanner new pattern
+            if not tables_3b["central_sector"] and not tables_3b["joint_venture"]:
+                self.write("3B old-pattern returned no data; trying new row-scanner pattern...", level='warning')
+                tables_3b = extract_tables_new_pattern_3b(pdf_path)
+                self.write("3B row-scanner extraction completed.", level='success')
+            else:
+                self.write("3B old-pattern extraction returned results.", level='success')
+
+            if not tables_3b.get("central_sector"):
+                self.write("⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).", level='warning')
+
+            central_3b = normalize_rows_for_table_3b(tables_3b.get("central_sector", []), report_info)
+            jv_3b = normalize_rows_for_table_3b(tables_3b.get("joint_venture", []), report_info)
+            combined_3b = central_3b + jv_3b
+
+            self.write(f"3B Central Rows: {len(central_3b)}; JV Rows: {len(jv_3b)}", level='info')
+
+            # JSON snapshot for 3B (kept locally for combining)
+            snapshot_3b = {
+                "report_date": report_info.get("report_date"),
+                "reporting_datetime": report_info.get("reporting_datetime"),
+                "central_sector": central_3b,
+                "joint_venture": jv_3b
+            }
+
+            # ------------------ BUILD SINGLE COMBINED JSON ------------------
+            # Ensure keys exist even if no data found
+            final_payload = {
+                "srldc_table_2A": combined_json_data.get("srldc_table_2A", []),
+                "srldc_table_2C": combined_json_data.get("srldc_table_2C", []),
+                "srldc_table_3B": {
+                    "central_sector": snapshot_3b.get("central_sector", []),
+                    "joint_venture": snapshot_3b.get("joint_venture", [])
+                }
+            }
+
+            combined_master_path = os.path.join(report_output_dir, f"srldc_combined_{report_date}.json")
+            try:
+                with open(combined_master_path, 'w', encoding='utf-8') as mf:
+                    json.dump(final_payload, mf, indent=4, ensure_ascii=False, default=str)
+                self.write(f"✅ Final combined JSON saved: {combined_master_path}", level='success')
+            except Exception as e:
+                self.write(f"❌ Failed to write final combined JSON: {e}", level='error')
+
+            # Save 3B to DB
+            # ---------------- Save 3B to DB (fixed) ----------------
+            saved = 0
+            with transaction.atomic():
+                for rec in combined_3b:
+                    # parse report_date for DB (report_info may be str or date)
+                    if isinstance(report_info.get("report_date"), str):
+                        report_date_parsed = _try_parse_date_token(report_info.get("report_date"))
+                    else:
+                        report_date_parsed = report_info.get("report_date")
+
+                    # parse reporting datetime if available (single value used for all rows)
+                    reporting_dt = None
+                    if report_info.get("reporting_datetime"):
+                        try:
+                            reporting_dt = _dt.strptime(report_info.get("reporting_datetime"), "%Y-%m-%d %H:%M")
+                        except Exception:
+                            reporting_dt = None
+
+                    # convert numeric fields to Decimal when present (model uses DecimalField)
+                    def to_dec(v):
+                        if v is None:
+                            return None
+                        try:
+                            return Decimal(str(v))
+                        except (InvalidOperation, ValueError, TypeError):
+                            return None
+
+                    try:
+                        obj, created = SRLDC3BData.objects.update_or_create(
+                            station=rec.get("station"),
+                            report_date=report_date_parsed,
+                            defaults={
+                                "reporting_datetime": reporting_dt,
+                                "installed_capacity_mw": rec.get("installed_capacity_mw"),
+                                "peak_1900_mw": rec.get("peak_1900_mw"),
+                                "offpeak_0300_mw": rec.get("offpeak_0300_mw"),
+                                "day_peak_mw": rec.get("day_peak_mw"),
+                                "day_peak_hrs": rec.get("day_peak_hrs"),
+                                "min_generation_mw": to_dec(rec.get("min_generation_mw")),
+                                "min_generation_hrs": rec.get("min_generation_hrs"),
+                                # map parsed energy -> DB field (day_energy_mu)
+                                # "day_energy_mu": to_dec(rec.get("day_energy_mu")),
+                                "gross_energy_mu": to_dec(rec.get("gross_energy_mu")),
+                                "net_energy_mu": to_dec(rec.get("net_energy_mu")),
+                                "avg_mw": to_dec(rec.get("avg_mw")),
+                                "row_type": rec.get("row_type"),
+                                "source_page": rec.get("source_page"),
+                                "source_table_index": rec.get("source_table_index"),
+                            }
+                        )
+                        saved += 1
+                    except Exception as e:
+                        # log the problem; do not abort the entire transaction for one bad row
+                        self.write(f"❌ DB save error for station '{rec.get('station')}' : {e}", level='error')
+                        self.write(traceback.format_exc(), level='error')
+
+            self.write(f"Saved {saved} rows to SRLDC3AData for {report_date}", level='success')
+
+        except Exception as e:
+            self.write(f"❌ 3B extraction failed: {e}", level='error')
+            self.write(traceback.format_exc(), level='error')
+
+        self.write(f"Finished processing. Files saved in: {report_output_dir}", level='success')
