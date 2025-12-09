@@ -416,7 +416,7 @@ class Command(BaseCommand):
             raise CommandError(f"❌ Error fetching NRDC metadata: {e}")
 
         try:
-            data = response.json()
+            data = response
         except Exception as e:
             raise CommandError(f"❌ Failed to parse JSON response: {e}")
 

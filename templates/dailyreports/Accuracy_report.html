@@ -1,0 +1,280 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Accuracy ERROR Reports</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+  {% include "partials/navbar.html" %}
+
+  <!-- container -->
+  <div class="max-w-7xl mx-auto mt-6 p-3">
+
+    <!-- Mobile toggle (shown only on small screens) -->
+    <div class="flex items-center justify-between lg:hidden mb-3">
+      <button id="sidebarToggle" class="p-2 rounded-md border inline-flex items-center" aria-expanded="false">
+        <!-- hamburger -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <span class="ml-2 text-sm">Menu</span>
+      </button>
+      <div class="text-sm text-gray-600">State: {% if selected_state %}{{ selected_state }}{% else %}—{% endif %}</div>
+    </div>
+
+    <div class="flex gap-6">
+
+      <!-- SIDEBAR: visible on lg, toggled on mobile -->
+      <aside id="mainSidebar" class="hidden lg:block w-64 fixed left-0 top-20 overflow-auto z-50 bg-white lg:shadow-2xl transition-all duration-300">
+        {% include "partials/sidebar.html" %}
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <div class="flex-1">
+
+        <div class="flex item-left mx-auto p-0">
+          <div class="grid grid-cols-1 lg:grid-cols-6 gap-3 w-full">
+
+            <!-- LEFT: Main card -->
+            <main class="lg:col-span-5 w-full">
+              <div class="bg-white shadow-md rounded-lg overflow-hidden">
+
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 border-b">
+                  <div>
+                    <h1 class="text-xl font-semibold">Accuracy ERROR Reports</h1>
+                    <p class="text-sm text-gray-500">Select month &amp; year and view state-wise report</p>
+                  </div>
+                  <div class="text-right text-sm text-gray-600">
+                    {% if selected_state %}<div>State: <span class="font-medium">{{ selected_state }}</span></div>{% endif %}
+                    {% if selected_date %}<div>Date: <span class="font-medium">{{ selected_date }}</span></div>{% endif %}
+                  </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="p-4">
+                  <form method="GET" id="monthYearForm" class="flex flex-col md:flex-row md:items-center gap-3">
+                    <label for="month_select" class="sr-only">Month</label>
+                    <select id="month_select" name="month" class="w-full md:w-40 p-2 border rounded-md bg-white">
+                      <option value="">-- Month --</option>
+                      <option value="01">January</option>
+                      <option value="02">February</option>
+                      <option value="03">March</option>
+                      <option value="04">April</option>
+                      <option value="05">May</option>
+                      <option value="06">June</option>
+                      <option value="07">July</option>
+                      <option value="08">August</option>
+                      <option value="09">September</option>
+                      <option value="10">October</option>
+                      <option value="11">November</option>
+                      <option value="12">December</option>
+                    </select>
+
+                    <label for="year_select" class="sr-only">Year</label>
+                    <select id="year_select" name="year" class="w-full md:w-28 p-2 border rounded-md bg-white">
+                      <option value="">-- Year --</option>
+                    </select>
+
+                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                      VIEW
+                    </button>
+
+                    <button type="button" id="exportCsvBtn" class="inline-flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-gray-700 ml-auto md:ml-0 hover:bg-gray-50">
+                      Export Excel
+                    </button>
+
+                    <button type="button" id="refreshBtn" class="inline-flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                      Refresh
+                    </button>
+                  </form>
+                </div>
+
+                <!-- Table -->
+                <div class="p-4 border-t">
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                      <thead class="bg-blue-50">
+                        <tr>
+                          <th class="px-3 py-2 text-left text-xs font-medium text-gray-600">S.No.</th>
+                          <th class="px-3 py-2 text-left text-xs font-medium text-gray-600">Plants</th>
+                          <th class="px-3 py-2 text-right text-xs font-medium text-gray-600">MU</th>
+                          <th class="px-3 py-2 text-right text-xs font-medium text-gray-600">Contribution %</th>
+                        </tr>
+                      </thead>
+                      <tbody id="psp-tbody" class="bg-white divide-y divide-gray-100">
+                        {% for _ in "123456789" %}
+                        <tr class="hover:bg-gray-50">
+                          <td class="px-3 py-2 text-sm text-gray-700">{{ forloop.counter }}</td>
+                          <td class="px-3 py-2 text-sm text-gray-700">&nbsp;</td>
+                          <td class="px-3 py-2 text-sm text-right text-gray-700">&nbsp;</td>
+                          <td class="px-3 py-2 text-sm text-right text-gray-700">&nbsp;</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="mt-3 text-xs text-gray-500">Tip: Choose month &amp; year then click <strong>VIEW</strong> to fetch state data. Export will download the currently visible table.</div>
+                </div>
+
+              </div>
+            </main>
+
+          </div>
+        </div>
+
+      </div> <!-- end main -->
+
+    </div> <!-- end flex -->
+
+  </div> <!-- end container -->
+
+  <!-- JS -->
+  <script>
+    // Populate years
+    (function populateYears() {
+      const yearSelect = document.getElementById('year_select');
+      if (!yearSelect) return;
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const start = currentYear - 5;
+      const end = currentYear + 5;
+      for (let y = end; y >= start; y--) {
+        const opt = document.createElement('option');
+        opt.value = String(y);
+        opt.textContent = String(y);
+        yearSelect.appendChild(opt);
+      }
+      const serverYear = "{{ request.GET.year|default:'' }}";
+      const serverMonth = "{{ request.GET.month|default:'' }}";
+      if (serverYear) yearSelect.value = serverYear;
+      if (serverMonth) {
+        const monthSelect = document.getElementById('month_select');
+        if (monthSelect) monthSelect.value = serverMonth;
+      }
+    })();
+
+    const dataApiUrl = ""; // set your API endpoint if available
+    const selectedState = "{{ selected_state|default:''|escapejs }}";
+    const tbody = document.getElementById('psp-tbody');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+    function renderEmptyRows() {
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      for (let i = 1; i <= 9; i++) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50';
+        tr.innerHTML = `
+          <td class="px-3 py-2 text-sm text-gray-700">${i}</td>
+          <td class="px-3 py-2 text-sm text-gray-700">&nbsp;</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">&nbsp;</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">&nbsp;</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function renderRows(rows) {
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      rows.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50';
+        const sno = r.sno !== undefined ? r.sno : (idx + 1);
+        tr.innerHTML = `
+          <td class="px-3 py-2 text-sm text-gray-700">${sno}</td>
+          <td class="px-3 py-2 text-sm text-gray-700">${r.plant||''}</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">${r.mu||''}</td>
+          <td class="px-3 py-2 text-sm text-right text-gray-700">${r.contrib||''}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getFormParams() {
+      return {
+        month: document.getElementById('month_select') ? document.getElementById('month_select').value : '',
+        year: document.getElementById('year_select') ? document.getElementById('year_select').value : ''
+      };
+    }
+
+    async function fetchAndPopulate() {
+      if (!dataApiUrl) { renderEmptyRows(); return; }
+      if (!selectedState) { renderEmptyRows(); return; }
+      const { month, year } = getFormParams();
+      if (!month || !year) { renderEmptyRows(); return; }
+      const url = new URL(dataApiUrl, window.location.origin);
+      url.searchParams.set('state', selectedState);
+      url.searchParams.set('month', month);
+      url.searchParams.set('year', year);
+      try {
+        const res = await fetch(url.toString(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
+        if (!res.ok) { renderEmptyRows(); return; }
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) { renderEmptyRows(); return; }
+        renderRows(data);
+      } catch (e) { console.error(e); renderEmptyRows(); }
+    }
+
+    function tableToCSV(filename = 'psp-report.csv') {
+      if (!tbody) return;
+      const rows = [];
+      const headers = ['S.No.','Plants','MU','Contribution %'];
+      rows.push(headers.join(','));
+      tbody.querySelectorAll('tr').forEach(tr => {
+        const cols = Array.from(tr.querySelectorAll('td')).map(td => {
+          let text = td.textContent.trim().replace(/"/g,'""');
+          if (text.includes(',')) text = `"${text}"`;
+          return text;
+        });
+        rows.push(cols.join(','));
+      });
+      const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    if (refreshBtn) refreshBtn.addEventListener('click', fetchAndPopulate);
+    if (exportCsvBtn) exportCsvBtn.addEventListener('click', () => tableToCSV('psp-report.csv'));
+
+    // Mobile sidebar toggle
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mainSidebar = document.getElementById('mainSidebar');
+    if (sidebarToggle && mainSidebar) {
+      sidebarToggle.addEventListener('click', () => {
+        const isHidden = mainSidebar.classList.contains('hidden');
+        if (isHidden) {
+          mainSidebar.classList.remove('hidden');
+          mainSidebar.classList.add('block','absolute','z-50','left-3','top-20','w-64','shadow-lg');
+          sidebarToggle.setAttribute('aria-expanded','true');
+        } else {
+          mainSidebar.classList.add('hidden');
+          mainSidebar.classList.remove('block','absolute','z-50','left-3','top-20','w-64','shadow-lg');
+          sidebarToggle.setAttribute('aria-expanded','false');
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchAndPopulate();
+    });
+  </script>
+
+  {% block content %}{% endblock %}
+</body>
+</html>

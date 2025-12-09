@@ -3,3 +3,6 @@
 /.idea/
 /downloads/
 /screenshots/
+venv
+*.pyc
+srl_on_json/
