@@ -3,7 +3,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from processor.models import Srldc2AData, Srldc2CData, Nrldc2CData, Nrldc2AData, Wrldc2AData, Wrldc2CData, PosocoTableA, PosocoTableG
+from processor.models import Srldc2AData, Srldc2CData, Nrldc2CData, Nrldc2AData, Wrldc2AData, Wrldc2CData, PosocoTableA, \
+    PosocoTableG, SRLDC3BData
 from .serializers import SrldcASerializer, SrldcCSerializer, NrldcASerializer, NrldcCSerializer, WrldcASerializer, WrldcCSerializer, PosocoGSerializer, PosocoASerializer
 
 
@@ -12,9 +13,11 @@ from .serializers import SrldcASerializer, SrldcCSerializer, NrldcASerializer, N
 def srldc_view(request):
     a_tab = Srldc2AData.objects.all()
     c_tab = Srldc2CData.objects.all()
+    # b_tab = SRLDC3BData.objects.all()
     return Response({
         "table_a": SrldcASerializer(a_tab, many=True).data,
-        "table_c": SrldcCSerializer(c_tab, many=True).data
+        "table_c": SrldcCSerializer(c_tab, many=True).data,
+        # "table_b":ScrldcBSerializer(b_tab, many=True).data,
     }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])

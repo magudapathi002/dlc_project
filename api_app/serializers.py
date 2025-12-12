@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from processor.models import Srldc2AData, Srldc2CData, Nrldc2AData, Nrldc2CData, Wrldc2CData, Wrldc2AData, PosocoTableG, PosocoTableA
+from processor.models import Srldc2AData, Srldc2CData ,SRLDC3BData, Nrldc2AData, Nrldc2CData, Wrldc2CData, Wrldc2AData, PosocoTableG, PosocoTableA
 
 
 class SrldcASerializer(serializers.ModelSerializer):
@@ -12,6 +12,12 @@ class SrldcCSerializer(serializers.ModelSerializer):
     class Meta:
         model = Srldc2CData
         fields = '__all__'
+
+# class ScrldcBSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = SRLDC3BData
+#         fields = '__all__'
+
 
 
 class NrldcASerializer(serializers.ModelSerializer):
