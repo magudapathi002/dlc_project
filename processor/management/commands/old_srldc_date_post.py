@@ -667,19 +667,28 @@ def normalize_rows_for_table_new(rows_with_meta, report_info=None):
 def normalize_rows_for_table_old(rows_with_meta, report_info=None):
     """
     Normalizer for OLD PATTERN (Image 2 - Simple).
-    Columns after Station Name:
-    0: Inst Capacity
-    1: 19:00 Peak
-    2: 03:00 Off Peak
-    3: Day Peak MW
-    4: Day Peak Hrs
-    5: Day Energy (MU)  <-- Value is here immediately after Peak Hrs
-    6: Avg MW
+
+    Columns after Station Name (expected):
+      0: Inst Capacity
+      1: 19:00 Peak
+      2: 03:00 Off Peak
+      3: Day Peak MW
+      4: Day Peak Hrs
+      5: Gross Gen (MU)
+      6: Net Get (MU)         <-- may be missing in some extracts
+      7: AVG.MW               <-- may be present or missing
+
+    This function:
+     - maps gross_energy_mu and net_energy_mu where present,
+     - keeps day_energy_mu as None (per your request),
+     - preserves existing avg_mw heuristics (compute from gross MU if avg missing/suspicious),
+     - remains tolerant to missing/merged columns.
     """
     report_info = report_info or {}
     recs = []
 
     for page, tbl_idx, r in rows_with_meta:
+        # find the column index that looks like station name
         station_index = None
         for i, c in enumerate(r):
             if looks_like_station_text(c):
@@ -697,24 +706,66 @@ def normalize_rows_for_table_old(rows_with_meta, report_info=None):
                 return func(tail_clean[idx])
             return None
 
-        # --- MAPPING FOR OLD PATTERN ---
+        # Basic mappings
         installed_capacity = safe_val(0, parse_int_safe)
         peak_1900 = safe_val(1, parse_int_safe)
         offpeak_0300 = safe_val(2, parse_int_safe)
         day_peak_mw = safe_val(3, parse_int_safe)
         day_peak_hrs = safe_val(4, lambda x: x)
 
-        # In Old Pattern, Index 5 is Day Energy
-        day_energy_mu = safe_val(5, parse_float_safe)
-
-        # In Old Pattern, Index 6 is Avg MW
-        avg_mw = safe_val(6, parse_float_safe)
-
-        # These fields do not exist in the Old Pattern
-        min_generation_mw = None
-        min_generation_hrs = None
-        gross_energy_mu = None  # Or you can map day_energy_mu here if you prefer
+        # Heuristic mapping of energy columns for OLD format
+        gross_energy_mu = None
         net_energy_mu = None
+        avg_mw = None
+
+        # Typical expected positions: 5=gross, 6=net, 7=avg
+        if len(tail_clean) >= 8:
+            gross_energy_mu = safe_val(5, parse_float_safe)
+            net_energy_mu = safe_val(6, parse_float_safe)
+            avg_mw = safe_val(7, parse_float_safe)
+        elif len(tail_clean) == 7:
+            cand5 = safe_val(5, parse_float_safe)
+            cand6 = safe_val(6, parse_float_safe)
+            if cand5 is not None and (cand6 is not None):
+                # If cand6 <= cand5 or cand6 looks large, treat as net energy
+                if cand6 <= cand5 or cand6 > 100:
+                    gross_energy_mu = cand5
+                    net_energy_mu = cand6
+                    avg_mw = None
+                else:
+                    gross_energy_mu = cand5
+                    net_energy_mu = None
+                    avg_mw = cand6
+            else:
+                gross_energy_mu = cand5
+                net_energy_mu = cand6
+        elif len(tail_clean) == 6:
+            # Single energy column - treat as gross MU
+            cand5 = safe_val(5, parse_float_safe)
+            gross_energy_mu = cand5
+            net_energy_mu = None
+            avg_mw = None
+        else:
+            # Try to salvage any MU-like token
+            for tok in tail_clean:
+                try:
+                    tokf = float(tok.replace(",", "")) if tok and re.search(r"\d", tok) else None
+                except Exception:
+                    tokf = None
+                if tokf is not None and tokf > 0.01:
+                    gross_energy_mu = tokf
+                    break
+
+        # Keep avg_mw if present; otherwise compute fallback from gross_energy_mu
+        if (avg_mw is None or (isinstance(avg_mw, (int, float)) and avg_mw < 100)) and gross_energy_mu:
+            try:
+                computed_avg = (gross_energy_mu * 1000.0) / 24.0
+                avg_mw = round(computed_avg, 2)
+            except Exception:
+                pass
+
+        # IMPORTANT: per your request, DO NOT populate day_energy_mu from gross_energy_mu.
+        day_energy_mu = None
 
         row_type = "TOTAL" if station.upper().startswith("TOTAL") else "GENERATOR"
 
@@ -725,9 +776,9 @@ def normalize_rows_for_table_old(rows_with_meta, report_info=None):
             "offpeak_0300_mw": offpeak_0300,
             "day_peak_mw": day_peak_mw,
             "day_peak_hrs": day_peak_hrs,
-            "min_generation_mw": min_generation_mw,
-            "min_generation_hrs": min_generation_hrs,
-            "day_energy_mu": day_energy_mu,
+            "min_generation_mw": None,
+            "min_generation_hrs": None,
+            "day_energy_mu": day_energy_mu,        # <-- intentionally NULL
             "gross_energy_mu": gross_energy_mu,
             "net_energy_mu": net_energy_mu,
             "avg_mw": avg_mw,
