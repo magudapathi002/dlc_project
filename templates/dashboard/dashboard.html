@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <style>
-    /* Custom Scrollbar (Still used for top cards or fallback) */
+    /* Custom Scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0B1221; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -37,6 +37,7 @@
         border: 1px solid rgba(34, 211, 238, 0.2);
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
     }
 
     .neon-card:hover {
@@ -63,6 +64,77 @@
         border-color: rgba(96, 165, 250, 0.8);
         box-shadow: 0 0 30px rgba(96, 165, 250, 0.25), inset 0 0 20px rgba(96, 165, 250, 0.05);
     }
+
+    /* --- REFRESH LOADER STYLES --- */
+    .refresh-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(11, 18, 33, 0.7);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        border-radius: 0.75rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+    .refresh-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(34, 211, 238, 0.1);
+        border-left-color: #22d3ee;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* --- FULL SCREEN STYLES --- */
+    .fullscreen-active {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        background: #0B1221 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        padding: 20px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        transform: none !important;
+    }
+    .fullscreen-active .overflow-x-auto,
+    .fullscreen-active .flex-1,
+    .fullscreen-active .relative {
+        flex: 1;
+        height: 100% !important;
+        overflow-y: auto !important;
+    }
+    .fullscreen-active #windChart,
+    .fullscreen-active #secondChart {
+        height: 90% !important;
+        width: 100% !important;
+    }
+
+    /* --- EXIT BUTTON STYLE --- */
+    .fullscreen-exit-btn {
+        display: none;
+    }
+    .fullscreen-active .fullscreen-exit-btn {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 10001;
+    }
+
 </style>
 
 <div class="max-w-8xl -mt-10 px-4 sm:px-6 lg:px-8">
@@ -79,15 +151,28 @@
     </div>
   </div>
 
-  {# --- ROW 1: SUMMARY CARDS (Unchanged) --- #}
+  {# --- ROW 1: SUMMARY CARDS --- #}
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    {# Card 1: Tamil Nadu #}
-    <div class="neon-card rounded-xl overflow-hidden h-96 animate-pop-in delay-100 group">
+
+    {# Card 1: Tamil Nadu (ID: card-tn) #}
+    <div id="card-tn" class="neon-card rounded-xl overflow-hidden h-96 animate-pop-in delay-100 group">
+      <button onclick="toggleFullScreen('card-tn')" class="fullscreen-exit-btn bg-red-500/80 hover:bg-red-500 text-white px-3 py-1 rounded-md shadow-lg backdrop-blur-sm transition-all items-center gap-2 font-bold text-sm">
+         <i class="fas fa-times"></i> Close View
+      </button>
+
       <div class="flex items-center justify-between bg-slate-900/50 backdrop-blur-md px-5 py-4 border-b border-slate-700/50">
-        <h2 class="font-bold text-lg text-slate-100 tracking-wide group-hover:text-cyan-400 transition-colors">Tamil Nadu Summary</h2>
-        <div class="flex items-center gap-4 text-slate-500 group-hover:text-cyan-400 transition-colors">
-          <button class="hover:text-white transition-transform hover:rotate-180 duration-500"><i class="fas fa-sync-alt"></i></button>
-          <button class="hover:text-white transition-transform hover:scale-125 duration-300"><i class="fas fa-expand"></i></button>
+        <h1 class="text-lg text-slate-100 tracking-wide group-hover:text-cyan-400 transition-colors">
+            Tamil Nadu Summary
+        </h1>
+        <div class="flex items-center gap-2 text-slate-500 group-hover:text-cyan-400 transition-colors">
+            <button onclick="triggerRefresh('card-tn')" class="w-6 h-6 bg-white flex items-center justify-center rounded-xl hover:bg-white-100 transition-all hover:text-cyan-400 hover:rotate-90 cursor-pointer">
+                <img src="{% static 'images/refresh.png' %}" class="w-4 h-4">
+            </button>
+            <button onclick="toggleFullScreen('card-tn')" class="w-6 h-6 bg-white flex items-center justify-center rounded-xl hover:bg-white-100 transition-all hover:text-cyan-400 hover:scale-110 cursor-pointer">
+                <img src="{% static 'images/fullsize.png' %}" class="w-4 h-4">
+            </button>
+            <button class="hover:text-white transition-transform hover:rotate-180 duration-500"><i class="fas fa-sync-alt"></i></button>
+            <button class="hover:text-white transition-transform hover:scale-125 duration-300"><i class="fas fa-expand"></i></button>
         </div>
       </div>
       <div class="overflow-x-auto">
@@ -104,11 +189,23 @@
       </div>
     </div>
 
-    {# Card 2: Region Wise #}
-    <div class="neon-card rounded-xl overflow-hidden h-96 animate-pop-in delay-200 group">
+    {# Card 2: Region Wise (ID: card-region) #}
+    <div id="card-region" class="neon-card rounded-xl overflow-hidden h-96 animate-pop-in delay-200 group">
+      <button onclick="toggleFullScreen('card-region')" class="fullscreen-exit-btn bg-red-500/80 hover:bg-red-500 text-white px-3 py-1 rounded-md shadow-lg backdrop-blur-sm transition-all items-center gap-2 font-bold text-sm">
+         <i class="fas fa-times"></i> Close View
+      </button>
+
       <div class="flex items-center justify-between bg-slate-900/50 backdrop-blur-md px-5 py-4 border-b border-slate-700/50">
-        <h2 class="font-bold text-lg text-slate-100 tracking-wide group-hover:text-cyan-400 transition-colors">Summary Region Wise</h2>
-        <div class="flex items-center gap-4 text-slate-500 group-hover:text-cyan-400 transition-colors">
+        <h1 class="text-lg text-slate-100 tracking-wide group-hover:text-cyan-400 transition-colors">
+            Summary Region Wise
+        </h1>
+        <div class="flex items-center gap-2 text-slate-500 group-hover:text-cyan-400 transition-colors">
+            <button onclick="triggerRefresh('card-region')" class="w-6 h-6 bg-white flex items-center justify-center rounded-xl hover:bg-white-100 transition-all hover:text-cyan-400 hover:rotate-90 cursor-pointer">
+                <img src="{% static 'images/refresh.png' %}" class="w-4 h-4">
+            </button>
+            <button onclick="toggleFullScreen('card-region')" class="w-6 h-6 bg-white flex items-center justify-center rounded-xl hover:bg-white-100 transition-all hover:text-cyan-400 hover:scale-110 cursor-pointer">
+                <img src="{% static 'images/fullsize.png' %}" class="w-4 h-4">
+            </button>
             <button class="hover:text-white transition-transform hover:rotate-180 duration-500"><i class="fas fa-sync-alt"></i></button>
             <button class="hover:text-white transition-transform hover:scale-125 duration-300"><i class="fas fa-expand"></i></button>
         </div>
@@ -129,11 +226,23 @@
       </div>
     </div>
 
-    {# Card 3: Substation Forecast #}
-    <div class="neon-card rounded-xl overflow-hidden flex flex-col h-96 animate-pop-in delay-300 group">
-      <div class="flex items-center justify-between bg-slate-900/50 backdrop-blur-md px-5 py-4 border-b border-slate-700/50 shrink-0">
-        <h2 class="font-bold text-lg text-slate-100 tracking-wide group-hover:text-cyan-400 transition-colors">Substation Forecast</h2>
-        <div class="flex items-center gap-4 text-slate-500 group-hover:text-cyan-400 transition-colors">
+    {# Card 3: Substation Forecast (ID: card-substation) #}
+    <div id="card-substation" class="neon-card rounded-xl overflow-hidden flex flex-col h-96 animate-pop-in delay-300 group">
+      <button onclick="toggleFullScreen('card-substation')" class="fullscreen-exit-btn bg-red-500/80 hover:bg-red-500 text-white px-3 py-1 rounded-md shadow-lg backdrop-blur-sm transition-all items-center gap-2 font-bold text-sm">
+         <i class="fas fa-times"></i> Close View
+      </button>
+
+      <div class="flex items-center justify-between bg-slate-900/50 backdrop-blur-md px-5 py-4 border-b border-slate-700/50">
+        <h1 class="text-lg text-slate-100 tracking-wide group-hover:text-cyan-400 transition-colors">
+            Substation Forecast
+        </h1>
+        <div class="flex items-center gap-2 text-slate-500 group-hover:text-cyan-400 transition-colors">
+            <button onclick="triggerRefresh('card-substation')" class="w-6 h-6 bg-white flex items-center justify-center rounded-xl hover:bg-white-100 transition-all hover:text-cyan-400 hover:rotate-90 cursor-pointer">
+                <img src="{% static 'images/refresh.png' %}" class="w-4 h-4">
+            </button>
+            <button onclick="toggleFullScreen('card-substation')" class="w-6 h-6 bg-white flex items-center justify-center rounded-xl hover:bg-white-100 transition-all hover:text-cyan-400 hover:scale-110 cursor-pointer">
+                <img src="{% static 'images/fullsize.png' %}" class="w-4 h-4">
+            </button>
             <button class="hover:text-white transition-transform hover:rotate-180 duration-500"><i class="fas fa-sync-alt"></i></button>
             <button class="hover:text-white transition-transform hover:scale-125 duration-300"><i class="fas fa-expand"></i></button>
         </div>
@@ -142,35 +251,34 @@
         <table class="min-w-full text-sm">
           <thead class="sticky top-0 z-10">
             <tr class="bg-[#0f172a] border-b border-slate-700 shadow-lg">
-              <th class="px-5 py-3 text-left font-bold text-slate-400 uppercase text-xs">Sub Station</th>
+              <th class="px-5 py-3 text-left font-bold text-slate-400 uppercase text-xs">SubStation</th>
               <th class="px-5 py-3 text-left font-bold text-cyan-500 uppercase text-xs">Wind(m/s)</th>
               <th class="px-5 py-3 text-left font-bold text-emerald-400 uppercase text-xs">Power(MW)</th>
             </tr>
           </thead>
           <tbody class="text-slate-300 divide-y divide-slate-800/50">
-            {# ... (Keeping your existing table rows here) ... #}
             <tr class="hover:bg-slate-800/60 transition-colors group/row">
-                <td class="px-5 py-3 font-medium text-slate-300 group-hover/row:text-white">Substation 1</td>
+                <td class="px-5 py-3 font-small-1 text-slate-300 group-hover/row:text-white">Substation1</td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="wind-spark-1" class="w-20 h-8 opacity-80 group-hover/row:opacity-100"></div><span class="text-cyan-400 font-bold font-mono">6.44</span></div></td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="power-spark-1" class="w-20 h-8 opacity-80 group-hover/row:opacity-100"></div><span class="text-emerald-400 font-bold font-mono">585.92</span></div></td>
             </tr>
             <tr class="hover:bg-slate-800/60 transition-colors group/row">
-                <td class="px-5 py-3 font-medium text-slate-300 group-hover/row:text-white">Substation 2</td>
+                <td class="px-5 py-3 font-small-1 text-slate-300 group-hover/row:text-white">Substation2</td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="wind-spark-2" class="w-20 h-8"></div><span class="text-cyan-400 font-bold font-mono">4.60</span></div></td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="power-spark-2" class="w-20 h-8"></div><span class="text-emerald-400 font-bold font-mono">719.95</span></div></td>
             </tr>
             <tr class="hover:bg-slate-800/60 transition-colors group/row">
-                <td class="px-5 py-3 font-medium text-slate-300 group-hover/row:text-white">Substation 3</td>
+                <td class="px-5 py-3 font-small-1 text-slate-300 group-hover/row:text-white">Substation3</td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="wind-spark-3" class="w-20 h-8"></div><span class="text-cyan-400 font-bold font-mono">3.60</span></div></td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="power-spark-3" class="w-20 h-8"></div><span class="text-emerald-400 font-bold font-mono">53.80</span></div></td>
             </tr>
             <tr class="hover:bg-slate-800/60 transition-colors group/row">
-                <td class="px-5 py-3 font-medium text-slate-300 group-hover/row:text-white">Substation 4</td>
+                <td class="px-5 py-3 font-small-1 text-slate-300 group-hover/row:text-white">Substation4</td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="wind-spark-4" class="w-20 h-8"></div><span class="text-cyan-400 font-bold font-mono">5.20</span></div></td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="power-spark-4" class="w-20 h-8"></div><span class="text-emerald-400 font-bold font-mono">120.40</span></div></td>
             </tr>
             <tr class="hover:bg-slate-800/60 transition-colors group/row">
-                <td class="px-5 py-3 font-medium text-slate-300 group-hover/row:text-white">Substation 5</td>
+                <td class="px-5 py-3 font-small-1 text-slate-300 group-hover/row:text-white">Substation5</td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="wind-spark-5" class="w-20 h-8"></div><span class="text-cyan-400 font-bold font-mono">4.10</span></div></td>
                 <td class="px-5 py-3"><div class="flex items-center gap-2"><div id="power-spark-5" class="w-20 h-8"></div><span class="text-emerald-400 font-bold font-mono">98.20</span></div></td>
             </tr>
@@ -183,99 +291,136 @@
   {# --- ROW 2: MAIN CHARTS --- #}
   <div class="grid grid-cols-1 gap-8 mb-10">
 
-      {# Chart 1: Wind Power (Cyan Theme) #}
-      <div class="neon-card rounded-xl p-2 md:p-6 animate-pop-in delay-500 relative">
+      {# Chart 1: Wind Power #}
+      <div id="card-wind-chart" class="neon-card rounded-xl p-2 md:p-6 animate-pop-in delay-500 relative">
+          <button onclick="toggleFullScreen('card-wind-chart')" class="fullscreen-exit-btn bg-red-500/80 hover:bg-red-500 text-white px-3 py-1 rounded-md shadow-lg backdrop-blur-sm transition-all items-center gap-2 font-bold text-sm">
+             <i class="fas fa-times"></i> Close View
+          </button>
+
           <div class="flex items-center justify-between mb-4 px-2">
               <div class="w-6"></div>
-              <h2 class="text-slate-200 font-semibold text-sm md:text-xl tracking-wide flex items-center gap-2">
+              <h1 class="text-slate-200 font-size-large text-sm md:text-xl tracking-wide flex items-center gap-2">
                   <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
                   Tamil Nadu Wind Forecast
-              </h2>
-              <button class="w-6 h-6 bg-white flex items-center justify-center rounded hover:bg-white-100 transition-all text-slate-400 hover:text-cyan-400 hover:rotate-90">
-                <img src="{% static 'images/menu.png' %}" alt="Menu" class="w-5 h-5 object-contain">
-            </button>
+              </h1>
+
+              <div class="relative inline-block text-left">
+                  <button onclick="toggleMenu('wind-options-menu')" class="w-6 h-6 bg-white flex items-center justify-center rounded hover:bg-white-100 transition-all text-slate-400 hover:text-cyan-400 cursor-pointer focus:outline-none hover:rotate-90">
+                      <img src="{% static 'images/menu.png' %}" alt="Menu" class="w-5 h-5 object-contain">
+                  </button>
+
+                  <div id="wind-options-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-[#1e293b] border border-slate-700 shadow-[0_0_15px_rgba(0,0,0,0.5)] ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                      <div class="py-1">
+                          <button onclick="toggleFullScreen('card-wind-chart'); toggleMenu('wind-options-menu')" class="group flex w-full items-center px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-cyan-400 transition-colors">
+                              <i class="fas fa-expand w-5 text-center mr-2 text-slate-500 group-hover:text-cyan-400"></i> View Full Size
+                          </button>
+                          <button onclick="window.print(); toggleMenu('wind-options-menu')" class="group flex w-full items-center px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-emerald-400 transition-colors">
+                              <i class="fas fa-print w-5 text-center mr-2 text-slate-500 group-hover:text-emerald-400"></i> Print Chart
+                          </button>
+                          <div class="border-t border-slate-700 my-1"></div>
+                          <button onclick="downloadChart('wind', 'png'); toggleMenu('wind-options-menu')" class="group flex w-full items-center px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-blue-400 transition-colors">
+                              <i class="fas fa-file-image w-5 text-center mr-2 text-slate-500 group-hover:text-blue-400"></i> Download PNG
+                          </button>
+                          <button onclick="downloadChart('wind', 'svg'); toggleMenu('wind-options-menu')" class="group flex w-full items-center px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-purple-400 transition-colors">
+                              <i class="fas fa-bezier-curve w-5 text-center mr-2 text-slate-500 group-hover:text-purple-400"></i> Download SVG
+                          </button>
+                      </div>
+                  </div>
+              </div>
           </div>
           <div class="relative w-full pr-0 md:pr-4">
               <div id="windChart"></div>
           </div>
       </div>
-
   </div>
 
+  {# Chart 2: Solar/Other Power (Purple Theme) WITH NEW MENU #}
+  {# ADDED ID: card-other-power-chart #}
+  <div id="card-other-power-chart" class="neon-card purple-theme rounded-xl p-2 md:p-6 animate-pop-in delay-600 relative">
+      <button onclick="toggleFullScreen('card-other-power-chart')" class="fullscreen-exit-btn bg-red-500/80 hover:bg-red-500 text-white px-3 py-1 rounded-md shadow-lg backdrop-blur-sm transition-all items-center gap-2 font-bold text-sm">
+         <i class="fas fa-times"></i> Close View
+      </button>
 
-      {# Chart 2: Solar/Other Power (Purple Theme) #}
-      <div class="neon-card purple-theme rounded-xl p-2 md:p-6 animate-pop-in delay-600 relative">
-        <div class="flex items-center justify-between mb-4 px-2">
-            <div class="w-6"></div>
-            <h2 class="text-slate-200 font-semibold text-sm md:text-xl tracking-wide flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
-                Other Power Forecast
-            </h2>
-            <button class="w-6 h-6 bg-white flex items-center justify-center rounded hover:bg-white-100 transition-all text-slate-400 hover:text-cyan-400 hover:rotate-90">
+    <div class="flex items-center justify-between mb-4 px-2">
+        <div class="w-6"></div>
+        <h1 class="text-slate-200 font-size-large text-sm md:text-xl tracking-wide flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+            Other Power Forecast
+        </h1>
+
+        <div class="relative inline-block text-left">
+            <button onclick="toggleMenu('other-options-menu')" class="w-6 h-6 bg-white flex items-center justify-center rounded hover:bg-white-100 transition-all text-slate-400 hover:text-cyan-400 cursor-pointer focus:outline-none hover:rotate-90">
                 <img src="{% static 'images/menu.png' %}" alt="Menu" class="w-5 h-5 object-contain">
             </button>
-        </div>
-        <div class="relative w-full pr-0 md:pr-4">
-            <div id="secondChart"></div>
-        </div>
-      </div>
 
-  {# --- ROW 3: FORECAST TABLES (UPDATED: h-auto to show full data) --- #}
+            <div id="other-options-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-[#1e293b] border border-slate-700 shadow-[0_0_15px_rgba(0,0,0,0.5)] ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                <div class="py-1">
+                    <button onclick="toggleFullScreen('card-other-power-chart'); toggleMenu('other-options-menu')" class="group flex w-full items-center px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-cyan-400 transition-colors">
+                        <i class="fas fa-expand w-5 text-center mr-2 text-slate-500 group-hover:text-cyan-400"></i> View Full Size
+                    </button>
+                    <button onclick="window.print(); toggleMenu('other-options-menu')" class="group flex w-full items-center px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-emerald-400 transition-colors">
+                        <i class="fas fa-print w-5 text-center mr-2 text-slate-500 group-hover:text-emerald-400"></i> Print Chart
+                    </button>
+                    <div class="border-t border-slate-700 my-1"></div>
+                    <button onclick="downloadChart('other', 'png'); toggleMenu('other-options-menu')" class="group flex w-full items-center px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-blue-400 transition-colors">
+                        <i class="fas fa-file-image w-5 text-center mr-2 text-slate-500 group-hover:text-blue-400"></i> Download PNG
+                    </button>
+                    <button onclick="downloadChart('other', 'svg'); toggleMenu('other-options-menu')" class="group flex w-full items-center px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-purple-400 transition-colors">
+                        <i class="fas fa-bezier-curve w-5 text-center mr-2 text-slate-500 group-hover:text-purple-400"></i> Download SVG
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="relative w-full pr-0 md:pr-4">
+        <div id="secondChart"></div>
+    </div>
+  </div>
+
+  {# --- ROW 3: FORECAST TABLES --- #}
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8 mt-10">
-
-    {# --- CARD 1: TAMIL NADU --- #}
     <div class="neon-card rounded-xl overflow-hidden flex flex-col h-auto animate-pop-in delay-100 group">
-      {# --- LOGO FIXED HEADER --- #}
       <div class="bg-[#0f172a] p-4 flex items-center gap-4 border-b border-slate-800 select-none">
          <div class="w-full h-14 shrink-0 flex items-center justify-center bg-slate-900 rounded-lg border border-slate-700">
             <img src="{% static 'images/logo.png' %}" alt="Logo" class="w-full h-full object-contain p-1">
          </div>
       </div>
-
-      {# Green Sub-Header #}
       <div class="bg-emerald-900/80 border-y border-emerald-500/30 py-1 text-center backdrop-blur-sm">
           <span class="text-emerald-100 font-bold text-xs uppercase tracking-wide">Tamil Nadu Wind Energy Forecast</span>
       </div>
-
-      {# Table Container - Removed overflow-auto and fixed height #}
       <div class="bg-[#0B1221]">
-        <table class="w-full border-collapse text-center">
-          <thead class="sticky top-0 z-10 bg-slate-800 text-slate-300 text-[10px] uppercase font-bold shadow-md">
-            <tr>
-              <th class="p-2 border border-slate-700 min-w-[50px]">Time</th>
-              {% for i in "12345678" %}<th class="p-2 border border-slate-700 min-w-[50px]">Date {{ i }}</th>{% endfor %}
-            </tr>
-          </thead>
-          <tbody class="text-[11px] text-slate-400 font-mono">
-             {% for i in "012345678901234567890123"|make_list %}
-             <tr class="hover:bg-slate-800/50 transition-colors">
-                 <td class="p-1 border border-slate-800 bg-slate-900/50 text-cyan-500 font-bold">{{ forloop.counter }}:00</td>
-                 {% for x in "12345678" %}<td class="p-1 border border-slate-800 hover:bg-cyan-900/20 cursor-crosshair transition-colors"></td>{% endfor %}
-             </tr>
-             {% endfor %}
-             <tr class="bg-slate-800 font-bold text-white sticky bottom-0 z-10">
-                 <td class="p-2 border border-slate-700">Total</td>
-                 <td class="p-2 border border-slate-700" colspan="8">--</td>
-             </tr>
-          </tbody>
-        </table>
+          <table class="w-full border-collapse text-center">
+            <thead class="sticky top-0 z-10 bg-slate-800 text-slate-300 text-[10px] uppercase font-bold shadow-md">
+              <tr>
+                <th class="p-2 border border-slate-700 min-w-[50px]">Time</th>
+                {% for i in "12345678" %}<th class="p-2 border border-slate-700 min-w-[50px]">Date {{ i }}</th>{% endfor %}
+              </tr>
+            </thead>
+            <tbody class="text-[11px] text-slate-400 font-mono">
+              {% for i in "012345678901234567890123"|make_list %}
+              <tr class="hover:bg-slate-800/50 transition-colors">
+                <td class="p-1 border border-slate-800 bg-slate-900/50 text-cyan-500 font-bold">{{ forloop.counter0|stringformat:"02d" }}:00</td>
+                {% for x in "12345678" %}<td class="p-1 border border-slate-800 hover:bg-cyan-900/20 cursor-crosshair transition-colors"></td>{% endfor %}
+              </tr>
+              {% endfor %}
+              <tr class="bg-slate-800 font-bold text-white sticky bottom-0 z-10">
+                <td class="p-2 border border-slate-700">Total</td>
+                <td class="p-2 border border-slate-700" colspan="8">--</td>
+              </tr>
+            </tbody>
+          </table>
       </div>
     </div>
 
-    {# --- CARD 2: MADURAI --- #}
     <div class="neon-card purple-theme rounded-xl overflow-hidden flex flex-col h-auto animate-pop-in delay-200 group">
-      {# --- LOGO FIXED HEADER --- #}
       <div class="bg-[#0f172a] p-4 flex items-center gap-4 border-b border-slate-800 select-none">
          <div class="w-full  h-14 shrink-0 flex items-center justify-center bg-slate-900 rounded-lg border border-slate-700">
             <img src="{% static 'images/logo.png' %}" alt="Logo" class="w-full h-full object-contain p-1">
          </div>
       </div>
-
-      {# Purple Sub-Header #}
       <div class="bg-purple-900/60 border-y border-purple-500/30 py-1 text-center backdrop-blur-sm">
           <span class="text-purple-100 font-bold text-xs uppercase tracking-wide">Madurai LDC Wind Forecast</span>
       </div>
-      {# Table Container - Removed overflow-auto and fixed height #}
       <div class="bg-[#0B1221]">
         <table class="w-full border-collapse text-center">
           <thead class="sticky top-0 z-10 bg-slate-800 text-slate-300 text-[10px] uppercase font-bold shadow-md">
@@ -287,7 +432,7 @@
           <tbody class="text-[11px] text-slate-400 font-mono">
              {% for i in "012345678901234567890123"|make_list %}
              <tr class="hover:bg-slate-800/50 transition-colors">
-                 <td class="p-1 border border-slate-800 bg-slate-900/50 text-purple-400 font-bold">{{ forloop.counter }}:00</td>
+                 <td class="p-1 border border-slate-800 bg-slate-900/50 text-purple-400 font-bold">{{ forloop.counter0|stringformat:"02d" }}:00</td>
                  {% for x in "12345678" %}<td class="p-1 border border-slate-800 hover:bg-purple-900/20 transition-colors"></td>{% endfor %}
              </tr>
              {% endfor %}
@@ -300,20 +445,15 @@
       </div>
     </div>
 
-    {# --- CARD 3: ERODE --- #}
     <div class="neon-card blue-theme rounded-xl overflow-hidden flex flex-col h-auto animate-pop-in delay-300 group">
-      {# --- LOGO FIXED HEADER --- #}
       <div class="bg-[#0f172a] p-4 flex items-center gap-4 border-b border-slate-800 select-none">
          <div class="w-full h-14 shrink-0 flex items-center justify-center bg-slate-900 rounded-lg border border-slate-700">
             <img src="{% static 'images/logo.png' %}" alt="Logo" class="w-full h-full object-contain p-1">
          </div>
       </div>
-
-      {# Blue Sub-Header #}
       <div class="bg-blue-900/60 border-y border-blue-500/30 py-1 text-center backdrop-blur-sm">
           <span class="text-blue-100 font-bold text-xs uppercase tracking-wide">Erode LDC Wind Forecast</span>
       </div>
-      {# Table Container - Removed overflow-auto and fixed height #}
       <div class="bg-[#0B1221]">
         <table class="w-full border-collapse text-center">
           <thead class="sticky top-0 z-10 bg-slate-800 text-slate-300 text-[10px] uppercase font-bold shadow-md">
@@ -325,7 +465,7 @@
           <tbody class="text-[11px] text-slate-400 font-mono">
              {% for i in "012345678901234567890123"|make_list %}
              <tr class="hover:bg-slate-800/50 transition-colors">
-                 <td class="p-1 border border-slate-800 bg-slate-900/50 text-blue-400 font-bold">{{ forloop.counter }}:00</td>
+                 <td class="p-1 border border-slate-800 bg-slate-900/50 text-blue-400 font-bold">{{ forloop.counter0|stringformat:"02d" }}:00</td>
                  {% for x in "12345678" %}<td class="p-1 border border-slate-800 hover:bg-blue-900/20 transition-colors"></td>{% endfor %}
              </tr>
              {% endfor %}
@@ -343,12 +483,70 @@
 </div>
 
 <script>
+    // --- 1. MENU TOGGLE FUNCTION ---
+    function toggleMenu(menuId) {
+        const menu = document.getElementById(menuId);
+        if (menu.classList.contains('hidden')) {
+            document.querySelectorAll('[id$="-options-menu"]').forEach(el => el.classList.add('hidden'));
+            menu.classList.remove('hidden');
+        } else {
+            menu.classList.add('hidden');
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const isButton = event.target.closest('button');
+        const isMenu = event.target.closest('[id$="-options-menu"]');
+        if (!isButton && !isMenu) {
+            document.querySelectorAll('[id$="-options-menu"]').forEach(el => el.classList.add('hidden'));
+        }
+    });
+
+    // --- 2. DOWNLOAD & PRINT FUNCTIONS ---
+    function downloadChart(chartName, type) {
+        let chart;
+        if (chartName === 'wind') chart = window.windChart;
+        if (chartName === 'other') chart = window.secondChart;
+
+        if (chart) {
+            if (type === 'png') chart.exports.exportToPng();
+            if (type === 'svg') chart.exports.exportToSVG();
+        }
+    }
+
+    // --- 3. REFRESH & FULLSCREEN FUNCTIONS ---
+    function triggerRefresh(cardId) {
+        const card = document.getElementById(cardId);
+        if (!card) return;
+        let overlay = card.querySelector('.refresh-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'refresh-overlay';
+            overlay.innerHTML = '<div class="spinner"></div>';
+            card.appendChild(overlay);
+            setTimeout(() => { overlay.classList.add('active'); }, 10);
+        } else return;
+
+        setTimeout(() => {
+            overlay.classList.remove('active');
+            setTimeout(() => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 300);
+        }, 1500);
+    }
+
+    function toggleFullScreen(cardId) {
+        const card = document.getElementById(cardId);
+        if (!card) return;
+        card.classList.toggle('fullscreen-active');
+
+        // Trigger resize for charts so they fill the new space
+        setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 100);
+    }
+
+    // --- 4. CHARTS INIT ---
     document.addEventListener('DOMContentLoaded', function () {
 
-        // --- 1. Main Chart 1 (Wind - Cyan) ---
         const dataValues = [430, 620, 560, 470, 680, 340, 300, 260, 280, 260, 250, 120, 130, 150, 140, 120, 120, 125, 130, 140, 160, 180, 220, 320];
 
-        // Shared Base Options
         const baseOptions = {
             chart: {
                 type: 'area',
@@ -356,15 +554,11 @@
                 toolbar: { show: false },
                 background: 'transparent',
                 fontFamily: 'ui-sans-serif, system-ui, sans-serif',
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                    animateGradually: { enabled: true, delay: 150 },
-                    dynamicAnimation: { enabled: true, speed: 350 }
-                }
+                animations: { enabled: true, easing: 'easeinout', speed: 800 },
+                dropShadow: { enabled: true, top: 0, left: 0, blur: 10, opacity: 0.5 }
             },
-            stroke: { curve: 'smooth', width: 3 },
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 4, lineCap: 'round' },
             xaxis: {
                 categories: Array.from({length: 24}, (_, i) => i + 1),
                 tooltip: { enabled: false },
@@ -376,103 +570,48 @@
                 min: 0, max: 800, tickAmount: 4,
                 labels: { style: { colors: '#64748b' } },
             },
-            grid: { borderColor: '#1e293b', strokeDashArray: 4, yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } } },
+            grid: {
+                borderColor: '#1e293b', strokeDashArray: 5,
+                yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } },
+                padding: { top: 0, right: 0, bottom: 0, left: 10 }
+            },
             tooltip: { theme: 'dark', style: { fontSize: '12px' }, x: { show: false }, marker: { show: true } },
             legend: { show: false }
         };
 
-        // Render Chart 1
         var options1 = {
             ...baseOptions,
             series: [{ name: 'Wind MW', data: dataValues }],
-            colors: ['#22d3ee'], // Cyan
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1, opacityFrom: 0.6, opacityTo: 0.0, stops: [0, 100],
-                    colorStops: [{ offset: 0, color: '#22d3ee', opacity: 0.5 }, { offset: 100, color: '#22d3ee', opacity: 0 }]
-                }
-            },
-            markers: { size: 0, colors: ['#0f172a'], strokeColors: '#22d3ee', strokeWidth: 2, hover: { size: 6 } },
+            colors: ['#22d3ee'],
+            chart: { ...baseOptions.chart, dropShadow: { enabled: true, top: 0, left: 0, blur: 15, color: '#22d3ee', opacity: 0.6 } },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, type: "vertical", opacityFrom: 0.8, opacityTo: 0.1, stops: [0, 100] } },
+            markers: { size: 0, colors: ['#fff'], strokeColors: '#22d3ee', strokeWidth: 3, hover: { size: 8, sizeOffset: 3 } },
         };
-        new ApexCharts(document.querySelector("#windChart"), options1).render();
 
+        window.windChart = new ApexCharts(document.querySelector("#windChart"), options1);
+        window.windChart.render();
 
-        // --- 2. Main Chart 2 (Multi-Value: Purple/Pink Theme) ---
-        // Define your data arrays
         const solarData = [100, 150, 200, 280, 450, 600, 750, 800, 780, 700, 600, 500, 400, 300, 200, 100, 50, 20, 10, 5, 0, 0, 0, 0];
         const hydroData = [300, 310, 305, 300, 290, 280, 400, 450, 500, 550, 520, 480, 460, 440, 420, 410, 400, 390, 380, 370, 360, 350, 340, 330];
         const windData = [500, 500, 600, 574, 575, 855, 852, 200, 100, 50, 966, 480, 460, 440, 420, 410, 400, 390, 380, 370, 360, 350, 340, 330];
 
         var options2 = {
-            // Include base options (animations, layout, etc.)
             ...baseOptions,
-
-            // --- 1. HERE IS WHERE YOU ADD MULTIPLE VALUES ---
-            series: [
-                {
-                    name: 'Solar MW',
-                    data: solarData
-                },
-                {
-                    name: 'Hydro MW',
-                    data: hydroData
-                },
-                {
-                    name:'Wind MW',
-                    data: windData
-                }
-            ],
-
-            // --- 2. ADD COLORS FOR EACH LINE ---
-            // Color 1: Purple (matches card), Color 2: Fuchsia/Pink (high contrast neon)
-            colors: ['#a855f7', '#d946ef'],
-
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.5,
-                    opacityTo: 0.05,
-                    stops: [0, 100],
-                    // Apply gradient to both colors automatically
-                }
-            },
-
-            // Customize markers to match their specific line colors
-            markers: {
-                size: 0,
-                colors: ['#0f172a'], // Dark center
-                strokeWidth: 2,
-                hover: { size: 6 }
-            },
-
-            // Optional: Customize legend if you want to see the names
-            legend: {
-                show: true,
-                position: 'top',
-                horizontalAlign: 'right',
-                labels: { colors: '#cbd5e1' }, // Light text
-                itemMargin: { horizontal: 10, vertical: 0 }
-            }
+            series: [{ name: 'Solar MW', data: solarData }, { name: 'Hydro MW', data: hydroData }, { name: 'Wind MW', data: windData }],
+            colors: ['#a855f7', '#d946ef', '#f472b6'],
+            chart: { ...baseOptions.chart, dropShadow: { enabled: true, top: 0, left: 0, blur: 12, color: '#d946ef', opacity: 0.5 } },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.6, opacityTo: 0.05, stops: [0, 95] } },
+            markers: { size: 0, colors: ['#fff'], strokeWidth: 2, hover: { size: 7 } },
+            legend: { show: true, position: 'top', horizontalAlign: 'right', labels: { colors: '#cbd5e1' }, itemMargin: { horizontal: 10, vertical: 0 }, markers: { radius: 12 } }
         };
+        // ASSIGN SECOND CHART TO WINDOW GLOBAL
+        window.secondChart = new ApexCharts(document.querySelector("#secondChart"), options2);
+        window.secondChart.render();
 
-        new ApexCharts(document.querySelector("#secondChart"), options2).render();
-
-
-        // --- 3. Sparklines (Existing) ---
-        const commonSpark = {
-            chart: { type: 'area', height: 35, width: 80, sparkline: { enabled: true }, animations: { enabled: true } },
-            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0, stops: [0, 100] } },
-            tooltip: { enabled: false }
-        };
-
-        // Wind (Cyan)
+        const commonSpark = { chart: { type: 'area', height: 35, width: 80, sparkline: { enabled: true }, animations: { enabled: true } }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0, stops: [0, 100] } }, tooltip: { enabled: false } };
         const windConf = { ...commonSpark, stroke: { curve: 'smooth', width: 2, colors: ['#22d3ee'] } };
-        // Power (Emerald)
-        const powerConf = { ...commonSpark, stroke: { curve: 'smooth', width: 2, colors: ['#34d399'] }, fill: { ...commonSpark.fill, gradient: { ...commonSpark.fill.gradient, colorStops: [{offset: 0, color:'#34d399', opacity:0.4}, {offset:100, color:'#34d399', opacity:0}] } } };
+        const powerConf = { ...commonSpark, stroke: { curve: 'smooth', width: 2, colors: ['#34d399'] }, fill: { ...commonSpark.fill, gradient: { ...commonSpark.fill.gradient, colorStops: [{offset: 0, color:'#34d399', opacity:0.5}, {offset:100, color:'#34d399', opacity:0}] } } };
 
-        // Render dummy sparklines
         new ApexCharts(document.querySelector("#wind-spark-1"), { ...windConf, series: [{ data: [5, 8, 6, 9, 7, 8, 6] }] }).render();
         new ApexCharts(document.querySelector("#power-spark-1"), { ...powerConf, series: [{ data: [500, 520, 550, 580, 560, 585, 590] }] }).render();
         new ApexCharts(document.querySelector("#wind-spark-2"), { ...windConf, series: [{ data: [2, 3, 4, 3, 4, 5, 4] }] }).render();
@@ -484,24 +623,11 @@
         new ApexCharts(document.querySelector("#wind-spark-5"), { ...windConf, series: [{ data: [2, 3, 2, 4, 3, 5, 4] }] }).render();
         new ApexCharts(document.querySelector("#power-spark-5"), { ...powerConf, series: [{ data: [80, 85, 90, 88, 92, 95, 98] }] }).render();
 
-        // --- 4. Tooltip CSS ---
         const style = document.createElement('style');
         style.innerHTML = `
-            .apexcharts-tooltip {
-                background: #0f172a !important;
-                border: 1px solid #334155 !important;
-                box-shadow: 0 0 15px rgba(0, 0, 0, 0.5) !important;
-                color: #fff;
-                border-radius: 8px !important;
-            }
-            .apexcharts-tooltip-title {
-                background: #1e293b !important;
-                border-bottom: 1px solid #334155 !important;
-                font-family: ui-sans-serif, system-ui !important;
-            }
-            .apexcharts-tooltip-text-value, .apexcharts-tooltip-text-z-value {
-                font-weight: bold;
-            }
+            .apexcharts-tooltip { background: rgba(15, 23, 42, 0.9) !important; backdrop-filter: blur(10px); border: 1px solid rgba(34, 211, 238, 0.3) !important; box-shadow: 0 0 20px rgba(34, 211, 238, 0.2) !important; color: #fff; border-radius: 8px !important; }
+            .apexcharts-tooltip-title { background: rgba(30, 41, 59, 0.8) !important; border-bottom: 1px solid rgba(34, 211, 238, 0.2) !important; font-family: ui-sans-serif, system-ui !important; }
+            .apexcharts-tooltip-text-value, .apexcharts-tooltip-text-z-value { font-weight: bold; color: #22d3ee; }
         `;
         document.head.appendChild(style);
     });

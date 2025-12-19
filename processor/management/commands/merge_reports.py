@@ -132,6 +132,7 @@ class Command(BaseCommand):
         merged_data = {}
 
         for region, report_dir in report_dirs.items():
+            print(f"Merging {region}...")
             region_data = None
             try:
                 # UPDATED LOGIC: Find the latest subdirectory for the target date
@@ -143,6 +144,7 @@ class Command(BaseCommand):
                 if subdirs_for_date:
                     # Sort to get the latest directory (e.g., ..._09-31-20 is newer than ..._09-30-26)
                     latest_subdir_name = sorted(subdirs_for_date)[-1]
+                    print(latest_subdir_name,"1234567")
                     full_subdir = os.path.join(report_dir, latest_subdir_name)
                     
                     # Find the JSON file inside the latest subdirectory
@@ -152,18 +154,34 @@ class Command(BaseCommand):
                         json_file_name = json_files[0] # Assume only one JSON per folder
                         try:
                             with open(json_file_name, 'r', encoding='utf-8') as f:
-                                data = json
-                            
+                                try:
+                                    data = json.load(f)
+                                except json.JSONDecodeError as jde:
+                                    self.stdout.write(self.style.ERROR(f"Invalid JSON in {json_file_name} for {region}: {jde}, using empty template."))
+                                    region_data = empty_templates.get(region, {})
+                                    continue
+
+                            # Ensure we have a dict before attempting .get
+                            if not isinstance(data, dict):
+                                self.stdout.write(self.style.WARNING(f"Unexpected JSON structure in {json_file_name} for {region}, expected object, using empty template."))
+                                region_data = empty_templates.get(region, {})
+                                continue
+
                             inner_data = data.get(region, data)
+                            if not isinstance(inner_data, dict):
+                                self.stdout.write(self.style.WARNING(f"Unexpected inner JSON for {region} in {json_file_name}, using empty template."))
+                                region_data = empty_templates.get(region, {})
+                                continue
+
                             restructured_data = {'date': report_date, **inner_data} # Use report_date
-                            
+
                             # Validate against template
                             template = empty_templates.get(region, {})
                             for table_key, template_value in template.items():
                                 if table_key != 'date' and (not restructured_data.get(table_key) or not any(restructured_data.get(table_key))):
                                     self.stdout.write(self.style.WARNING(f"⚠️ Missing or empty table '{table_key}' for {region}, applying empty template."))
                                     restructured_data[table_key] = template_value
-                            
+
                             region_data = restructured_data
                             self.stdout.write(self.style.SUCCESS(f"✅ Merged data for {region} from {json_file_name}"))
 

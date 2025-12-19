@@ -1,29 +1,49 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- your head, tailwind CDN or compiled css etc. -->
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>{% block title %}My App{% endblock %}</title>
+
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body class="bg-gray-50">
 
+<body class="bg-gray-50 overflow-x-hidden">
+
+  <!-- NAVBAR -->
   {% include 'partials/navbar.html' %}
 
+  <!-- SIDEBAR (hidden on mobile, overlay on desktop) -->
   {% include 'partials/sidebar.html' %}
 
-  <!-- MAIN: no left margin required (sidebar overlays top only) -->
-  <main class="main-content min-h-screen">
-    <div class="pt-20">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        {% block content %}{% endblock %}
-      </div>
+  <!-- MAIN CONTENT -->
+  <main
+    class="
+      min-h-screen
+      pt-16
+      md:pt-20
+      transition-all
+      duration-300
+    "
+  >
+    <div
+      class="
+        max-w-screen-2xl
+        mx-auto
+        px-3
+        sm:px-4
+        md:px-6
+        lg:px-8
+      "
+    >
+      {% block content %}{% endblock %}
     </div>
   </main>
 
 </body>
-
 </html>
