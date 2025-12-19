@@ -1,48 +1,73 @@
 {% load static %}
-<nav class="fixed top-0 left-0 w-full bg-transparent text-white shadow z-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center h-16">
-      <div class="flex items-center gap-3">
+<nav class="fixed top-0 left-0 w-full bg-white text-white shadow z-20">
+  <div class="max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+
+    <div class="flex items-center h-14 sm:h-16">
+
+      <!-- LOGO -->
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
         <a href="#" class="inline-flex items-center">
-          <img src="{% static 'images/logo.png' %}" alt="logo" class="h-14 w-auto object-contain rounded">
+          <img
+            src="{% static 'images/logo.png' %}"
+            alt="logo"
+            class="h-10 sm:h-12 md:h-14 w-auto object-contain rounded"
+          >
         </a>
       </div>
 
-<!--      <div class="hidden md:flex items-center ms-6">-->
-<!--        {% if selected_state %}-->
-<!--          <div class="hidden lg:flex items-center bg-white/10 text-white px-3 py-1 rounded-md text-sm font-medium gap-2">-->
-<!--            <span>Selected state:</span>-->
-<!--            <span class="px-2 py-0.5 bg-white/20 rounded text-xs">{{ selected_state }}</span>-->
-<!--          </div>-->
-<!--        {% elif request.session.selected_state %}-->
-<!--          <div class="hidden lg:flex items-center bg-white/10 text-white px-3 py-1 rounded-md text-sm font-medium gap-2">-->
-<!--            <span>Selected state:</span>-->
-<!--            <span class="px-2 py-0.5 bg-white/20 rounded text-xs">{{ request.session.selected_state }}</span>-->
-<!--          </div>-->
-<!--        {% endif %}-->
-<!--      </div>-->
+      <!-- RIGHT SIDE -->
+      <div class="ml-auto flex items-center gap-2 sm:gap-3 md:gap-4">
 
-      <div class="ml-auto flex items-center gap-4">
-        <div class="hidden sm:block text-sm text-gray-800">
+        <!-- USER NAME -->
+        <div class="hidden sm:block text-xs sm:text-sm text-gray-800 whitespace-nowrap">
           {{ user.get_full_name|default:user.username }}
         </div>
 
+        <!-- SELECTED STATE -->
         {% if selected_state %}
           <div class="flex items-center gap-2">
-            <a href="{% url 'dashboard:dashboard' %}" class="text-xs px-2 py-1 rounded bg-yellow-400 text-black font-semibold">{{ selected_state }}</a>
+            <a
+              href="{% url 'dashboard:dashboard' %}"
+              class="text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded bg-yellow-400 text-black font-semibold whitespace-nowrap"
+            >
+              {{ selected_state }}
+            </a>
           </div>
         {% elif request.session.selected_state %}
           <div class="flex items-center gap-2">
-            <a href="{% url 'dashboard:dashboard' %}" class="text-xs px-2 py-1 rounded bg-yellow-400 text-black font-semibold">{{ request.session.selected_state }}</a>
+            <a
+              href="{% url 'dashboard:dashboard' %}"
+              class="text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded bg-yellow-400 text-black font-semibold whitespace-nowrap"
+            >
+              {{ request.session.selected_state }}
+            </a>
           </div>
         {% endif %}
 
+        <!-- LOGOUT -->
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}
-          <button type="submit" class="inline-flex items-center px-3 py-1 rounded-md bg-red-500 hover:bg-red-600 text-white text-sm">Logout</button>
+          <button
+            type="submit"
+            class="
+              inline-flex items-center
+              px-2 sm:px-3
+              py-0.5 sm:py-1
+              rounded-md
+              bg-red-500 hover:bg-red-600
+              text-white
+              text-xs sm:text-sm
+              whitespace-nowrap
+            "
+          >
+            Logout
+          </button>
         </form>
+
       </div>
     </div>
   </div>
 </nav>
-<div class="h-16" aria-hidden="true"></div>
+
+<!-- Spacer for fixed navbar -->
+<div class="h-14 sm:h-16" aria-hidden="true"></div>
