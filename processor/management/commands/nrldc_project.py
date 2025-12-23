@@ -7,6 +7,30 @@ import logging
 from django.core.management.base import BaseCommand, CommandError
 from processor.models import Nrldc2AData, Nrldc2CData
 from tabula.io import read_pdf
+import ssl
+from requests.adapters import HTTPAdapter
+from urllib3.util.ssl_ import create_urllib3_context
+from urllib3.poolmanager import PoolManager
+
+
+class LegacySSLAdapter(HTTPAdapter):
+    def init_poolmanager(self, connections, maxsize, block=False):
+        ctx = create_urllib3_context()
+        ctx.load_default_certs()
+        # Enable "Legacy Server Connect" (0x4) to allow unsafe renegotiation
+        ctx.options |= 0x4
+        # (Optional) Lower security level to allow older ciphers often used by gov sites
+        try:
+            ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+        except Exception:
+            pass
+
+        self.poolmanager = PoolManager(
+            num_pools=connections,
+            maxsize=maxsize,
+            block=block,
+            ssl_context=ctx
+        )
 
 
 class Command(BaseCommand):
@@ -358,7 +382,7 @@ class Command(BaseCommand):
         # If dashboard passes --date, parse and use it. Otherwise, use today.
         raw_date = options.get('date')
         try:
-            target_date = self.parse_date_string(raw_date) if raw_date else datetime.date.today()
+            target_date = self.parse_date_string(raw_date) if raw_date else datetime.date.today()-datetime.timedelta(days=1)
         except ValueError as e:
             raise CommandError(str(e))
 
@@ -383,9 +407,12 @@ class Command(BaseCommand):
             "Referer": "https://nrldc.in/reports/daily-psp",
         }
 
+        session = requests.Session()
+        session.mount('https://', LegacySSLAdapter())
+
         self.write(f"🌐 Fetching NRDC report metadata for {today_str_for_query}...")
         try:
-            response = requests.get(url, headers=headers)
+            response = session.get(url, headers=headers)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             raise CommandError(f"❌ Error fetching NRDC metadata: {e}")
@@ -420,7 +447,7 @@ class Command(BaseCommand):
         self.write(f"⬇️ Attempting to download PDF to: {pdf_path}")
 
         try:
-            pdf_response = requests.get(download_url, headers=headers, timeout=60)
+            pdf_response = session.get(download_url, headers=headers, timeout=60)
             pdf_response.raise_for_status()
             with open(pdf_path, "wb") as f:
                 f.write(pdf_response.content)
