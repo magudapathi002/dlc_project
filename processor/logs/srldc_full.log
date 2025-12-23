@@ -320,3 +320,1055 @@
 2025-12-19 15:07:12,420 - INFO - Reporting DATETIME (3B extraction): 2025-12-19 19:00
 2025-12-19 15:07:15,579 - WARNING - 3B old-pattern returned no data; trying new row-scanner pattern...
 2025-12-19 15:07:18,327 - INFO - 3B Central Rows: 17; JV Rows: 4
+2025-12-22 10:39:35,258 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-20_10-39-35
+2025-12-22 10:39:35,258 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/19-12-2025-psp.pdf
+2025-12-22 10:39:36,128 - INFO - ✅ Successfully downloaded: srldc_20122025.pdf to downloads\SRLDC\report_2025-12-20_10-39-35
+2025-12-22 10:39:36,130 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 10:39:38,456 - INFO - ✅ Tabula found 8 tables.
+2025-12-22 10:39:38,476 - INFO - Renamed columns (2A): ['state', 'thermal', 'hydro', 'gas_naptha_diesel', 'wind', 'solar', 'others', 'net_sch', 'drawal', 'ui', 'availability', 'demand_met', 'shortage']
+2025-12-22 10:39:38,791 - INFO - --- RAW DataFrame for Table 2(C) before renaming ---
+2025-12-22 10:39:38,832 - INFO -     State Maximum Demand Met of the day      Time Shortage during maximum demand Requirement at maximum demand  ... Demand Met at maximum Requirement Min Demand Met Time.2    ACE_MAX Time.3
+3      AP                        10,979     09:18                              0                        10,979  ...                            10,979          581.3  18:05    -480.14  12:33
+4     KAR                        16,749     10:00                              0                        16,749  ...                            16,749         740.95  16:32  -1,145.91  09:05
+5     KER                         4,238     18:30                              0                         4,238  ...                             4,238         195.35  19:47    -677.67  18:28
+6   PONDY                           414     08:00                              0                           414  ...                               414          44.92  18:29     -34.96  07:47
+7      TN                        16,766     16:30                              0                        16,766  ...                            16,766         989.71  15:31    -771.08  08:01
+8      TG                        14,181     07:58                              0                        14,181  ...                            14,181         857.94  16:50    -745.13  17:01
+9  Region                        59,821  09:30:07                              0                        59,821  ...                            59,821        2,668.2  06:32  -1,518.84  17:52
+
+[7 rows x 13 columns]
+2025-12-22 10:39:38,833 - INFO - Columns present in Table 2C after renaming: ['state', 'max_demand', 'time', 'shortage_max_demand', 'req_max_demand', 'max_req_day', 'time_max_req', 'shortage_max_req', 'demand_max_req', 'ace_min', 'time_ace_min', 'ace_max', 'time_ace_max']
+2025-12-22 10:39:38,993 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 10:39:39,618 - INFO - Report DATE (3B extraction): 2025-12-19
+2025-12-22 10:39:39,618 - INFO - Reporting DATETIME (3B extraction): 2025-12-20 19:00
+2025-12-22 10:39:43,507 - WARNING - 3B old-pattern returned no data; trying new row-scanner pattern...
+2025-12-22 10:39:46,754 - INFO - 3B Central Rows: 17; JV Rows: 4
+2025-12-22 10:41:09,546 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_10-41-09
+2025-12-22 10:41:09,547 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 10:41:10,553 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_10-41-09
+2025-12-22 10:41:10,554 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 10:41:13,690 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 10:41:13,908 - WARNING - ⚠️ Start marker '.*2\s*\(A\)State['’]?s\s*Load\s*Deails\s*\(At\s*State\s*Periphery\)\s*in\s*MUs.*' not found for Table 2(A).
+2025-12-22 10:41:13,908 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 10:41:14,081 - WARNING - ⚠️ Start marker '2\s*\(C\)\s*State's\s*Demand\s*Met\s*in\s*MWs.*' not found for Table 2(C).
+2025-12-22 10:41:14,081 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 10:41:14,081 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 10:41:14,411 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 10:41:14,412 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 10:41:17,217 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 10:41:17,221 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 12:16:20,489 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_12-16-20
+2025-12-22 12:16:20,489 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 12:16:23,294 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_12-16-20
+2025-12-22 12:16:23,296 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 12:16:26,796 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 12:16:27,068 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*A\s*\)\s*State['’]?\s*Load\s*Deails\s*\(\s*At\s*State\s*Periphery\s*\)\s*in\s*MUs\s*:?\s*$' not found for Table 2(A).
+2025-12-22 12:16:27,068 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 12:16:27,249 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 12:16:27,249 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 12:16:27,250 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 12:16:27,595 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 12:16:27,595 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 12:16:30,489 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 12:16:30,493 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 12:36:34,464 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_12-36-34
+2025-12-22 12:36:34,465 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 12:36:35,514 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_12-36-34
+2025-12-22 12:36:35,518 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 12:36:38,792 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 12:36:39,037 - WARNING - ⚠️ Start marker '.*2\s*\(\s*A\s*\)\s*State['’]?s\s*Load\s*Deails\s*\(\s*At\s*State\s*Periphery\s*\)\s*in\s*MUs.*' not found for Table 2(A).
+2025-12-22 12:36:39,037 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 12:36:39,208 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 12:36:39,209 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 12:36:39,209 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 12:36:39,549 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 12:36:39,549 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 12:36:42,390 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 12:36:42,395 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 12:38:37,319 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_12-38-37
+2025-12-22 12:38:37,320 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 12:38:38,294 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_12-38-37
+2025-12-22 12:38:38,297 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 12:38:41,709 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 12:38:41,940 - WARNING - ⚠️ Start marker '.*2\s*\(\s*A\s*\)\s*State['’]?s\s*Load\s*Deails\s*\(\s*At\s*State\s*Periphery\s*\)\s*in\s*MUs*' not found for Table 2(A).
+2025-12-22 12:38:41,941 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 12:38:42,123 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 12:38:42,123 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 12:38:42,123 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 12:38:42,464 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 12:38:42,464 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 12:38:45,305 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 12:38:45,310 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 14:03:35,944 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_14-03-35
+2025-12-22 14:03:35,944 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 14:03:39,315 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_14-03-35
+2025-12-22 14:03:39,317 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 14:03:43,303 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 14:03:43,541 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*A\s*\)\s*State['’]?s\s*Load\s*Deails\s*\(\s*At\s*State\s*Periphery\s*\)\s*in\s*MUs\s*:\s*$' not found for Table 2(A).
+2025-12-22 14:03:43,541 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 14:03:43,731 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 14:03:43,731 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 14:03:43,731 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 14:03:44,080 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 14:03:44,080 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 14:03:46,878 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 14:03:46,882 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 14:08:20,451 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_14-08-20
+2025-12-22 14:08:20,451 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 14:08:24,775 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_14-08-20
+2025-12-22 14:08:24,780 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 14:08:27,816 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 14:08:28,030 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*A\s*\)\s*State['’]?s\s*Load\s*Deails\s*\(\s*At\s*State\s*Periphery\s*\)\s*in\s*MUs\s*:?\s*$' not found for Table 2(A).
+2025-12-22 14:08:28,030 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 14:08:28,203 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 14:08:28,203 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 14:08:28,204 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 14:08:28,541 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 14:08:28,541 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 14:08:31,348 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 14:08:31,353 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 14:21:28,381 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_14-21-28
+2025-12-22 14:21:28,381 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 14:21:29,256 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_14-21-28
+2025-12-22 14:21:29,257 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 14:21:32,308 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 14:21:32,523 - WARNING - ⚠️ Start marker '2\s*\(\s*A\s*\).*State['’]?\s*Load\s*Dea\w*.*State\s*Periphery.*MUs' not found for Table 2(A).
+2025-12-22 14:21:32,523 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 14:21:32,700 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 14:21:32,701 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 14:21:32,701 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 14:21:33,034 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 14:21:33,035 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 14:21:35,818 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 14:21:35,822 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 14:23:33,060 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_14-23-33
+2025-12-22 14:23:33,060 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 14:23:34,177 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_14-23-33
+2025-12-22 14:23:34,178 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 14:23:37,279 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 14:23:37,507 - WARNING - ⚠️ Start marker '\b2\s*\(\s*A\s*\)\b' not found for Table 2(A).
+2025-12-22 14:23:37,507 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 14:23:37,689 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 14:23:37,689 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 14:23:37,689 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 14:23:38,022 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 14:23:38,022 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 14:23:40,858 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 14:23:40,863 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 14:24:35,567 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_14-24-35
+2025-12-22 14:24:35,567 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 14:24:36,870 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_14-24-35
+2025-12-22 14:24:36,871 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 14:24:40,086 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 14:24:40,299 - WARNING - ⚠️ Start marker '\b2\s*\(?\s*A\s*\)?\b' not found for Table 2(A).
+2025-12-22 14:24:40,299 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 14:24:40,500 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 14:24:40,501 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 14:24:40,501 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 14:24:40,828 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 14:24:40,828 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 14:24:43,624 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 14:24:43,628 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 14:27:20,995 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_14-27-20
+2025-12-22 14:27:20,995 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 14:27:21,910 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_14-27-20
+2025-12-22 14:27:21,912 - INFO - 🧪 DEBUG: Extracting PDF page text (first 2 pages)...
+2025-12-22 14:27:22,338 - INFO - 
+----- PAGE 1 TEXT START -----
+2025-12-22 14:27:22,340 - INFO - ग्रिड कंट्रोलर ऑफ इंग्रडया ग्रलग्रिटडे
+GRID CONTROLLER OF INDIA LIMITED
+क्षत्रे ीय लोड प्रषे ण केन्द्र
+SOUTHERN REGIONAL LOAD DESPATCH CENTER Date of Reporting: 21-Dec-2025
+Power Supply Position Report For
+20-Dec-2025
+1. Regional Availability/Demand:
+Evening Peak (19:00) MW Off-Peak (03:00) MW Day Energy (Net MU)
+Demand Met Shortage Requirement Freq (Hz) Demand Met Shortage Requirement Freq (Hz) Demand Met Shortage #
+48704 250 48954 50.08 37807 0 37807 50.04 1157.89 0.75
+2(A) State's Load Deails (At State Periphery) in MUs:
+State's Control Area Generation (Net MU) Net SCH Drawal UI Availability Demand Met Shortage #
+State GAS/DIESEL
+THERMAL HYDRO WIND SOLAR OTHERS (Net Mu) (Net Mu) (Net Mu) (Net Mu) (Net Mu) (Net Mu)
+/NAPTHA
+Andhra Pradesh 136.76 4.6 0 4.38 16.08 3.39 45.74 43.58 -2.16 210.95 208.79 0
+Karnataka 53.08 41.87 0 15.82 33.61 15.07 127.32 128.61 1.29 286.77 288.06 0
+Kerala 0 22.49 0 0.23 1.45 0.24 51.93 52.26 0.33 76.34 76.67 0.75
+Puducherry 0 0 0.56 0 0.05 0 8.29 8.11 -0.18 8.9 8.72 0
+Tamil Nadu 68.49 14.04 3.17 11.72 45.7 5.21 181.96 181.33 -0.63 330.29 329.66 0
+Telangana 96.55 8.66 0 0.33 23.24 5.71 111.04 111.5 0.46 245.53 245.99 0
+Region 354.88 91.66 3.73 32.48 120.13 29.62 526.28 525.39 -0.89 1158.78 1157.89 0.75
+2(B) State's Demand Met in MWs and day energy forecast and deviation particulars
+Average
+Evening Peak (19:00) MW Off-Peak (03:00) MW Day Energy (Net MU)
+State Demand
+Demand Met Shortage Requirement Demand Met Shortage Requirement (MW) Forecast (LGBR) Deviation [Forecast - Consumption]
+Andhra Pradesh 8677 0 8677 6792 0 6792 8597 210 -1.21
+Karnataka 10894 0 10894 8691 0 8691 11989 294.6 -6.54
+Kerala 4187 250 4437 2759 0 2759 3127 83.82 -7.15
+Puducherry 401 0 401 296 0 296 345 9.2 -0.48
+Tamil Nadu 16305 0 16305 11140 0 11140 14026 343 -13.34
+Telangana 8240 0 8240 8129 0 8129 10577 242 3.99
+Region 48704 250 48954 37807 0 37807 48661 1182.62 -24.73
+2(C) State's Demand Met in MWs ( maximum demand met and Maximum requirement of the day details)
+Maximum Demand, corresponding shortage and Maximum requirement, corresponding shortage and
+ACE
+requirement details for the day demand details for the day
+State Requirement Demand Met Shortage at
+Maximum Shortage at Maximum Maximum Minimum
+Time at the max at maximum Time maximum Time Time
+Demand Met maximum demand Requirement ACE(MW) ACE(MW)
+demand met requiremnet Requirement
+Andhra Pradesh 10871 09:14 0 10871 10871 09:14 0 10871 661.26 06:02 -690.86 14:40
+Karnataka 16431 10:00 0 16431 16431 10:00 0 16431 706.26 10:03 -748.18 16:00
+Kerala 4187 19:00 250 4437 4187 19:00 250 4437 330.67 19:47 -705.58 18:30
+Puducherry 411 18:15 0 411 411 18:15 0 411 51.82 08:42 -27.7 17:59
+Tamil Nadu 16305 19:00 0 16305 16305 19:00 0 16305 1459.54 15:31 -1247.96 07:46
+Telangana 13990 07:53 0 13990 13990 07:53 0 13990 1022.63 08:46 -709.21 17:16
+Region 58271 09:39 0 58271 58271 09:39 0 58271 2968.92 06:16 -3541.47 17:54
+3(A) State Entities Generation:
+ANDHRA PRADESH
+Inst. Min Generation (06:00
+19:00 03:00 Day
+2025-12-22 14:27:22,340 - INFO - ----- PAGE 1 TEXT END -----
+
+2025-12-22 14:27:22,588 - INFO - 
+----- PAGE 2 TEXT START -----
+2025-12-22 14:27:22,589 - INFO - HAMPI ( 4*9 ) 36 40 40 40 00:00 40 06:00 0.45 0.45 19
+LOWER SILERU ( 4*115 ) 460 0 0 0 00:00 0 06:00 0 0 0
+SRISAILAM RBPH ( 7*110 ) 770 0 0 0 00:00 0 06:00 0 0 0
+UPPER SILERU ( 4*60 ) 240 1 1 164 07:07 0 10:27 0.68 0.68 28
+OTHER HYDEL 431 130 150 206 20:08 99 12:36 3.47 3.46 144
+Total Hydro 1937 171 191 - - - - 4.6 4.59 191
+GAUTAMI CCPP ( 2*145 + 174 ) 464 0 0 0 00:00 0 06:00 0 0 0
+GMR (BARG) (1 * 237) 237 0 0 0 00:00 0 06:00 0 0 0
+JEGURUPADU (GAS) ( 2*45.8 + 49.9 + 75.5 ) 217 0 0 0 00:00 0 06:00 0 0 0
+Jegrupadu Ext. (1 * 220) 220 0 0 0 00:00 0 06:00 0 0 0
+KONASEEMA CCPP ( 145 + 140 + 165 ) 450 0 0 0 00:00 0 06:00 0 0 0
+LANCO (GAS) ( 2*115 + 121 ) 351 0 0 0 00:00 0 06:00 0 0 0
+RELIANCE ENERGY LTD. (GAS) ( 140 + 80 ) 220 0 0 0 00:00 0 06:00 0 0 0
+SPECTRUM (GAS) ( 46.8 + 2*46.1 + 68.8 ) 208 0 0 0 00:00 0 06:00 0 0 0
+VEMAGIRI POWER GENERATION LTD.(GAS) ( 233 + 137
+370 0 0 0 00:00 0 06:00 0 0 0
+)
+VIJJESWARAM GTS ( 2*33 + 34 + 112.5 + 59.5 ) 272 0 0 0 00:00 0 06:00 0 0 0
+OTHER GAS/NAPTHA/DIESEL 27 0 0 0 00:00 0 06:00 0 0 0
+Total Gas 3036 0 0 - - - - 0 0 0
+WIND 4084 525 7 578 19:29 10 09:23 4.38 4.38 183
+SOLAR 3356 0 0 2362 12:16 0 06:02 16.08 16.08 670
+OTHERS 619 117 114 138 11:52 103 08:23 3.39 3.39 141
+Total ANDHRA PRADESH 21342 7012 5413 - - - - 175.1 165.2 6883
+TELANGANA
+Inst. Min Generation (06:00
+19:00 03:00 Day Peak Day Energy Avg
+Station/Constituents Capacity to 18:00)
+Off Peak
+(MW) Peak MW (MW) Hrs (MW) Hrs Gross (MU) Net (MU) (MW)
+MW
+BHADRADRI TPS ( 4*270 ) 1080 599 426 688 07:57 420 13:05 14.3 12.86 536
+KAKATIYA ST1&ST2 ( 500 + 600 ) 1100 1047 667 1075 16:42 941 13:59 22.98 21.92 913
+KOTHAGUDEM TPS ( 2*250 + 500 + 800 ) 1800 1090 748 1200 09:47 735 13:11 25 23.43 976
+RAMAGUNDAM-B ( 1*62.5 ) 63 0 0 0 00:00 0 06:00 0 0 0
+SINGARENI TPS ( 2*600 ) 1200 1194 686 1220 17:10 1017 13:58 26 24.54 1023
+YADADRI ( 2*800 ) 1600 535 784 954 08:10 358 12:27 15.36 13.8 575
+Total Thermal 6843 4465 3311 - - - - 103.64 96.55 4023
+NAGARJUNA SAGAR ( 110 + 7*100.8 ) 816 712 0 713 18:20 0 08:56 3.92 3.9 162
+NAGARJUNA SAGAR (Pump) ( 110 + 7*100.8 ) 816 0 418 423 00:16 0 06:00 0 -5.47 -228
+SRISAILAM LBPH ( 6*150 ) 900 593 0 630 18:16 0 06:00 3.86 3.83 160
+SRISAILAM LBPH(Pump) ( 6*150 ) 900 0 353 359 16:24 0 06:00 0 -4.72 -197
+OTHER HYDEL 957 37 809 813 00:55 0 16:55 0.94 0.93 39
+Total Hydro 2673 1342 809 - - - - 8.72 8.66 361
+WIND 128 29 1 39 19:20 0 06:00 0.33 0.33 14
+SOLAR 3818 0 0 2772 12:03 6 06:43 23.24 23.24 968
+OTHERS 252 238 238 238 00:00 238 06:00 5.71 5.71 238
+Total TELANGANA 13714 6074 4359 - - - - 141.64 134.49 5604
+KARNATAKA
+Inst. Min Generation (06:00
+19:00 03:00 Day Peak Day Energy Avg
+Station/Constituents Capacity to 18:00)
+Off Peak
+(MW) Peak MW (MW) Hrs (MW) Hrs Gross (MU) Net (MU) (MW)
+MW
+Bellary TPS ( 2*500 + 700 ) 1700 285 365 463 15:36 270 17:18 9.33 8.42 351
+JINDAL ( 2*130 + 4*300 ) 1460 1047 1040 1069 06:11 667 11:34 24.29 22.41 934
+Jindal (Excl. Captive Consumption) (2 * 130 + 4 * 300) 1460 96 19 214 22:45 0 06:31 0.62 0.62 26
+Raichur TPS ( 7
+2025-12-22 14:27:22,589 - INFO - ----- PAGE 2 TEXT END -----
+
+2025-12-22 14:27:22,590 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 14:27:25,534 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 14:27:25,547 - INFO - 🧪 DEBUG: Scanning Tabula cells for section markers...
+2025-12-22 14:27:25,547 - INFO - TABULA ROW 2: 48704 | 250 | 48954 | 50.08 | 37807 | 0 | 37807 | 50.04 | 1157.89 | 0.75
+2025-12-22 14:27:25,548 - INFO - TABULA ROW 5: Andhra Pradesh | 136.76 | 4.6 | 0 | 4.38 | 16.08 | 3.39 | 45.74 | 43.58 | -2.16 | 210.95 | 208.79 | 0
+2025-12-22 14:27:25,548 - INFO - TABULA ROW 6: Karnataka | 53.08 | 41.87 | 0 | 15.82 | 33.61 | 15.07 | 127.32 | 128.61 | 1.29 | 286.77 | 288.06 | 0
+2025-12-22 14:27:25,548 - INFO - TABULA ROW 7: Kerala | 0 | 22.49 | 0 | 0.23 | 1.45 | 0.24 | 51.93 | 52.26 | 0.33 | 76.34 | 76.67 | 0.75
+2025-12-22 14:27:25,548 - INFO - TABULA ROW 8: Puducherry | 0 | 0 | 0.56 | 0 | 0.05 | 0 | 8.29 | 8.11 | -0.18 | 8.9 | 8.72 | 0
+2025-12-22 14:27:25,549 - INFO - TABULA ROW 9: Tamil Nadu | 68.49 | 14.04 | 3.17 | 11.72 | 45.7 | 5.21 | 181.96 | 181.33 | -0.63 | 330.29 | 329.66 | 0
+2025-12-22 14:27:25,549 - INFO - TABULA ROW 10: Telangana | 96.55 | 8.66 | 0 | 0.33 | 23.24 | 5.71 | 111.04 | 111.5 | 0.46 | 245.53 | 245.99 | 0
+2025-12-22 14:27:25,549 - INFO - TABULA ROW 11: Region | 354.88 | 91.66 | 3.73 | 32.48 | 120.13 | 29.62 | 526.28 | 525.39 | -0.89 | 1158.78 | 1157.89 | 0.75
+2025-12-22 14:27:25,549 - INFO - TABULA ROW 14: Andhra Pradesh | 8677 | 0 | 8677 | 6792 | 0 | 6792 | 8597 | 210 | -1.21
+2025-12-22 14:27:25,550 - INFO - TABULA ROW 15: Karnataka | 10894 | 0 | 10894 | 8691 | 0 | 8691 | 11989 | 294.6 | -6.54
+2025-12-22 14:27:25,550 - INFO - TABULA ROW 16: Kerala | 4187 | 250 | 4437 | 2759 | 0 | 2759 | 3127 | 83.82 | -7.15
+2025-12-22 14:27:25,550 - INFO - TABULA ROW 17: Puducherry | 401 | 0 | 401 | 296 | 0 | 296 | 345 | 9.2 | -0.48
+2025-12-22 14:27:25,550 - INFO - TABULA ROW 18: Tamil Nadu | 16305 | 0 | 16305 | 11140 | 0 | 11140 | 14026 | 343 | -13.34
+2025-12-22 14:27:25,550 - INFO - TABULA ROW 19: Telangana | 8240 | 0 | 8240 | 8129 | 0 | 8129 | 10577 | 242 | 3.99
+2025-12-22 14:27:25,551 - INFO - TABULA ROW 20: Region | 48704 | 250 | 48954 | 37807 | 0 | 37807 | 48661 | 1182.62 | -24.73
+2025-12-22 14:27:25,551 - INFO - TABULA ROW 23: Andhra Pradesh | 10871 | 09:14 | 0 | 10871 | 10871 | 09:14 | 0 | 10871 | 661.26 | 06:02 | -690.86 | 14:40
+2025-12-22 14:27:25,551 - INFO - TABULA ROW 24: Karnataka | 16431 | 10:00 | 0 | 16431 | 16431 | 10:00 | 0 | 16431 | 706.26 | 10:03 | -748.18 | 16:00
+2025-12-22 14:27:25,551 - INFO - TABULA ROW 25: Kerala | 4187 | 19:00 | 250 | 4437 | 4187 | 19:00 | 250 | 4437 | 330.67 | 19:47 | -705.58 | 18:30
+2025-12-22 14:27:25,552 - INFO - TABULA ROW 26: Puducherry | 411 | 18:15 | 0 | 411 | 411 | 18:15 | 0 | 411 | 51.82 | 08:42 | -27.7 | 17:59
+2025-12-22 14:27:25,552 - INFO - TABULA ROW 27: Tamil Nadu | 16305 | 19:00 | 0 | 16305 | 16305 | 19:00 | 0 | 16305 | 1459.54 | 15:31 | -1247.96 | 07:46
+2025-12-22 14:27:25,552 - INFO - TABULA ROW 28: Telangana | 13990 | 07:53 | 0 | 13990 | 13990 | 07:53 | 0 | 13990 | 1022.63 | 08:46 | -709.21 | 17:16
+2025-12-22 14:27:25,552 - INFO - TABULA ROW 29: Region | 58271 | 09:39 | 0 | 58271 | 58271 | 09:39 | 0 | 58271 | 2968.92 | 06:16 | -3541.47 | 17:54
+2025-12-22 14:27:25,552 - INFO - TABULA ROW 32: HINDUJA POWER CORPORATION LTD ( 2*520 ) | 1040 | 850 | 850 | 850 | 00:00 | 850 | 06:00 | 19.66 | 18.58 | 774
+2025-12-22 14:27:25,553 - INFO - TABULA ROW 33: KRISHNAPATTANAM  ( 3*800 ) | 2400 | 1929 | 1229 | 2027 | 09:27 | 1225 | 12:28 | 40.5 | 38.21 | 1592
+2025-12-22 14:27:25,553 - INFO - TABULA ROW 34: RAYALASEEMA TPP ( 5*210 + 600 ) | 1650 | 830 | 793 | 1216 | 07:35 | 779 | 06:03 | 23.11 | 20.91 | 871
+2025-12-22 14:27:25,553 - INFO - TABULA ROW 35: SEIL P2 Unit-2 ( 1*660 ) | 660 | 625 | 630 | 633 | 07:41 | 594 | 07:28 | 15.79 | 14.99 | 625
+2025-12-22 14:27:25,553 - INFO - TABULA ROW 36: VIJAYAWADA TPS ( 6*210 + 500 + 800 ) | 2560 | 1965 | 1599 | 2055 | 15:24 | 1540 | 11:56 | 47.59 | 44.07 | 1836
+2025-12-22 14:27:25,554 - INFO - TABULA ROW 41: UPPER SILERU ( 4*60 ) | 240 | 1 | 1 | 164 | 07:07 | 0 | 10:27 | 0.68 | 0.68 | 28
+2025-12-22 14:27:25,554 - INFO - TABULA ROW 42: OTHER HYDEL | 431 | 130 | 150 | 206 | 20:08 | 99 | 12:36 | 3.47 | 3.46 | 144
+2025-12-22 14:27:25,554 - INFO - TABULA ROW 44: GAUTAMI CCPP ( 2*145 + 174 ) | 464 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,554 - INFO - TABULA ROW 45: GMR (BARG) (1 * 237) | 237 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,554 - INFO - TABULA ROW 46: JEGURUPADU (GAS) ( 2*45.8 + 49.9 + 75.5 ) | 217 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,555 - INFO - TABULA ROW 47: Jegrupadu Ext. (1 * 220) | 220 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,555 - INFO - TABULA ROW 49: LANCO (GAS) ( 2*115 + 121 ) | 351 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,555 - INFO - TABULA ROW 50: RELIANCE ENERGY LTD. (GAS) ( 140 + 80 ) | 220 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,555 - INFO - TABULA ROW 51: SPECTRUM (GAS) ( 46.8 + 2*46.1 + 68.8 ) | 208 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,555 - INFO - TABULA ROW 52: VEMAGIRI POWER GENERATION LTD.(GAS) ( 233 + 137) | 370 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,555 - INFO - TABULA ROW 53: VIJJESWARAM GTS ( 2*33 + 34 + 112.5 + 59.5 ) | 272 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,556 - INFO - TABULA ROW 54: OTHER GAS/NAPTHA/DIESEL | 27 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,556 - INFO - TABULA ROW 56: WIND | 4084 | 525 | 7 | 578 | 19:29 | 10 | 09:23 | 4.38 | 4.38 | 183
+2025-12-22 14:27:25,556 - INFO - TABULA ROW 57: SOLAR | 3356 | 0 | 0 | 2362 | 12:16 | 0 | 06:02 | 16.08 | 16.08 | 670
+2025-12-22 14:27:25,556 - INFO - TABULA ROW 58: OTHERS | 619 | 117 | 114 | 138 | 11:52 | 103 | 08:23 | 3.39 | 3.39 | 141
+2025-12-22 14:27:25,557 - INFO - TABULA ROW 59: Total ANDHRA PRADESH | 21342 | 7012 | 5413 | - | - | - | - | 175.1 | 165.2 | 6883
+2025-12-22 14:27:25,557 - INFO - TABULA ROW 62: BHADRADRI TPS ( 4*270 ) | 1080 | 599 | 426 | 688 | 07:57 | 420 | 13:05 | 14.3 | 12.86 | 536
+2025-12-22 14:27:25,557 - INFO - TABULA ROW 63: KAKATIYA ST1&ST2 ( 500 + 600 ) | 1100 | 1047 | 667 | 1075 | 16:42 | 941 | 13:59 | 22.98 | 21.92 | 913
+2025-12-22 14:27:25,557 - INFO - TABULA ROW 64: KOTHAGUDEM TPS ( 2*250 + 500 + 800 ) | 1800 | 1090 | 748 | 1200 | 09:47 | 735 | 13:11 | 25 | 23.43 | 976
+2025-12-22 14:27:25,558 - INFO - TABULA ROW 65: RAMAGUNDAM-B ( 1*62.5 ) | 63 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,558 - INFO - TABULA ROW 66: SINGARENI TPS ( 2*600 ) | 1200 | 1194 | 686 | 1220 | 17:10 | 1017 | 13:58 | 26 | 24.54 | 1023
+2025-12-22 14:27:25,558 - INFO - TABULA ROW 67: YADADRI ( 2*800 ) | 1600 | 535 | 784 | 954 | 08:10 | 358 | 12:27 | 15.36 | 13.8 | 575
+2025-12-22 14:27:25,558 - INFO - TABULA ROW 68: Total Thermal | 6843 | 4465 | 3311 | - | - | - | - | 103.64 | 96.55 | 4023
+2025-12-22 14:27:25,558 - INFO - TABULA ROW 69: NAGARJUNA SAGAR ( 110 + 7*100.8 ) | 816 | 712 | 0 | 713 | 18:20 | 0 | 08:56 | 3.92 | 3.9 | 162
+2025-12-22 14:27:25,559 - INFO - TABULA ROW 70: NAGARJUNA SAGAR (Pump) ( 110 + 7*100.8 ) | 816 | 0 | 418 | 423 | 00:16 | 0 | 06:00 | 0 | -5.47 | -228
+2025-12-22 14:27:25,559 - INFO - TABULA ROW 72: SRISAILAM LBPH(Pump) ( 6*150 ) | 900 | 0 | 353 | 359 | 16:24 | 0 | 06:00 | 0 | -4.72 | -197
+2025-12-22 14:27:25,559 - INFO - TABULA ROW 74: Total Hydro | 2673 | 1342 | 809 | - | - | - | - | 8.72 | 8.66 | 361
+2025-12-22 14:27:25,559 - INFO - TABULA ROW 75: WIND | 128 | 29 | 1 | 39 | 19:20 | 0 | 06:00 | 0.33 | 0.33 | 14
+2025-12-22 14:27:25,559 - INFO - TABULA ROW 76: SOLAR | 3818 | 0 | 0 | 2772 | 12:03 | 6 | 06:43 | 23.24 | 23.24 | 968
+2025-12-22 14:27:25,560 - INFO - TABULA ROW 77: OTHERS | 252 | 238 | 238 | 238 | 00:00 | 238 | 06:00 | 5.71 | 5.71 | 238
+2025-12-22 14:27:25,560 - INFO - TABULA ROW 81: Bellary TPS ( 2*500 + 700 ) | 1700 | 285 | 365 | 463 | 15:36 | 270 | 17:18 | 9.33 | 8.42 | 351
+2025-12-22 14:27:25,560 - INFO - TABULA ROW 82: JINDAL ( 2*130 + 4*300 ) | 1460 | 1047 | 1040 | 1069 | 06:11 | 667 | 11:34 | 24.29 | 22.41 | 934
+2025-12-22 14:27:25,561 - INFO - TABULA ROW 83: Jindal (Excl. Captive Consumption) (2 * 130 + 4 * 300) | 1460 | 96 | 19 | 214 | 22:45 | 0 | 06:31 | 0.62 | 0.62 | 26
+2025-12-22 14:27:25,561 - INFO - TABULA ROW 84: Raichur TPS ( 7*210 + 250 ) | 1720 | 1030 | 950 | 1189 | 23:52 | 731 | 12:55 | 24.65 | 21.97 | 915
+2025-12-22 14:27:25,561 - INFO - TABULA ROW 85: UPCL ( 2*600 ) | 1200 | 479 | 484 | 501 | 23:50 | 470 | 14:09 | 12.86 | 12.06 | 503
+2025-12-22 14:27:25,562 - INFO - TABULA ROW 86: YERAMARAS TPS ( 2*800 ) | 1600 | 0 | 592 | 652 | 06:45 | 406 | 17:51 | 10.78 | 10 | 417
+2025-12-22 14:27:25,562 - INFO - TABULA ROW 87: Total Thermal | 7680 | 1890 | 2410 | - | - | - | - | 58.24 | 53.07 | 2212
+2025-12-22 14:27:25,562 - INFO - TABULA ROW 88: NAGJHERI ( 135 + 5*150 ) | 885 | 591 | 437 | 675 | 07:33 | 102 | 11:32 | 11.09 | 10.97 | 457
+2025-12-22 14:27:25,563 - INFO - TABULA ROW 89: SHARAVATHI ( 10*103.5 ) | 1035 | 740 | 725 | 754 | 19:17 | 201 | 10:53 | 15.82 | 15.7 | 654
+2025-12-22 14:27:25,563 - INFO - TABULA ROW 90: Varahi UGPH ( 4*115 ) | 460 | 389 | 242 | 402 | 07:16 | 45 | 06:02 | 5.61 | 5.48 | 228
+2025-12-22 14:27:25,563 - INFO - TABULA ROW 91: OTHER HYDEL | 2137 | 727 | 273 | 729 | 20:01 | 268 | 11:45 | 9.85 | 9.72 | 405
+2025-12-22 14:27:25,564 - INFO - TABULA ROW 92: Total Hydro | 4517 | 2447 | 1677 | - | - | - | - | 42.37 | 41.87 | 1744
+2025-12-22 14:27:25,564 - INFO - TABULA ROW 93: OTHER GAS/NAPTHA/DIESEL | 126 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,564 - INFO - TABULA ROW 94: Total Gas | 126 | 0 | 0 | - | - | - | - | 0.0 | 0.0 | 0
+2025-12-22 14:27:25,565 - INFO - TABULA ROW 95: WIND | 5440 | 857 | 281 | 1076 | 23:28 | 443 | 06:00 | 15.82 | 15.82 | 659
+2025-12-22 14:27:25,565 - INFO - TABULA ROW 96: SOLAR | 6571 | 0 | 0 | 4807 | 12:00 | 72 | 06:11 | 33.61 | 33.61 | 1400
+2025-12-22 14:27:25,565 - INFO - TABULA ROW 97: OTHERS | 1832 | 437 | 463 | 515 | 07:49 | 403 | 17:17 | 15.07 | 15.07 | 628
+2025-12-22 14:27:25,565 - INFO - TABULA ROW 98: Total KARNATAKA | 26166 | 5631 | 4831 | - | - | - | - | 165.11 | 159.44 | 6643
+2025-12-22 14:27:25,566 - INFO - TABULA ROW 101: Iddukki ( 6*130 ) | 780 | 624 | 351 | 765 | 20:03 | 224 | 14:01 | 12.99 | 12.95 | 540
+2025-12-22 14:27:25,566 - INFO - TABULA ROW 103: Sabarigiri ( 4*55 + 2*60 ) | 340 | 188 | 99 | 192 | 12:45 | 91 | 16:10 | 4.21 | 4.2 | 175
+2025-12-22 14:27:25,567 - INFO - TABULA ROW 104: OTHER HYDEL | 834 | 510 | 87 | 536 | 16:28 | 68 | 12:57 | 5.36 | 5.34 | 222
+2025-12-22 14:27:25,567 - INFO - TABULA ROW 105: Total Hydro | 2134 | 1322 | 537 | - | - | - | - | 22.56 | 22.49 | 937
+2025-12-22 14:27:25,567 - INFO - TABULA ROW 106: BRAHMAPURAM DGPP (DIESEL) ( 3*21.32 ) | 64 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,568 - INFO - TABULA ROW 110: RGCCPP KAYAMKULAM (KSEB) - NTPC ( 2*116.6 +126.38 ) | 360 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,568 - INFO - TABULA ROW 111: OTHER GAS/NAPTHA/DIESEL | 22 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,568 - INFO - TABULA ROW 113: WIND | 70 | 4 | 5 | 13 | 05:28 | 2 | 13:42 | 0.23 | 0.23 | 9
+2025-12-22 14:27:25,569 - INFO - TABULA ROW 114: SOLAR | 1988 | 1 | 0 | 218 | 11:55 | 0 | 06:28 | 1.45 | 1.45 | 61
+2025-12-22 14:27:25,569 - INFO - TABULA ROW 115: OTHERS | 20 | 5 | 6 | 224 | 12:19 | 5 | 17:59 | 0.24 | 0.24 | 10
+2025-12-22 14:27:25,569 - INFO - TABULA ROW 116: Total KERALA | 4921 | 1332 | 548 | - | - | - | - | 24.48 | 24.41 | 1017
+2025-12-22 14:27:25,570 - INFO - TABULA ROW 119: Mettur TPS ( 4*210 + 600 ) | 1440 | 412 | 395 | 416 | 19:16 | 310 | 14:56 | 9.39 | 8.56 | 357
+2025-12-22 14:27:25,570 - INFO - TABULA ROW 120: NCTPS STG3 | 0 | 506 | 447 | 773 | 00:56 | 15 | 15:33 | 12.61 | 11.76 | 490
+2025-12-22 14:27:25,570 - INFO - TABULA ROW 121: NORTH CHENNAI TPS STG-II ( 2*600 ) | 1200 | 434 | 431 | 466 | 04:06 | 315 | 11:36 | 9.64 | 8.76 | 365
+2025-12-22 14:27:25,570 - INFO - TABULA ROW 122: North Chennai TPS ( 3*210 ) | 630 | 438 | 429 | 455 | 07:49 | 380 | 10:50 | 11.38 | 10.25 | 427
+2025-12-22 14:27:25,570 - INFO - TABULA ROW 123: OPG PGPL ( 2*77 + 80 + 180 ) | 414 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 1.59 | 1.44 | 60
+2025-12-22 14:27:25,571 - INFO - TABULA ROW 124: SEPC ( 1*525 ) | 525 | 496 | 500 | 512 | 17:41 | 241 | 11:11 | 11.4 | 10.84 | 452
+2025-12-22 14:27:25,571 - INFO - TABULA ROW 125: ST - CMS ( 1*250 ) | 250 | 249 | 248 | 252 | 19:03 | 163 | 14:52 | 5.6 | 5.15 | 215
+2025-12-22 14:27:25,571 - INFO - TABULA ROW 126: Tuticorin ( 5*210 ) | 1050 | 519 | 486 | 537 | 08:41 | 473 | 06:21 | 12.96 | 11.72 | 488
+2025-12-22 14:27:25,571 - INFO - TABULA ROW 127: Total Thermal | 5509 | 3054 | 2936 | - | - | - | - | 74.57 | 68.48 | 2854
+2025-12-22 14:27:25,572 - INFO - TABULA ROW 128: Kadamparai  ( 4*100 ) | 400 | 196 | 0 | 200 | 17:33 | 0 | 06:09 | 1.13 | 1.13 | 47
+2025-12-22 14:27:25,572 - INFO - TABULA ROW 129: Kadamparai (Pump) ( 4*100 ) | 400 | 0 | 1 | 116 | 22:02 | 0 | 06:00 | 0.56 | 0.56 | 23
+2025-12-22 14:27:25,572 - INFO - TABULA ROW 130: OTHER HYDEL | 1826 | 383 | 114 | 400 | 18:06 | 0 | 16:35 | 13.06 | 12.93 | 539
+2025-12-22 14:27:25,572 - INFO - TABULA ROW 131: Total Hydro | 2226 | 579 | 114 | - | - | - | - | 14.19 | 14.06 | 586
+2025-12-22 14:27:25,572 - INFO - TABULA ROW 132: BASIN BRIDGE (NAPTHA) ( 4*30 ) | 120 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,573 - INFO - TABULA ROW 134: KUTTALAM (GAS) ( 64 + 37 ) | 101 | 88 | 74 | 90 | 22:00 | 73 | 11:46 | 1.89 | 1.76 | 73
+2025-12-22 14:27:25,573 - INFO - TABULA ROW 138: VALATTUR(STG1&STG2) ( 2*60 + 35 + 32 ) | 187 | 24 | 34 | 61 | 10:49 | 25 | 17:59 | 1.52 | 1.41 | 59
+2025-12-22 14:27:25,573 - INFO - TABULA ROW 139: OTHER GAS/NAPTHA/DIESEL | 362 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,573 - INFO - TABULA ROW 140: Total Gas | 1421 | 112 | 108 | - | - | - | - | 3.41 | 3.17 | 132
+2025-12-22 14:27:25,573 - INFO - TABULA ROW 141: WIND | 9392 | 3 | 356 | 1318 | 11:31 | 9 | 16:37 | 11.72 | 11.72 | 488
+2025-12-22 14:27:25,574 - INFO - TABULA ROW 143: OTHERS | 2029 | 333 | 336 | 336 | 03:55 | 263 | 16:21 | 5.21 | 5.21 | 217
+2025-12-22 14:27:25,574 - INFO - TABULA ROW 144: Total TAMIL NADU | 30132 | 4081 | 3850 | - | - | - | - | 154.8 | 148.34 | 6181
+2025-12-22 14:27:25,574 - INFO - TABULA ROW 147: KUDGI ( 3*800 ) | 2400 | 2382 | 1407 | 2454 | 19:26 | 1328 | 15:22 | 42.88 | 40.14 | 1673
+2025-12-22 14:27:25,574 - INFO - TABULA ROW 148: Neyveli TS I Expn  ( 2*210 ) | 420 | 254 | 280 | 291 | 04:11 | 200 | 07:17 | 6.75 | 6.15 | 256
+2025-12-22 14:27:25,575 - INFO - TABULA ROW 149: Neyveli TS II ( 7*210 ) | 1470 | 673 | 652 | 705 | 10:07 | 580 | 08:33 | 18.31 | 15.02 | 626
+2025-12-22 14:27:25,575 - INFO - TABULA ROW 150: Neyveli TS II Expn  ( 2*250 ) | 500 | 395 | 356 | 404 | 18:12 | 278 | 12:27 | 9.62 | 8.37 | 349
+2025-12-22 14:27:25,575 - INFO - TABULA ROW 151: NNTPS ( 2*500 ) | 1000 | 573 | 589 | 667 | 11:31 | 467 | 08:27 | 15.65 | 13.6 | 567
+2025-12-22 14:27:25,575 - INFO - TABULA ROW 152: NTPC-TELANGANA STPP ( 2*800 ) | 1600 | 1510 | 862 | 1548 | 23:01 | 797 | 13:33 | 33.73 | 31.65 | 1319
+2025-12-22 14:27:25,575 - INFO - TABULA ROW 153: Ramagundam ( 3*200 + 4*500 ) | 2600 | 1942 | 1122 | 1999 | 08:39 | 1135 | 14:03 | 41.8 | 39.13 | 1631
+2025-12-22 14:27:25,575 - INFO - TABULA ROW 154: Simhadri Stage I ( 2*500 ) | 1000 | 439 | 283 | 489 | 09:24 | 250 | 13:49 | 9.72 | 8.99 | 375
+2025-12-22 14:27:25,576 - INFO - TABULA ROW 155: Simhadri Stage II ( 2*500 ) | 1000 | 935 | 569 | 975 | 23:09 | 514 | 13:13 | 20.19 | 19.26 | 803
+2025-12-22 14:27:25,576 - INFO - TABULA ROW 156: TALCHER ST2 ( 4*500 ) | 2000 | 446 | 462 | 467 | 02:48 | 425 | 06:34 | 11.42 | 9.93 | 414
+2025-12-22 14:27:25,576 - INFO - TABULA ROW 157: Total Thermal | 13990 | 9549 | 6582 | - | - | - | - | 210.07 | 192.24 | 8013
+2025-12-22 14:27:25,576 - INFO - TABULA ROW 158: KAIGA STG1 ( 2*220 ) | 440 | 203 | 197 | 205 | 00:04 | 195 | 13:36 | 5.35 | 4.86 | 202
+2025-12-22 14:27:25,576 - INFO - TABULA ROW 159: KAIGA STG2 ( 2*220 ) | 440 | 429 | 430 | 433 | 16:06 | 420 | 17:48 | 11.49 | 10.56 | 440
+2025-12-22 14:27:25,577 - INFO - TABULA ROW 160: KUDANKULAM ( 2*1000 ) | 2000 | 1035 | 1022 | 1040 | 01:13 | 976 | 12:15 | 24.69 | 23.93 | 997
+2025-12-22 14:27:25,577 - INFO - TABULA ROW 161: MAPS ( 2*220 ) | 440 | 173 | 175 | 184 | 09:21 | 169 | 17:57 | 4.98 | 4.2 | 175
+2025-12-22 14:27:25,577 - INFO - TABULA ROW 162: Total Nuclear | 3320 | 1840 | 1824 | - | - | - | - | 46.51 | 43.55 | 1814
+2025-12-22 14:27:25,577 - INFO - TABULA ROW 163: Total ISGS | 17310 | 11389 | 8406 | - | - | - | - | 256.58 | 235.79 | 9827
+2025-12-22 14:27:25,578 - INFO - TABULA ROW 166: NTPL ( 2*500 ) | 1000 | 22 | 543 | 971 | 08:04 | 21 | 17:52 | 7.69 | 7.27 | 303
+2025-12-22 14:27:25,578 - INFO - TABULA ROW 167: Vallur TPS ( 3*500 ) | 1500 | 966 | 488 | 993 | 20:09 | 463 | 13:07 | 18.74 | 17.36 | 723
+2025-12-22 14:27:25,578 - INFO - TABULA ROW 168: Total Thermal | 2500 | 988 | 1031 | - | - | - | - | 26.43 | 24.63 | 1026
+2025-12-22 14:27:25,578 - INFO - TABULA ROW 169: Total JOINT VENTURE | 2500 | 988 | 1031 | - | - | - | - | 26.43 | 24.63 | 1026
+2025-12-22 14:27:25,578 - INFO - TABULA ROW 172: COASTAL ENERGEN ( 2*600 ) | 1200 | 989 | 913 | 1046 | 08:40 | 683 | 11:53 | 22.57 | 21.03 | 876
+2025-12-22 14:27:25,579 - INFO - TABULA ROW 173: IL&FS ( 2*600 ) | 1200 | 7 | 279 | 532 | 00:00 | 7 | 15:56 | 1.6 | 1.27 | 53
+2025-12-22 14:27:25,579 - INFO - TABULA ROW 174: JINDAL POWER LIMITED (Simhapuri Unit) ( 4*150 ) | 600 | 161 | 161 | 161 | 00:00 | 161 | 06:00 | 5.83 | 5.29 | 220
+2025-12-22 14:27:25,579 - INFO - TABULA ROW 175: MEENAKSHI ENERGY LTD STAGE1 ( 2*150 ) | 300 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,579 - INFO - TABULA ROW 176: MEENAKSHI ENERGY LTD STAGE2 ( 2*350 ) | 700 | 299 | 196 | 317 | 20:09 | 181 | 12:17 | 5.57 | 5.21 | 217
+2025-12-22 14:27:25,579 - INFO - TABULA ROW 177: SEIL ( 2*660 ) | 1320 | 571 | 429 | 588 | 17:51 | 473 | 13:33 | 14 | 13.04 | 543
+2025-12-22 14:27:25,579 - INFO - TABULA ROW 178: SEIL-PROJECT2 ( 1*660 ) | 660 | 626 | 248 | 637 | 07:32 | 267 | 13:55 | 12.23 | 11.62 | 484
+2025-12-22 14:27:25,580 - INFO - TABULA ROW 179: Total Thermal | 5980 | 2653 | 2226 | - | - | - | - | 61.8 | 57.46 | 2393
+2025-12-22 14:27:25,580 - INFO - TABULA ROW 180: Greenko ( 6*240 + 2*120 ) | 1680 | 1181 | 0 | 1236 | 17:10 | 0 | 06:00 | 8.3 | 8.27 | 344
+2025-12-22 14:27:25,580 - INFO - TABULA ROW 181: GREENKO(Pump) ( 6*240 + 2*120 ) | 1680 | 0 | 1286 | 1300 | 01:12 | 0 | 06:00 | 9.73 | 9.75 | 406
+2025-12-22 14:27:25,580 - INFO - TABULA ROW 182: Total Hydro | 1680 | 1181 | 0 | - | - | - | - | 8.3 | 8.27 | 344
+2025-12-22 14:27:25,580 - INFO - TABULA ROW 183: LKPPL ST2 ( 233 + 133 ) | 366 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,581 - INFO - TABULA ROW 184: LKPPL ST3 ( 2*233 + 2*133 ) | 732 | 0 | 0 | 0 | 00:00 | 0 | 06:00 | 0 | 0 | 0
+2025-12-22 14:27:25,581 - INFO - TABULA ROW 186: Total IPP UNDER OPEN ACCESS | 8758 | 3834 | 2226 | - | - | - | - | 70.1 | 65.73 | 2737
+2025-12-22 14:27:25,581 - INFO - TABULA ROW 189: GADAG_GreenInfra_W | 55 | 23 | 1 | 47 | 00:00 | 7 | 09:29 | 0.41 | 0.41 | 17
+2025-12-22 14:27:25,581 - INFO - TABULA ROW 190: GADAG_RSPPL_W | 175 | 88 | 0 | 127 | 08:48 | 23 | 15:03 | 1.11 | 1.11 | 46
+2025-12-22 14:27:25,581 - INFO - TABULA ROW 191: GADAG_Serentica3_W | 52 | 35 | 0 | 47 | 07:03 | 9 | 15:38 | 0.46 | 0.46 | 19
+2025-12-22 14:27:25,582 - INFO - TABULA ROW 192: GADAG_VENA_W | 133 | 26 | 0 | 52 | 23:39 | 3 | 09:04 | 0.45 | 0.45 | 19
+2025-12-22 14:27:25,582 - INFO - TABULA ROW 193: GREEN INFRA | 250 | 9 | 52 | 93 | 10:27 | 0 | 16:17 | 0.78 | 0.78 | 33
+2025-12-22 14:27:25,582 - INFO - TABULA ROW 195: HIRIYUR_ZREPL_W | 66 | 19 | 0 | 24 | 10:17 | 0 | 06:14 | 0.23 | 0.23 | 10
+2025-12-22 14:27:25,582 - INFO - TABULA ROW 197: KARUR_JSWRENEW_W | 162 | 33 | 38 | 64 | 00:34 | 0 | 08:43 | 0.48 | 0.48 | 20
+2025-12-22 14:27:25,582 - INFO - TABULA ROW 198: Karur_JSWRETwo_W | 150 | 10 | 42 | 58 | 01:20 | 0 | 13:30 | 0.41 | 0.41 | 17
+2025-12-22 14:27:25,583 - INFO - TABULA ROW 199: KARUR_TPVARDHAMAN_W | 50 | 23 | 31 | 63 | 00:00 | 0 | 08:27 | 0.37 | 0.37 | 15
+2025-12-22 14:27:25,583 - INFO - TABULA ROW 200: KOPPAL_AyanaSix_W | 300 | 101 | 1 | 106 | 19:07 | 17 | 06:00 | 0.92 | 0.92 | 38
+2025-12-22 14:27:25,583 - INFO - TABULA ROW 201: KOPPAL_Kleio_W | 101 | 10 | 0 | 41 | 07:50 | 4 | 17:26 | 0.24 | 0.24 | 10
+2025-12-22 14:27:25,583 - INFO - TABULA ROW 202: Koppal_RenewOjas_W | 319 | 76 | 4 | 100 | 20:12 | 31 | 09:40 | 1.07 | 1.07 | 45
+2025-12-22 14:27:25,583 - INFO - TABULA ROW 203: Koppal_RenewRoshni_W | 291 | 61 | 2 | 128 | 08:35 | 16 | 06:02 | 0.92 | 0.92 | 38
+2025-12-22 14:27:25,584 - INFO - TABULA ROW 204: KOPPAL_SRI1PL_W | 79 | 18 | 1 | 30 | 21:06 | 7 | 09:20 | 0.32 | 0.32 | 13
+2025-12-22 14:27:25,584 - INFO - TABULA ROW 205: Kurnool_AMGreeen_W | 304 | 21 | 2 | 91 | 21:06 | 0 | 09:43 | 0.51 | 0.51 | 21
+2025-12-22 14:27:25,584 - INFO - TABULA ROW 206: MYTRA | 250 | 0 | 22 | 96 | 10:56 | 0 | 15:50 | 0.56 | 0.56 | 23
+2025-12-22 14:27:25,584 - INFO - TABULA ROW 207: ORANGE | 200 | 8 | 35 | 76 | 10:38 | 0 | 16:11 | 0.57 | 0.57 | 24
+2025-12-22 14:27:25,584 - INFO - TABULA ROW 208: PGLR_SAUPL_W | 53 | 6 | 2 | 13 | 00:18 | 0 | 13:10 | 0.05 | 0.05 | 2
+2025-12-22 14:27:25,584 - INFO - TABULA ROW 209: PGLR_SREPL | 300 | 11 | 11 | 23 | 00:40 | 0 | 08:47 | 0.14 | 0.14 | 6
+2025-12-22 14:27:25,585 - INFO - TABULA ROW 210: TuticorinJSWRenewW | 540 | 19 | 189 | 233 | 01:38 | 5 | 16:44 | 2.56 | 2.56 | 107
+2025-12-22 14:27:25,585 - INFO - TABULA ROW 211: VIVID SOLAIRE (BEETAM) | 220 | 21 | 45 | 108 | 10:45 | 20 | 15:21 | 0.89 | 0.89 | 37
+2025-12-22 14:27:25,585 - INFO - TABULA ROW 212: Total SR_Wind | 4650 | 720 | 623 | - | - | - | - | 16.04 | 16.04 | 668
+2025-12-22 14:27:25,585 - INFO - TABULA ROW 213: Total RENEWABLE WIND | 4650 | 720 | 623 | - | - | - | - | 16.04 | 16.04 | 668
+2025-12-22 14:27:25,585 - INFO - TABULA ROW 216: ANP_AdaniAPSeven | 250 | 1 | 0 | 241 | 12:41 | 1 | 17:46 | 1.53 | 1.53 | 64
+2025-12-22 14:27:25,586 - INFO - TABULA ROW 217: ANP_ATHENA BIWADI | 50 | 0 | 0 | 49 | 12:49 | 0 | 06:00 | 0.3 | 0.3 | 13
+2025-12-22 14:27:25,586 - INFO - TABULA ROW 220: ANP_AYANA | 250 | 1 | 0 | 254 | 12:11 | 0 | 06:33 | 1.61 | 1.61 | 67
+2025-12-22 14:27:25,586 - INFO - TABULA ROW 221: ANP_AZURE | 50 | 0 | 0 | 37 | 10:30 | 1 | 06:00 | 0.27 | 0.27 | 11
+2025-12-22 14:27:25,586 - INFO - TABULA ROW 222: ANP_IGS1 | 50 | 0 | 0 | 48 | 12:19 | 0 | 06:13 | 0.29 | 0.29 | 12
+2025-12-22 14:27:25,586 - INFO - TABULA ROW 223: ANP_IGS2 | 50 | 0 | 0 | 47 | 11:45 | 0 | 06:00 | 0.29 | 0.29 | 12
+2025-12-22 14:27:25,587 - INFO - TABULA ROW 224: ANP_NTPC | 250 | 1 | 0 | 165 | 12:11 | 1 | 06:33 | 1.05 | 1.05 | 44
+2025-12-22 14:27:25,587 - INFO - TABULA ROW 225: ANP_TATA | 100 | 12 | 0 | 84 | 12:19 | 0 | 06:13 | 0.59 | 0.59 | 25
+2025-12-22 14:27:25,587 - INFO - TABULA ROW 226: SPRING ANG ITRA | 250 | 1 | 0 | 265 | 11:45 | 0 | 06:37 | 1.67 | 1.67 | 70
+2025-12-22 14:27:25,587 - INFO - TABULA ROW 227: Total NP_KUNTA | 1400 | 30 | 0 | - | - | - | - | 8.29 | 8.29 | 347
+2025-12-22 14:27:25,587 - INFO - TABULA ROW 228: PVG_ADYAH | 300 | 6 | 0 | 260 | 11:11 | 6 | 06:00 | 1.84 | 1.84 | 77
+2025-12-22 14:27:25,587 - INFO - TABULA ROW 229: PVG_AMPLUS PAVAGADA | 50 | 1 | 0 | 50 | 11:21 | 1 | 06:00 | 0.34 | 0.34 | 14
+2025-12-22 14:27:25,588 - INFO - TABULA ROW 230: PVG_AMPLUS TUMKUR | 50 | 1 | 0 | 50 | 11:28 | 0 | 06:02 | 0.34 | 0.34 | 14
+2025-12-22 14:27:25,588 - INFO - TABULA ROW 231: PVG_AVAADA SOLAR | 150 | 0 | 0 | 148 | 12:53 | 0 | 06:00 | 0.95 | 0.95 | 40
+2025-12-22 14:27:25,588 - INFO - TABULA ROW 232: PVG_AVAADA SOLARISE | 150 | 1 | 0 | 146 | 12:11 | 1 | 06:00 | 0.94 | 0.94 | 39
+2025-12-22 14:27:25,588 - INFO - TABULA ROW 233: PVG_AZURE POWER EARTH | 100 | 0 | 0 | 100 | 13:07 | 0 | 06:00 | 0.67 | 0.67 | 28
+2025-12-22 14:27:25,588 - INFO - TABULA ROW 234: PVG_FORTUM FIN SURYA | 100 | 1 | 0 | 92 | 13:02 | 1 | 06:00 | 0.59 | 0.59 | 25
+2025-12-22 14:27:25,588 - INFO - TABULA ROW 235: PVG_IRCON_S | 225 | 0 | 0 | 304 | 13:17 | 1 | 06:34 | 2.13 | 2.13 | 89
+2025-12-22 14:27:25,589 - INFO - TABULA ROW 236: PVG_KREDL | 50 | 0 | 0 | 44 | 13:09 | 0 | 06:00 | 0.29 | 0.29 | 12
+2025-12-22 14:27:25,589 - INFO - TABULA ROW 237: PVG_PARAMPUJYA | 150 | 1 | 0 | 127 | 13:11 | 1 | 06:00 | 0.88 | 0.88 | 37
+2025-12-22 14:27:25,589 - INFO - TABULA ROW 238: PVG_RENEW TN2 | 50 | 0 | 0 | 40 | 10:44 | 0 | 06:00 | 0.29 | 0.29 | 12
+2025-12-22 14:27:25,589 - INFO - TABULA ROW 239: PVG_SBG ENERGY | 200 | 0 | 0 | 198 | 12:54 | 0 | 06:00 | 1.26 | 1.26 | 53
+2025-12-22 14:27:25,589 - INFO - TABULA ROW 240: PVG_SPRING SOLAR INDIA | 250 | 0 | 0 | 250 | 11:58 | 0 | 06:00 | 1.6 | 1.6 | 67
+2025-12-22 14:27:25,590 - INFO - TABULA ROW 241: PVG_TATA RENEWABLES | 400 | 1 | 0 | 359 | 11:52 | 1 | 06:00 | 2.35 | 2.35 | 98
+2025-12-22 14:27:25,590 - INFO - TABULA ROW 242: PVG_YARROW | 50 | 1 | 0 | 51 | 12:02 | 1 | 06:00 | 0.34 | 0.34 | 14
+2025-12-22 14:27:25,590 - INFO - TABULA ROW 243: Total PAVAGADA | 2275 | 13 | 0 | - | - | - | - | 14.81 | 14.81 | 619
+2025-12-22 14:27:25,590 - INFO - TABULA ROW 244: GADAG_Serentica3_S | 69 | 0 | 0 | 113 | 14:02 | 0 | 06:48 | 0.8 | 0.8 | 33
+2025-12-22 14:27:25,590 - INFO - TABULA ROW 245: GADAG_VENA_S | 31 | 0 | 0 | 36 | 12:26 | 0 | 06:00 | 0.24 | 0.24 | 10
+2025-12-22 14:27:25,590 - INFO - TABULA ROW 246: GRT | 150 | 0 | 0 | 152 | 12:03 | 0 | 06:00 | 1.02 | 1.02 | 43
+2025-12-22 14:27:25,591 - INFO - TABULA ROW 247: KOPPAL_Kleio_S | 105 | 0 | 0 | 99 | 12:47 | 0 | 06:47 | 0.63 | 0.63 | 26
+2025-12-22 14:27:25,591 - INFO - TABULA ROW 248: KOPPAL_RenewOjas_S | 81 | 0 | 0 | 86 | 12:49 | 0 | 06:00 | 0.56 | 0.56 | 23
+2025-12-22 14:27:25,591 - INFO - TABULA ROW 249: KOPPAL_SRI1PL_S | 188 | 0 | 0 | 188 | 12:54 | 0 | 06:44 | 1.38 | 1.38 | 58
+2025-12-22 14:27:25,591 - INFO - TABULA ROW 250: Kurnool3_SAEL1_S | 201 | 0 | 0 | 191 | 13:19 | 0 | 17:31 | 1.27 | 1.27 | 53
+2025-12-22 14:27:25,591 - INFO - TABULA ROW 251: Kurnool_AMGreen_S | 599 | 2 | 0 | 554 | 12:56 | 0 | 17:54 | 3.65 | 3.65 | 152
+2025-12-22 14:27:25,592 - INFO - TABULA ROW 252: NTPC ETTAYAPURAM SOLAR PLANT | 230 | 0 | 0 | 233 | 12:00 | 0 | 06:00 | 1.67 | 1.67 | 70
+2025-12-22 14:27:25,592 - INFO - TABULA ROW 253: RAMANGUNDAM (SOLAR) | 100 | 0 | 0 | 62 | 12:17 | 0 | 17:38 | 0.41 | 0.41 | 17
+2025-12-22 14:27:25,592 - INFO - TABULA ROW 254: SIMHADRI (SOLAR) | 25 | 0 | 0 | 15 | 12:15 | 0 | 06:00 | 0.1 | 0.1 | 4
+2025-12-22 14:27:25,592 - INFO - TABULA ROW 255: Total OTHER | 1779 | 2 | 0 | - | - | - | - | 11.73 | 11.73 | 489
+2025-12-22 14:27:25,593 - INFO - TABULA ROW 257: Total ISGS IPP Thermal | 22470 | 13190 | 9839 | - | - | - | - | 298.3 | 274.33 | 11432
+2025-12-22 14:27:25,593 - INFO - TABULA ROW 258: Total State Thermal | 28342 | 15608 | 13758 | - | - | - | - | 383.1 | 354.86 | 14787
+2025-12-22 14:27:25,593 - INFO - TABULA ROW 259: Total ISGS IPP Hydro | 1680 | 1181 | 0 | - | - | - | - | 8.3 | 8.27 | 344
+2025-12-22 14:27:25,593 - INFO - TABULA ROW 260: Total State Hydro | 13487 | 5861 | 3328 | - | - | - | - | 92.44 | 91.67 | 3819
+2025-12-22 14:27:25,594 - INFO - TABULA ROW 261: Total Gas/Naptha/Diesel | 6390 | 112 | 108 | - | - | - | - | 3.41 | 3.17 | 132
+2025-12-22 14:27:25,594 - INFO - TABULA ROW 262: Total Nuclear | 3320 | 1840 | 1824 | - | - | - | - | 46.51 | 43.55 | 1814
+2025-12-22 14:27:25,594 - INFO - TABULA ROW 263: Total Wind | 23764 | 2138 | 1273 | - | - | - | - | 48.52 | 48.52 | 2021
+2025-12-22 14:27:25,594 - INFO - TABULA ROW 264: Total Solar | 30742 | 46 | 0 | - | - | - | - | 154.91 | 154.91 | 6458
+2025-12-22 14:27:25,595 - INFO - TABULA ROW 265: Total Others | 4752 | 1130 | 1157 | - | - | - | - | 29.62 | 29.62 | 1234
+2025-12-22 14:27:25,595 - INFO - TABULA ROW 269: 1 | 220KV-UPPER_SILERU-BALIMELA | 0 | 0 | 0.0 | - | 0 | 0 | 0.0
+2025-12-22 14:27:25,595 - INFO - TABULA ROW 270: 2 | 400KV-GAZUWAKA-JEYPORE | 704 | 704 | 725.0 | - | 16.82 | 0 | 16.82
+2025-12-22 14:27:25,595 - INFO - TABULA ROW 271: 3 | 765KV-SRIKAKULAM-ANGUL | 1606 | 2112 | 2720.0 | - | 40.56 | 0 | 40.56
+2025-12-22 14:27:25,596 - INFO - TABULA ROW 272: 4 | HVDC500KV-TALCHER-KOLAR_DC | 635 | 1336 | 1341.0 | - | 26.51 | 0 | 26.51
+2025-12-22 14:27:25,596 - INFO - TABULA ROW 273: Sub-Total EAST REGION | 2945 | 4152 | - | - | 83.89 | 0 | 83.89
+2025-12-22 14:27:25,596 - INFO - TABULA ROW 275: 1 | 220KV-AMBEWADI-PONDA | 0 | 1 | - | 1.0 | 0 | 0 | 0.0
+2025-12-22 14:27:25,596 - INFO - TABULA ROW 276: 2 | 220KV-AMBEWADI-XELDEM | 109 | 72 | - | 111.0 | 0 | 2 | -2.0
+2025-12-22 14:27:25,597 - INFO - TABULA ROW 277: 3 | 220KV-CHIKKODI-MUDASANGI | 0 | 0 | - | 0.0 | 0 | 0 | 0.0
+2025-12-22 14:27:25,597 - INFO - TABULA ROW 278: 4 | 220KV-CHIKKODI-TALANGADE | 0 | 0 | - | 0.0 | 0 | 0 | 0.0
+2025-12-22 14:27:25,597 - INFO - TABULA ROW 279: 5 | 220KV-LOWER_SILERU-BARSUR | 0 | 0 | 0.0 | - | 0 | 0 | 0.0
+2025-12-22 14:27:25,597 - INFO - TABULA ROW 280: 6 | 400KV-BHADRAVTAHI-RAMAGUNDAM | 972 | 496 | 1025.0 | - | 15.23 | 0 | 15.23
+2025-12-22 14:27:25,597 - INFO - TABULA ROW 281: 7 | 400KV-KUDGI_PG-KHOLAPUR_PG | 1132 | 678 | - | 1792.0 | 0 | 25.86 | -25.86
+2025-12-22 14:27:25,598 - INFO - TABULA ROW 282: 8 | 765KV-NIZAMABAD-WARDHA | 354 | 1436 | 2240.0 | - | 19.63 | 0 | 19.63
+2025-12-22 14:27:25,598 - INFO - TABULA ROW 283: 9 | 765KV-RAICHUR_PG-SHOLAPUR | 66 | 662 | 1605.0 | - | 0.47 | 0 | 0.47
+2025-12-22 14:27:25,598 - INFO - TABULA ROW 284: 10 | 765KV-WARANGAL(NEW)-WARORA | 930 | 1721 | 2506.0 | - | 29.03 | 0 | 29.03
+2025-12-22 14:27:25,598 - INFO - TABULA ROW 285: 11 | HVDC800KV-RAIGARH HVDC-PUGALUR HVDC | 3814 | 1921 | 3818.0 | - | 60.9 | 0 | 60.9
+2025-12-22 14:27:25,598 - INFO - TABULA ROW 286: Sub-Total WEST REGION | 7377 | 6987 | - | - | 125.26 | 27.86 | 97.4
+2025-12-22 14:27:25,598 - INFO - TABULA ROW 287: TOTAL IR EXCHANGE | 10322 | 11139 | - | - | 209.15 | 27.86 | 181.29
+2025-12-22 14:27:25,599 - INFO - TABULA ROW 289: East-South | 21.1 | 0.25 | 0 | 0 | 0 | 0.08 | 14.11 | 73.96 | 59.85
+2025-12-22 14:27:25,599 - INFO - TABULA ROW 290: West-South | 50.79 | 14.4 | -7.42 | 76.49 | 0 | 10.32 | 166.79 | 97.4 | -69.39
+2025-12-22 14:27:25,599 - INFO - TABULA ROW 291: Total | 71.89 | 14.65 | -7.42 | 76.49 | 0 | 10.4 | 180.9 | 171.36 | -9.54
+2025-12-22 14:27:25,599 - INFO - TABULA ROW 292: RANGE(Hz) | < 48.8 | < 49 | < 49.2 | < 49.5 | < 49.7 | < 49.9 | >= 49.9 - <= 50.05 | > 50 | > 50.05
+2025-12-22 14:27:25,599 - INFO - TABULA ROW 293: % | 0 | 0 | 0 | 0 | 1.424 | 8.9 | 78.877 | 44.606 | 12.222
+2025-12-22 14:27:25,600 - INFO - TABULA ROW 296: 50.33 | 16:03:00 | 49.53 | 17:42:40 | 49.984 | 0.062 | 0.08 | 50.18 | 49.63
+2025-12-22 14:27:25,600 - INFO - TABULA ROW 298: Voltage | Time | Voltage | Time | < 720 | < 750 | > 780 | > 800
+2025-12-22 14:27:25,600 - INFO - TABULA ROW 299: KURNOOL - 765KV | 792 | 00:01 | 753 | 07:16 | 0 | 0 | 30.33 | 0
+2025-12-22 14:27:25,600 - INFO - TABULA ROW 301: RAICHUR_PG - 765KV | 793 | 00:02 | 756 | 07:16 | 0 | 0 | 36.22 | 0
+2025-12-22 14:27:25,601 - INFO - TABULA ROW 302: SRIKAKULAM - 765KV | 789 | 00:02 | 747 | 16:28 | 0 | 0.49 | 31.3 | 0
+2025-12-22 14:27:25,601 - INFO - TABULA ROW 304: Voltage | Time | Voltage | Time | < 380 | < 390 | > 420 | > 430
+2025-12-22 14:27:25,601 - INFO - TABULA ROW 305: GHANAPUR - 400KV | 423 | 00:00 | 400 | 06:39 | 0 | 0 | 13.74 | 0
+2025-12-22 14:27:25,601 - INFO - TABULA ROW 306: GOOTY - 400KV | 421 | 00:00 | 400 | 07:15 | 0 | 0 | 0.42 | 0
+2025-12-22 14:27:25,601 - INFO - TABULA ROW 307: HIRIYUR - 400KV | 425 | 03:02 | 394 | 09:05 | 0 | 0 | 13.88 | 0
+2025-12-22 14:27:25,602 - INFO - TABULA ROW 308: KAIGA - 400KV | 422 | 03:02 | 388 | 09:05 | 0 | 0.28 | 6.11 | 0
+2025-12-22 14:27:25,602 - INFO - TABULA ROW 309: KOLAR_AC - 400KV | 417 | 23:58 | 394 | 08:32 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,602 - INFO - TABULA ROW 310: KUDANKULAM - 400KV | 419 | 21:52 | 402 | 10:13 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,602 - INFO - TABULA ROW 311: SHANKARAPALLY - 400KV | 425 | 00:02 | 398 | 06:40 | 0 | 0 | 23.87 | 0
+2025-12-22 14:27:25,602 - INFO - TABULA ROW 312: SOMANAHALLI - 400KV | 416 | 03:02 | 388 | 09:06 | 0 | 2.64 | 0 | 0
+2025-12-22 14:27:25,602 - INFO - TABULA ROW 313: SRIPERUMBADUR - 400KV | 415 | 03:01 | 395 | 17:52 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,603 - INFO - TABULA ROW 314: TRICHY - 400KV | 415 | 14:47 | 397 | 10:12 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,603 - INFO - TABULA ROW 315: TRIVANDRUM - 400KV | 420 | 03:01 | 402 | 10:12 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,603 - INFO - TABULA ROW 316: VIJAYAWADA - 400KV | 423 | 02:27 | 391 | 07:21 | 0 | 0 | 0.42 | 0
+2025-12-22 14:27:25,603 - INFO - TABULA ROW 318: Voltage | Time | Voltage | Time | < 198 | < 210 | > 235 | > 245
+2025-12-22 14:27:25,603 - INFO - TABULA ROW 319: GHANAPUR - 220KV | 237 | 00:02 | 220 | 07:21 | 0 | 0 | 14.57 | 0
+2025-12-22 14:27:25,603 - INFO - TABULA ROW 320: GOOTY - 220KV | 229 | 00:00 | 216 | 07:16 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,604 - INFO - TABULA ROW 321: HIRIYUR - 220KV | 225 | 03:02 | 207 | 09:06 | 0 | 13.67 | 0 | 0
+2025-12-22 14:27:25,604 - INFO - TABULA ROW 322: KAIGA - 220KV | 237 | 03:01 | 218 | 09:05 | 0 | 0 | 15.06 | 0
+2025-12-22 14:27:25,604 - INFO - TABULA ROW 323: KOLAR_AC - 220KV | 227 | 23:59 | 212 | 09:06 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,604 - INFO - TABULA ROW 324: SOMANAHALLI - 220KV | 234 | 03:02 | 214 | 09:44 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,604 - INFO - TABULA ROW 325: SRIPERUMBADUR - 220KV | 0 | 00:00 | 0 | 00:00 | 100 | 100 | 0 | 0
+2025-12-22 14:27:25,605 - INFO - TABULA ROW 326: TRICHY - 220KV | 237 | 21:51 | 222 | 10:13 | 0 | 0 | 14.71 | 0
+2025-12-22 14:27:25,605 - INFO - TABULA ROW 327: TRIVANDRUM - 220KV | 233 | 03:00 | 228 | 06:38 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,605 - INFO - TABULA ROW 328: VIJAYAWADA - 220KV | 233 | 00:02 | 223 | 09:23 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,605 - INFO - TABULA ROW 331: IDUKKI | 694.94 | 732.43 | 2148 | 726.21 | 1680 | 725.09 | 1592 | 0 | 13.21 | 3593.78 | 140.05
+2025-12-22 14:27:25,605 - INFO - TABULA ROW 332: JALAPUT | 818.39 | 838.4 | 534 | 836.68 | 460 | 836.74 | 462 | 0.97 | 2.89 | 22.58 | 54.2
+2025-12-22 14:27:25,605 - INFO - TABULA ROW 333: KAKKI | 908.3 | 981.45 | 916 | 975.54 | 699 | 971.78 | 595 | 1.56 | 4.52 | 1494.22 | 90.07
+2025-12-22 14:27:25,606 - INFO - TABULA ROW 334: LINGANAMAKKI | 522.73 | 554.5 | 4557 | 550.59 | 3387 | 551.7 | 3700 | 0 | 15.96 | 28.59 | 306.48
+2025-12-22 14:27:25,606 - INFO - TABULA ROW 335: N.SAGAR | 149.3 | 179.9 | 1398.13 | 173.64 | 682 | 176.2 | 802 | 4.06 | 3.79 | 88.38 | 55.84
+2025-12-22 14:27:25,606 - INFO - TABULA ROW 336: NILAGIRIS | 0 | 0 | 1504 | 0 | 857 | 0 | 932 | 0.95 | 1.87 | 44.88 | 92.07
+2025-12-22 14:27:25,606 - INFO - TABULA ROW 337: SRISAILAM | 243.84 | 270.7 | 1391.84 | 268.5 | 901 | 263.04 | 476 | 6.84 | 2.95 | 103.19 | 52.34
+2025-12-22 14:27:25,606 - INFO - TABULA ROW 338: SUPA | 495 | 564 | 3159 | 552.96 | 2212 | 559.08 | 2717 | 0 | 13.78 | 1.76 | 262.21
+2025-12-22 14:27:25,607 - INFO - TABULA ROW 339: Total | - | - | 15607.97 | - | 10878 | - | 11276 | 14.38 | 58.97 | 5377.38 | 1053.26
+2025-12-22 14:27:25,607 - INFO - TABULA ROW 342: Andhra Pradesh | 1.71 | -7.32 | 167.86 | 0 | 110.74 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,607 - INFO - TABULA ROW 343: Karnataka | -33.39 | -455.32 | 948.41 | 0 | -30.7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,607 - INFO - TABULA ROW 344: Kerala | 0 | 0 | 231.45 | 0 | 478.6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,607 - INFO - TABULA ROW 346: Tamil Nadu | 23.52 | 88.78 | 225.71 | 0 | 53.55 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,608 - INFO - TABULA ROW 347: Telangana | 0.01 | 31.28 | 2422.52 | 0 | 378.56 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,608 - INFO - TABULA ROW 348: Total | -8.15 | -342.58 | 3995.95 | 0 | 990.75 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,608 - INFO - TABULA ROW 351: Andhra Pradesh | -13.3 | -7.8 | 144.26 | 0 | -426.9 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,608 - INFO - TABULA ROW 352: Karnataka | -103.39 | -406.7 | 1243.36 | 0 | 428.06 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,609 - INFO - TABULA ROW 353: Kerala | 155.45 | 6.14 | 189.96 | 0 | 259.97 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,609 - INFO - TABULA ROW 355: Tamil Nadu | 3362.07 | 2.59 | 699.21 | 0 | 372.96 | 0 | 0 | 0 | 51.2 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,609 - INFO - TABULA ROW 356: Telangana | -178.99 | -2.4 | -455.81 | 0 | 14.14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,609 - INFO - TABULA ROW 357: Total | 3221.84 | -408.17 | 1820.98 | 0 | 643.23 | 0 | 0 | 0 | 51.2 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,609 - INFO - TABULA ROW 360: Andhra Pradesh | 41.82 | 0.49 | -0.14 | 5.32 | 0 | -1.75 | 45.74
+2025-12-22 14:27:25,610 - INFO - TABULA ROW 361: Karnataka | 95.9 | -0.87 | -10.36 | 35.42 | 0 | 7.23 | 127.32
+2025-12-22 14:27:25,610 - INFO - TABULA ROW 362: Kerala | 43.31 | 0.65 | 0.44 | 2.24 | 0 | 5.3 | 51.94
+2025-12-22 14:27:25,610 - INFO - TABULA ROW 364: Tamil Nadu | 148.32 | 26.49 | 2.35 | 0.24 | 0 | 4.56 | 181.96
+2025-12-22 14:27:25,610 - INFO - TABULA ROW 365: Telangana | 81.87 | -0.35 | 0.46 | 29.39 | 0 | -0.33 | 111.04
+2025-12-22 14:27:25,610 - INFO - TABULA ROW 366: Total | 419.85 | 26.54 | -7.25 | 72.46 | 0 | 14.7 | 526.3
+2025-12-22 14:27:25,611 - INFO - TABULA ROW 369: Andhra Pradesh | 2438.71 | 1210.55 | 74.4 | -13.3 | 58.33 | -13.51 | 0 | 0 | 0 | 0 | 1213.86 | -48.8 | 0 | 0
+2025-12-22 14:27:25,611 - INFO - TABULA ROW 370: Karnataka | 5746.46 | 2941.74 | 10.93 | -103.39 | -377.26 | -477.4 | 0 | 0 | 0 | 0 | 2805.44 | 945.05 | 0 | 0
+2025-12-22 14:27:25,611 - INFO - TABULA ROW 371: Kerala | 2166.48 | 1531.95 | 155.45 | -234.63 | 66.9 | 0 | 0 | 0 | 0 | 0 | 375.42 | -8.5 | 0 | 0
+2025-12-22 14:27:25,611 - INFO - TABULA ROW 372: Puducherry | 437.92 | 296.12 | 17.95 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | -70 | 0 | 0
+2025-12-22 14:27:25,611 - INFO - TABULA ROW 373: Tamil Nadu | 6722.45 | 5178.44 | 4390.47 | 13.92 | 242.93 | 0 | 0 | 0 | 0 | 0 | 983.75 | -1391.16 | 0 | 0
+2025-12-22 14:27:25,612 - INFO - TABULA ROW 377: Andhra Pradesh | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 173.29 | -947.6 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,612 - INFO - TABULA ROW 382: Telangana | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1005.48 | -954.2 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,612 - INFO - TABULA ROW 384: 1. Physical regulation stage 1 implemented for Tamilnadu2. Talcher-Kolar pole-2 E/S/D taken at 16:22 hrs. During metallic return operation change over of Pole-1, that pole 1 also got tripped at 16:23 hrs. Pole1 deblocked at 17:13Hrs
+2025-12-22 14:27:25,613 - INFO - TABULA ROW 385: 1) 400kV Somanahalli-Mylasandra S/C line availed S/D on 03.08.2025/15:38Hrs for construction related works associated with the upcoming 400kV Dommasandra (New) substation, for a period offour months. Expected on 31.12.20252) 400KV-MEHBOOBNAGAR-RTPS line Shutdown availed for line reconductoring works and bay upgradation works at both ends from 31.10.2025 16:44 Hrs to 31.01.2026 18:00 Hrs.3) Kudankulam Unit-2 taken out for Refueling works on 27.10.2025 06:10 Hrs. Expected on 03.01.20264) Idduki Station shutdown taken 11.11.2025 21:36 hrs. all units were restored expect unit-5 which got revived at 20.12.2025 19:23 hrs.5) 400KV-HEBBANAHALLI-UPCL 1&2 availed S/D on 01.12.2025 for establishing 2x500 MVA, 400/220kV sub station at Kadandale. Line-1 revived on 20-12-2025 20:49 hrs and Line-2 revived on 20-12-202521:00 hrs.6) 400KV-TELANGANA_STPP-NARSAPUR-1&2 availed S/D on 01.12.2025 for diversion of QMDC line to carry out Railway track laying work across the line in between loc. No. 292 & 293. expected on 31-12-2025.7) 220kV Lower Sileru Generating Station (4* 115 MW )shutdown taken 02.12.2025 11:52 hrs. for Capital works for commissioning of unit 5&6 at Lower Sileru end. expected on 02.02.2026.8) 400KV-NELLORE_PG-VIJAYAWADA-2 L/R@ VIJAYAWADA - 400KV S/D on 06.12.25; 08:38 hrs for Replacement of existing ACEC make 50MVAR reactor with new CGL make 80MVAR reactor underADD Cap. Expected on 31.12.2025.9) 400KV-KOLAR_AC-THIRUVALAM line S/D availed For erection works of elevated viaduct using overhead gantry launcher by NHAI, on 08.12.2025 12:57 Hrs.Expected on 23.12.2025.10) 400KV-GUDDIGUDEM-KV_KOTA 1&2 availed S/D on 17.12.2025 for diversion of 400 KV GuddiGudem- K. Kota TMDC line Loc No. 604 to 607 near Ponguturu , Koyyala Gudem (M), Elru (Dt) by NHAIAuthorities. same expected on 02-01-2026.11) 400KV-THIRUVALAM-CHITTOOR D/C S/D availed on 20.12-.2025 for Chennai - Bangalore Express Highway construction works - NHAI Line Diversion works in 400 kV Thiruvalam - Chittor DC linebetween tower location no. 9-12. Expected on 22-12-2025
+2025-12-22 14:27:25,614 - INFO - TABULA ROW 401: Tamil Nadu | 0 | 6 | 1 | 2 | 9 | 4 | 0 | 0 | 4 | 0 | 0 | 0
+2025-12-22 14:27:25,614 - INFO - TABULA ROW 402: Telangana | 0 | 1 | 0 | 0 | 7 | 20 | 0 | 0 | 0 | 0 | 0 | 0
+2025-12-22 14:27:25,800 - WARNING - ⚠️ Start marker '\b2\s*\(?\s*A\s*\)?\b' not found for Table 2(A).
+2025-12-22 14:27:25,800 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 14:27:26,007 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 14:27:26,007 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 14:27:26,007 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 14:27:26,340 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 14:27:26,340 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 14:27:29,305 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 14:27:29,310 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 14:36:01,421 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_14-36-01
+2025-12-22 14:36:01,423 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 14:36:02,523 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_14-36-01
+2025-12-22 14:36:02,524 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 14:36:05,853 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 14:36:05,865 - ERROR - ❌ Tabula extraction failed: TabulaExtractor.extract_subtable_by_markers() missing 1 required positional argument: 'start_marker'
+2025-12-22 14:36:05,866 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\srldc_project.py", line 935, in handle
+    sub_2A, headers_2A = self.tabula_extractor.extract_subtable_by_markers(
+TypeError: TabulaExtractor.extract_subtable_by_markers() missing 1 required positional argument: 'start_marker'
+
+2025-12-22 14:36:05,867 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 14:36:06,253 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 14:36:06,253 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 14:36:09,184 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 14:36:09,189 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 14:36:34,988 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_14-36-34
+2025-12-22 14:36:34,988 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 14:36:36,107 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_14-36-34
+2025-12-22 14:36:36,109 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 14:36:39,032 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 14:36:39,246 - WARNING - ⚠️ Start marker '.*2\s*\(A\)State['’]?s\s*Load\s*Deails\s*\(At\s*State\s*Periphery\)\s*in\s*MUs.*' not found for Table 2(A).
+2025-12-22 14:36:39,246 - WARNING - ⚠️ Table 2(A) not found or extraction failed.
+2025-12-22 14:36:39,421 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 14:36:39,422 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 14:36:39,422 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 14:36:39,755 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 14:36:39,756 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 14:36:42,579 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 14:36:42,584 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 15:08:46,704 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_15-08-46
+2025-12-22 15:08:46,705 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 15:08:47,739 - INFO - ✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_15-08-46
+2025-12-22 15:44:57,512 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_15-44-57
+2025-12-22 15:44:57,512 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 15:44:58,489 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_15-44-57[0m
+2025-12-22 15:44:58,490 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 15:45:02,206 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 15:45:02,258 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 15:45:02,735 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 15:45:03,309 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 15:45:03,309 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 15:45:03,309 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 15:45:03,666 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 15:45:03,667 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 15:45:06,700 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 15:45:06,704 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 15:53:29,306 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_15-53-29
+2025-12-22 15:53:29,306 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 15:53:30,284 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_15-53-29[0m
+2025-12-22 15:53:30,285 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 15:53:33,994 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 15:53:34,041 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 15:53:34,541 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 15:53:35,034 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 15:53:35,034 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 15:53:35,035 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 15:53:35,414 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 15:53:35,415 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 15:53:38,486 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 15:53:38,491 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 15:59:13,348 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-01_15-59-13
+2025-12-22 15:59:13,348 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Nov25/30-11-2025-psp.pdf
+2025-12-22 15:59:13,706 - INFO - [32;1m✅ Successfully downloaded: srldc_01122025.pdf to downloads\SRLDC\report_2025-12-01_15-59-13[0m
+2025-12-22 15:59:13,708 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 15:59:15,992 - INFO - ✅ Tabula found 8 tables.
+2025-12-22 15:59:16,037 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 15:59:16,378 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-22 15:59:16,581 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 15:59:16,582 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 15:59:16,582 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 15:59:16,954 - INFO - Report DATE (3B extraction): 2025-11-30
+2025-12-22 15:59:16,954 - INFO - Reporting DATETIME (3B extraction): 2025-12-01 19:00
+2025-12-22 15:59:20,456 - WARNING - 3B old-pattern returned no data; trying new row-scanner pattern...
+2025-12-22 15:59:23,431 - INFO - 3B Central Rows: 17; JV Rows: 4
+2025-12-22 16:01:36,848 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_16-01-36
+2025-12-22 16:01:36,848 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 16:01:37,880 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_16-01-36[0m
+2025-12-22 16:01:37,882 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 16:01:42,098 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 16:01:42,129 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 16:01:42,680 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 16:01:43,166 - WARNING - ⚠️ Start marker '^\s*2\s*\(\s*C\s*\)\s*State['’]?\s*Demand\s*Met\s*in\s*MWs\s*$' not found for Table 2(C).
+2025-12-22 16:01:43,167 - WARNING - ⚠️ Table 2(C) not found or extraction failed.
+2025-12-22 16:01:43,167 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 16:01:43,507 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 16:01:43,507 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 16:01:46,423 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 16:01:46,427 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 16:10:37,201 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_16-10-37
+2025-12-22 16:10:37,201 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 16:10:43,465 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_16-10-37[0m
+2025-12-22 16:10:43,467 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 16:10:47,443 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 16:10:47,484 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 16:10:47,959 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 16:10:48,451 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 16:10:48,843 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 16:10:48,872 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 16:10:49,163 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-22 16:10:49,651 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 16:10:49,652 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 16:10:53,010 - WARNING - ⚠️ 3B 'Central Sector' table not found. Continuing (3B JV may exist).
+2025-12-22 16:10:53,019 - INFO - 3B Central Rows: 0; JV Rows: 228
+2025-12-22 16:48:13,787 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_16-48-13
+2025-12-22 16:48:13,788 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 16:48:14,808 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_16-48-13[0m
+2025-12-22 16:48:14,809 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 16:48:18,254 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 16:48:18,339 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 16:48:18,822 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 16:48:19,072 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 16:48:19,451 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 16:48:19,474 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 16:48:19,528 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 16:48:19,910 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 16:48:19,910 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 16:54:17,612 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-22_16-54-17
+2025-12-22 16:54:17,613 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/21-12-2025-psp.pdf
+2025-12-22 16:54:18,881 - INFO - [32;1m✅ Successfully downloaded: srldc_22122025.pdf to downloads\SRLDC\report_2025-12-22_16-54-17[0m
+2025-12-22 16:54:18,882 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 16:54:23,444 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 16:54:23,457 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 16:54:23,870 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 16:54:24,069 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 16:54:24,433 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 16:54:24,447 - INFO -                0   ...     12
+0           State  ...   None
+1            None  ...   Time
+2  Andhra Pradesh  ...  05:11
+3       Karnataka  ...  09:05
+4          Kerala  ...  02:46
+
+[5 rows x 13 columns]
+2025-12-22 16:54:24,502 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 16:54:24,934 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-22 16:54:24,935 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 16:55:17,104 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_16-55-17
+2025-12-22 16:55:17,105 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 16:55:17,930 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_16-55-17[0m
+2025-12-22 16:55:17,932 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 16:55:21,493 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 16:55:21,521 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 16:55:21,992 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 16:55:22,215 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 16:55:22,596 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 16:55:22,610 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 16:55:22,653 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 16:55:23,026 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 16:55:23,027 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 16:55:39,907 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_16-55-39
+2025-12-22 16:55:39,907 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 16:55:40,789 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_16-55-39[0m
+2025-12-22 16:55:40,791 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 16:55:44,132 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 16:55:44,144 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 16:55:44,552 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 16:55:44,713 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 16:55:45,076 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 16:55:45,087 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 16:55:45,133 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 16:55:45,498 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 16:55:45,498 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 17:01:13,630 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_17-01-13
+2025-12-22 17:01:13,630 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 17:01:14,865 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_17-01-13[0m
+2025-12-22 17:01:14,867 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 17:01:18,910 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 17:01:18,923 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 17:01:19,400 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 17:01:19,575 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 17:01:19,946 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 17:01:19,958 - INFO -                0                                                  1   ...                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...  ...              None   None
+1            None                                Maximum\nDemand Met  ...  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  ...           -690.86  14:40
+3       Karnataka                                              16431  ...           -748.18  16:00
+4          Kerala                                               4187  ...           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 17:01:20,005 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 17:01:20,403 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 17:01:20,403 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 17:04:01,253 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_17-04-01
+2025-12-22 17:04:01,253 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 17:04:02,530 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_17-04-01[0m
+2025-12-22 17:04:02,532 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 17:04:06,355 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 17:04:06,372 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 17:04:06,784 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 17:04:06,980 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 17:04:07,372 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 17:04:07,390 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 17:04:07,457 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 17:04:08,011 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 17:04:08,011 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 17:05:58,391 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_17-05-58
+2025-12-22 17:05:58,392 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 17:05:59,643 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_17-05-58[0m
+2025-12-22 17:05:59,644 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 17:06:02,995 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 17:06:03,011 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 17:06:03,403 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 17:06:03,585 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 17:06:03,964 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 17:06:03,975 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 17:06:04,041 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 17:06:04,411 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 17:06:04,412 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 17:06:53,391 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_17-06-53
+2025-12-22 17:06:53,391 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 17:06:54,595 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_17-06-53[0m
+2025-12-22 17:06:54,597 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 17:06:58,316 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 17:06:58,328 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 17:06:58,709 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 17:06:58,876 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 17:06:59,248 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 17:06:59,258 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 17:06:59,303 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 17:06:59,673 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 17:06:59,673 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 17:09:39,523 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_17-09-39
+2025-12-22 17:09:39,524 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 17:09:40,792 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_17-09-39[0m
+2025-12-22 17:09:40,793 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 17:09:44,252 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 17:09:44,267 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 17:09:44,690 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 17:09:44,944 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 17:09:45,322 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 17:09:45,334 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14                            0  ...            661.26  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00                            0  ...            706.26  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00                          250  ...            330.67  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 17:09:45,384 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 17:09:45,748 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 17:09:45,748 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-22 17:17:18,714 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_17-17-18
+2025-12-22 17:17:18,715 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-22 17:17:19,985 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_17-17-18[0m
+2025-12-22 17:17:19,987 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-22 17:17:23,169 - INFO - ✅ Tabula found 40 tables.
+2025-12-22 17:17:23,181 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-22 17:17:23,617 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-22 17:17:23,781 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-22 17:17:24,169 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-22 17:17:24,180 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-22 17:17:24,228 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-22 17:17:24,616 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-22 17:17:24,616 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-23 10:25:12,771 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_10-25-12
+2025-12-23 10:25:12,772 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-23 10:25:16,663 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_10-25-12[0m
+2025-12-23 10:25:16,665 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-23 10:25:21,137 - INFO - ✅ Tabula found 40 tables.
+2025-12-23 10:25:21,159 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-23 10:25:21,556 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-23 10:25:21,923 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-23 10:25:22,307 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-23 10:25:22,324 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14  ...  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00  ...  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00  ...  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-23 10:25:22,374 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-23 10:25:22,742 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-23 10:25:22,742 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-23 12:06:17,687 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-01-02_12-06-17
+2025-12-23 12:06:17,687 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Jan25/01-01-2025-psp.pdf
+2025-12-23 12:06:18,727 - INFO - [32;1m✅ Successfully downloaded: srldc_02012025.pdf to downloads\SRLDC\report_2025-01-02_12-06-17[0m
+2025-12-23 12:06:18,729 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-23 12:06:21,178 - INFO - ✅ Tabula found 7 tables.
+2025-12-23 12:06:21,196 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-23 12:06:21,554 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-23 12:06:21,555 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-23 12:06:21,882 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-23 12:06:21,882 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-23 12:06:22,255 - WARNING - PDF internal date: 2025-01-01 | Forced report date: 2025-01-01
+2025-12-23 12:06:22,255 - INFO - Report DATE (3B extraction): 2025-01-01
+2025-12-23 12:06:22,255 - INFO - Reporting DATETIME (3B extraction): 2025-01-02 19:00
+2025-12-23 12:23:27,732 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-20_12-23-27
+2025-12-23 12:23:27,744 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/19-12-2025-psp.pdf
+2025-12-23 12:23:28,412 - INFO - [32;1m✅ Successfully downloaded: srldc_20122025.pdf to downloads\SRLDC\report_2025-12-20_12-23-27[0m
+2025-12-23 12:23:28,414 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-23 12:23:30,744 - INFO - ✅ Tabula found 8 tables.
+2025-12-23 12:23:30,802 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-23 12:23:31,145 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-23 12:23:31,145 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-23 12:23:31,523 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-23 12:23:31,523 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-23 12:23:31,862 - WARNING - PDF internal date: 2025-12-19 | Forced report date: 2025-12-19
+2025-12-23 12:23:31,862 - INFO - Report DATE (3B extraction): 2025-12-19
+2025-12-23 12:23:31,862 - INFO - Reporting DATETIME (3B extraction): 2025-12-20 19:00
+2025-12-23 12:27:39,559 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-20_12-27-39
+2025-12-23 12:27:39,559 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/19-12-2025-psp.pdf
+2025-12-23 12:27:40,245 - INFO - [32;1m✅ Successfully downloaded: srldc_20122025.pdf to downloads\SRLDC\report_2025-12-20_12-27-39[0m
+2025-12-23 12:27:40,247 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-23 12:27:42,286 - INFO - ✅ Tabula found 8 tables.
+2025-12-23 12:27:42,404 - INFO - Renamed columns (2A): ['state', 'thermal', 'hydro', 'gas_naptha_diesel', 'wind', 'solar', 'others', 'net_sch', 'drawal', 'ui', 'availability', 'demand_met', 'shortage']
+2025-12-23 12:27:42,600 - INFO - --- RAW DataFrame for Table 2(C) before renaming ---
+2025-12-23 12:27:42,627 - INFO -     State Maximum Demand Met of the day      Time Shortage during maximum demand  ... Min Demand Met Time.2    ACE_MAX Time.3
+3      AP                        10,979     09:18                              0  ...          581.3  18:05    -480.14  12:33
+4     KAR                        16,749     10:00                              0  ...         740.95  16:32  -1,145.91  09:05
+5     KER                         4,238     18:30                              0  ...         195.35  19:47    -677.67  18:28
+6   PONDY                           414     08:00                              0  ...          44.92  18:29     -34.96  07:47
+7      TN                        16,766     16:30                              0  ...         989.71  15:31    -771.08  08:01
+8      TG                        14,181     07:58                              0  ...         857.94  16:50    -745.13  17:01
+9  Region                        59,821  09:30:07                              0  ...        2,668.2  06:32  -1,518.84  17:52
+
+[7 rows x 13 columns]
+2025-12-23 12:27:42,627 - INFO - Columns present in Table 2C after renaming: ['state', 'max_demand', 'time', 'shortage_max_demand', 'req_max_demand', 'max_req_day', 'time_max_req', 'shortage_max_req', 'demand_max_req', 'ace_min', 'time_ace_min', 'ace_max', 'time_ace_max']
+2025-12-23 12:27:42,681 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-23 12:27:43,053 - INFO - Report DATE (3B extraction): 2025-12-19
+2025-12-23 12:27:43,053 - INFO - Reporting DATETIME (3B extraction): 2025-12-20 19:00
+2025-12-23 12:27:46,199 - WARNING - 3B old-pattern returned no data; trying new row-scanner pattern...
+2025-12-23 12:27:48,847 - INFO - 3B Central Rows: 17; JV Rows: 4
+2025-12-23 12:32:55,006 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_12-32-55
+2025-12-23 12:32:55,006 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-23 12:32:59,450 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_12-32-55[0m
+2025-12-23 12:32:59,454 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-23 12:33:02,773 - INFO - ✅ Tabula found 40 tables.
+2025-12-23 12:33:02,796 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-23 12:33:03,204 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-23 12:33:03,423 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-23 12:33:03,831 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-23 12:33:03,841 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14                            0  ...            661.26  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00                            0  ...            706.26  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00                          250  ...            330.67  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-23 12:33:03,921 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-23 12:33:04,306 - WARNING - PDF internal date: 2025-12-21 | Forced report date: 2025-12-20
+2025-12-23 12:33:04,306 - INFO - Report DATE (3B extraction): 2025-12-20
+2025-12-23 12:33:04,306 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-23 12:53:46,478 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-21_12-53-46
+2025-12-23 12:53:46,494 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/20-12-2025-psp.pdf
+2025-12-23 12:53:50,957 - INFO - [32;1m✅ Successfully downloaded: srldc_21122025.pdf to downloads\SRLDC\report_2025-12-21_12-53-46[0m
+2025-12-23 12:53:50,960 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-23 12:53:54,340 - INFO - ✅ Tabula found 40 tables.
+2025-12-23 12:53:54,372 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-23 12:53:54,827 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-23 12:53:55,085 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-23 12:53:55,451 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-23 12:53:55,465 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10871  09:14                            0  ...            661.26  06:02           -690.86  14:40
+3       Karnataka                                              16431  10:00                            0  ...            706.26  10:03           -748.18  16:00
+4          Kerala                                               4187  19:00                          250  ...            330.67  19:47           -705.58  18:30
+
+[5 rows x 13 columns]
+2025-12-23 12:53:55,531 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-23 12:53:55,912 - WARNING - PDF internal date: 2025-12-21 | Forced report date: 2025-12-20
+2025-12-23 12:53:55,912 - INFO - Report DATE (3B extraction): 2025-12-20
+2025-12-23 12:53:55,912 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-23 14:50:06,635 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-22_14-50-06
+2025-12-23 14:50:06,636 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/21-12-2025-psp.pdf
+2025-12-23 14:50:11,635 - INFO - [32;1m✅ Successfully downloaded: srldc_22122025.pdf to downloads\SRLDC\report_2025-12-22_14-50-06[0m
+2025-12-23 14:50:11,639 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-23 14:50:15,053 - INFO - ✅ Tabula found 40 tables.
+2025-12-23 14:50:15,065 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-23 14:50:15,480 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-23 14:50:15,666 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-23 14:50:16,033 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-23 14:50:16,076 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10933  09:27                            0  ...            656.45  06:02           -432.62  05:11
+3       Karnataka                                              15434  11:00                            0  ...           1105.79  18:05           -906.72  09:05
+4          Kerala                                               3821  18:30                            0  ...            423.08  14:01            -506.2  02:46
+
+[5 rows x 13 columns]
+2025-12-23 14:50:16,162 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-23 14:50:16,553 - WARNING - PDF internal date: 2025-12-22 | Forced report date: 2025-12-21
+2025-12-23 14:50:16,553 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-23 14:50:16,553 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-23 16:03:28,496 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_16-03-28
+2025-12-23 16:03:28,497 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-23 16:03:28,898 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_16-03-28[0m
+2025-12-23 16:03:28,900 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-23 16:03:30,750 - INFO - ✅ Tabula found 42 tables.
+2025-12-23 16:03:30,792 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-23 16:03:31,079 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-23 16:03:31,344 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-23 16:03:31,619 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-23 16:03:31,653 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              11095  09:19                            0  ...             495.5  01:18           -427.35  15:49
+3       Karnataka                                              16364  10:00                            0  ...            799.58  06:03           -737.19  15:40
+4          Kerala                                               4294  18:30                            0  ...            381.85  16:46           -240.92  11:05
+
+[5 rows x 13 columns]
+2025-12-23 16:03:31,787 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-23 16:03:32,000 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-23 16:03:32,000 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-23 16:03:32,000 - INFO - Reporting DATETIME (3B extraction): None
