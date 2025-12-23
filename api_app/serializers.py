@@ -13,10 +13,10 @@ class SrldcCSerializer(serializers.ModelSerializer):
         model = Srldc2CData
         fields = '__all__'
 
-# class ScrldcBSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = SRLDC3BData
-#         fields = '__all__'
+class ScrldcBSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SRLDC3BData
+        fields = '__all__'
 
 
 
