@@ -1372,3 +1372,913 @@ TypeError: TabulaExtractor.extract_subtable_by_markers() missing 1 required posi
 2025-12-23 16:03:32,000 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
 2025-12-23 16:03:32,000 - INFO - Report DATE (3B extraction): 2025-12-22
 2025-12-23 16:03:32,000 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 10:21:02,401 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-24_10-21-02
+2025-12-25 10:21:02,409 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/23-12-2025-psp.pdf
+2025-12-25 10:21:03,920 - INFO - [32;1m✅ Successfully downloaded: srldc_24122025.pdf to downloads\SRLDC\report_2025-12-24_10-21-02[0m
+2025-12-25 10:21:03,921 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 10:21:07,923 - INFO - ✅ Tabula found 41 tables.
+2025-12-25 10:21:07,940 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 10:21:08,412 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-25 10:21:08,578 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 10:21:08,970 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 10:21:08,994 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              11091  09:28                            0  ...            383.02  11:03           -735.29  14:30
+3       Karnataka                                              16931  10:00                            0  ...            877.02  03:02           -533.49  15:30
+4          Kerala                                               4375  18:43                            0  ...            336.77  09:14           -353.57  15:08
+
+[5 rows x 13 columns]
+2025-12-25 10:21:09,037 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 10:21:09,423 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-23
+2025-12-25 10:21:09,423 - INFO - Report DATE (3B extraction): 2025-12-23
+2025-12-25 10:21:09,423 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 10:21:20,974 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_10-21-20
+2025-12-25 10:21:20,975 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 10:21:21,394 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_10-21-20[0m
+2025-12-25 10:21:21,395 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 10:21:23,409 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 10:21:23,414 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 10:21:23,751 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 10:21:23,751 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 10:21:24,105 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 10:21:24,105 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 10:21:24,426 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 10:21:24,427 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 10:21:24,427 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 10:41:46,808 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_10-41-46
+2025-12-25 10:41:46,808 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 10:41:47,230 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_10-41-46[0m
+2025-12-25 10:41:47,234 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 10:41:50,415 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 10:41:50,419 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 10:41:50,815 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 10:41:50,815 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 10:41:51,236 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 10:41:51,236 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 10:41:51,656 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 10:41:51,656 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 10:41:51,656 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 10:47:14,451 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_10-47-14
+2025-12-25 10:47:14,451 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 10:47:14,830 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_10-47-14[0m
+2025-12-25 10:47:14,832 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 10:47:17,368 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 10:47:17,371 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 10:47:17,703 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 10:47:17,703 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 10:47:18,061 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 10:47:18,061 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 10:47:18,396 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 10:47:18,396 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 10:47:18,396 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 10:49:10,434 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_10-49-10
+2025-12-25 10:49:10,434 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 10:49:11,523 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_10-49-10[0m
+2025-12-25 10:49:11,526 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 10:49:14,097 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 10:49:14,100 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 10:49:14,426 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 10:49:14,426 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 10:49:14,794 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 10:49:14,795 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 10:49:15,123 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 10:49:15,123 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 10:49:15,123 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 10:50:21,449 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_10-50-21
+2025-12-25 10:50:21,449 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 10:50:21,934 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_10-50-21[0m
+2025-12-25 10:50:21,935 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 10:50:23,941 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 10:50:23,945 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 10:50:24,288 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 10:50:24,289 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 10:50:24,658 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 10:50:24,658 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 10:50:24,991 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 10:50:24,991 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 10:50:24,991 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 10:50:34,258 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-24_10-50-34
+2025-12-25 10:50:34,259 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/23-12-2025-psp.pdf
+2025-12-25 10:50:36,278 - INFO - [32;1m✅ Successfully downloaded: srldc_24122025.pdf to downloads\SRLDC\report_2025-12-24_10-50-34[0m
+2025-12-25 10:50:36,278 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 10:50:38,979 - INFO - ✅ Tabula found 41 tables.
+2025-12-25 10:50:38,991 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 10:50:39,410 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-25 10:50:39,578 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 10:50:39,965 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 10:50:39,975 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              11091  09:28                            0  ...            383.02  11:03           -735.29  14:30
+3       Karnataka                                              16931  10:00                            0  ...            877.02  03:02           -533.49  15:30
+4          Kerala                                               4375  18:43                            0  ...            336.77  09:14           -353.57  15:08
+
+[5 rows x 13 columns]
+2025-12-25 10:50:40,020 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 10:50:40,403 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-23
+2025-12-25 10:50:40,403 - INFO - Report DATE (3B extraction): 2025-12-23
+2025-12-25 10:50:40,403 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 12:16:54,657 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_12-16-54
+2025-12-25 12:16:54,657 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 12:16:55,084 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_12-16-54[0m
+2025-12-25 12:16:55,086 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 12:16:57,912 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 12:16:57,921 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 12:16:58,248 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 12:16:58,248 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 12:16:58,601 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 12:16:58,601 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 12:16:58,930 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 12:16:58,931 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 12:16:58,931 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 12:30:12,496 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_12-30-12
+2025-12-25 12:30:12,496 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 12:30:14,242 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_12-30-12[0m
+2025-12-25 12:30:14,244 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 12:30:16,759 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 12:30:16,784 - INFO - Renamed columns (2A): ['state', 'thermal', 'hydro', 'gas_naptha_diesel', 'wind', 'solar', 'others', 'net_sch', 'drawal', 'ui', 'availability', 'demand_met', 'shortage']
+2025-12-25 12:30:17,106 - INFO - --- RAW DataFrame for Table 2(C) before renaming ---
+2025-12-25 12:30:17,119 - INFO -     State Maximum Demand Met of the day      Time Shortage during maximum demand  ... Min Demand Met Time.2    ACE_MAX Time.3
+3      AP                        11,220     09:26                              0  ...         797.04  06:01    -484.65  08:57
+4     KAR                        16,745     10:00                              -  ...         580.33  09:01    -776.14  18:01
+5     KER                         4,379     18:43                              0  ...         258.74  20:02    -441.86  16:16
+6   PONDY                           411     18:45                              0  ...          53.26  07:35     -31.19  09:19
+7      TN                        17,141     18:30                              0  ...       1,159.09  06:31  -1,322.42  16:30
+8      TG                        14,213     07:59                              0  ...         971.21  17:00    -700.07  03:46
+9  Region                        61,607  09:26:27                              0  ...       2,833.85  06:32  -2,559.62  17:57
+
+[7 rows x 13 columns]
+2025-12-25 12:30:17,120 - INFO - Columns present in Table 2C after renaming: ['state', 'max_demand', 'time', 'shortage_max_demand', 'req_max_demand', 'max_req_day', 'time_max_req', 'shortage_max_req', 'demand_max_req', 'ace_min', 'time_ace_min', 'ace_max', 'time_ace_max']
+2025-12-25 12:30:17,252 - INFO - 🔍 Running pdfplumber-based extraction for Table 3(B)...
+2025-12-25 12:30:17,606 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 12:30:17,606 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 12:30:20,866 - WARNING - 3B old-pattern returned no data; trying new row-scanner pattern...
+2025-12-25 12:30:23,570 - INFO - 3B Central Rows: 17; JV Rows: 4
+2025-12-25 13:00:57,814 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_13-00-57
+2025-12-25 13:00:57,815 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 13:00:58,256 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_13-00-57[0m
+2025-12-25 13:00:58,666 - INFO - 📄 Detected PDF Pattern: OLD
+2025-12-25 13:00:58,666 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 13:01:01,466 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 13:01:01,473 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 13:01:01,858 - INFO - ✅ Table 2(A) processed. 407 rows.
+2025-12-25 13:01:02,314 - ERROR - ❌ Error saving Table 2A row (State: The accuracy of shortage computation depends on timely load shedding details furnished in the web directly by constituents2(B)State's Demand Met in MWs and day energy forecast and deviation particulars): value too long for type character varying(100)
+
+2025-12-25 13:01:03,540 - ERROR - ❌ Error saving Table 2A row (State: Inst. Capacity19:0003:00Day PeakMin Generation(06:00-18:00)Station/Constituents(MW)Peak MWOff Peak MW(MW)Hrs(MW)Hrs): value too long for type character varying(100)
+
+2025-12-25 13:01:05,051 - ERROR - ❌ Error saving Table 2A row (State: 10. Synchronisation of new 220 / 400 / 765 KV Transmission elements and energising of bus /substation :11.Significant events (If any):): value too long for type character varying(100)
+
+2025-12-25 13:01:05,072 - ERROR - ❌ Error saving Table 2A row (State: 1) 400kV Somanahalli-Mylasandra S/C line availed S/D on 03.08.2025/15:38Hrs for construction related works associated with the upcoming 400kV Dommasandra (New) substation, for a period offour months. Expected on 31.12.20252) 400KV-MEHBOOBNAGAR-RTPS line Shutdown availed for line reconductoring works and bay upgradation works at both ends from 31.10.2025 16:44 Hrs to 31.01.2026 18:00 Hrs.3) Kudankulam Unit-2 taken out for Refueling works on 27.10.2025 06:10 Hrs. Expected on 03.01.20264) 400KV-TELANGANA_STPP-NARSAPUR-1&2 availed S/D on 01.12.2025 for diversion of QMDC line to carry out Railway track laying work across the line in between loc. No. 292 & 293.expected on 31-12-2025.5) 220kV Lower Sileru Generating Station (4* 115 MW )shutdown taken 02.12.2025 11:52 hrs. for Capital works for commissioning of unit 5&6 at Lower Sileru end. expected on 02.02.2026.6) 400KV-NELLORE_PG-VIJAYAWADA-2 L/R@ VIJAYAWADA - 400KV S/D on 06.12.25; 08:38 hrs for Replacement of existing ACEC make 50MVAR reactor with new CGL make 80MVARreactor under ADD Cap. Expected on 31.12.2025.7) 400KV-KOLAR_AC-THIRUVALAM line S/D availed For erection works of elevated viaduct using overhead gantry launcher by NHAI, on 08.12.2025 12:57 Hrs.Expected on 25.12.2025.8) 400KV-GUDDIGUDEM-KV_KOTA 1&2 availed S/D on 17.12.2025 for diversion of 400 KV GuddiGudem- K. Kota TMDC line Loc No. 604 to 607 near Ponguturu , Koyyala Gudem (M), Elru(Dt) by NHAI Authorities. same expected on 02-01-2026.9) 400KV-THIRUVALAM-CHITTOOR D/C S/D availed on 20.12-.2025 for Chennai - Bangalore Express Highway construction works - NHAI Line Diversion works in 400 kV Thiruvalam - ChittorDC line between tower location no. 9-12. Expected on03-01-2026): value too long for type character varying(100)
+
+2025-12-25 13:01:05,194 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 13:01:05,604 - ERROR - ❌ Error processing Table 2(C): Length mismatch: Expected axis has 15 elements, new values have 13 elements
+2025-12-25 13:01:05,630 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\test.py", line 1362, in handle
+    df_2C.columns = standard_cols[:len(df_2C.columns)]
+  File "C:\Users\tamilarasans\AppData\Roaming\Python\Python310\site-packages\pandas\core\generic.py", line 6335, in __setattr__
+    return object.__setattr__(self, name, value)
+  File "pandas/_libs/properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "C:\Users\tamilarasans\AppData\Roaming\Python\Python310\site-packages\pandas\core\generic.py", line 817, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "C:\Users\tamilarasans\AppData\Roaming\Python\Python310\site-packages\pandas\core\internals\managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "C:\Users\tamilarasans\AppData\Roaming\Python\Python310\site-packages\pandas\core\internals\base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 15 elements, new values have 13 elements
+
+2025-12-25 13:01:05,632 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 13:01:06,029 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 13:01:06,030 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 13:01:06,030 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 14:51:12,155 - INFO - 🌐 Downloading: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 14:51:16,343 - INFO - Trying New 2(A) extractor...
+2025-12-25 14:51:16,752 - WARNING - New 2(A) failed. Fallback to Tabula...
+2025-12-25 14:51:17,211 - ERROR - ❌ Error 2(A): 'float' object has no attribute 'strip'
+2025-12-25 14:51:17,211 - INFO - Trying New 2(C) extractor...
+2025-12-25 14:51:17,948 - INFO - Trying New 3(B) extractor...
+2025-12-25 14:51:20,658 - ERROR - ❌ Table 3(B) Failed or Empty
+2025-12-25 14:51:36,215 - INFO - 🌐 Downloading: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 14:51:38,936 - INFO - Trying New 2(A) extractor...
+2025-12-25 14:51:39,373 - INFO - Trying New 2(C) extractor...
+2025-12-25 14:51:39,905 - INFO - Trying New 3(B) extractor...
+2025-12-25 14:51:42,132 - ERROR - ❌ Table 3(B) Failed or Empty
+2025-12-25 14:51:57,803 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_14-51-57
+2025-12-25 14:51:57,803 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 14:51:58,254 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_14-51-57[0m
+2025-12-25 14:51:58,487 - INFO - 📄 Detected PDF Pattern: OLD
+2025-12-25 14:51:58,487 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 14:52:00,058 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 14:52:00,078 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 14:52:00,282 - INFO - 🔍 Extracting Table 2(A) using Tabula (OLD pattern)...
+2025-12-25 14:52:00,469 - WARNING - ⚠️ Start marker '2\s*\(\s*A\s*\)' not found for Table 2(A).
+2025-12-25 14:52:00,469 - ERROR - ❌ Error processing Table 2(A) data: 'NoneType' object has no attribute 'iloc'
+2025-12-25 14:52:00,471 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\test.py", line 1201, in handle
+    h0_vals = df_2A.iloc[0].fillna("").astype(str).str.upper().str.replace("\n", " ").str.strip().tolist()
+AttributeError: 'NoneType' object has no attribute 'iloc'
+
+2025-12-25 14:52:00,471 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 14:52:00,890 - WARNING - ⚠️ Start marker '2\s*\(\s*C\s*\)' not found for Table 2(C).
+2025-12-25 14:52:00,890 - ERROR - ❌ Error processing Table 2(C): 'NoneType' object has no attribute 'iloc'
+2025-12-25 14:52:00,890 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\test.py", line 1325, in handle
+    h0_vals = df_2C.iloc[0].fillna("").astype(str).str.upper().str.replace("\n", " ").str.strip().tolist()
+AttributeError: 'NoneType' object has no attribute 'iloc'
+
+2025-12-25 14:52:00,891 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 14:52:01,102 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 14:52:01,103 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 14:52:01,103 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 14:52:52,658 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_14-52-52
+2025-12-25 14:52:52,658 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 14:52:53,112 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_14-52-52[0m
+2025-12-25 14:52:53,351 - INFO - 📄 Detected PDF Pattern: OLD
+2025-12-25 14:52:53,351 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 14:52:55,363 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 14:52:55,382 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 14:52:55,589 - INFO - 🔍 Extracting Table 2(A) using Tabula (OLD pattern)...
+2025-12-25 14:52:55,793 - WARNING - ⚠️ Start marker '2\s*\(\s*A\s*\)' not found for Table 2(A).
+2025-12-25 14:52:55,794 - ERROR - ❌ Error processing Table 2(A) data: 'NoneType' object has no attribute 'iloc'
+2025-12-25 14:52:55,795 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\test.py", line 1201, in handle
+    h0_vals = df_2A.iloc[0].fillna("").astype(str).str.upper().str.replace("\n", " ").str.strip().tolist()
+AttributeError: 'NoneType' object has no attribute 'iloc'
+
+2025-12-25 14:52:55,795 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 14:52:56,227 - WARNING - ⚠️ Start marker '2\s*\(\s*C\s*\)' not found for Table 2(C).
+2025-12-25 14:52:56,227 - ERROR - ❌ Error processing Table 2(C): 'NoneType' object has no attribute 'iloc'
+2025-12-25 14:52:56,228 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\test.py", line 1325, in handle
+    h0_vals = df_2C.iloc[0].fillna("").astype(str).str.upper().str.replace("\n", " ").str.strip().tolist()
+AttributeError: 'NoneType' object has no attribute 'iloc'
+
+2025-12-25 14:52:56,228 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 14:52:56,447 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 14:52:56,447 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 14:52:56,447 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 14:53:07,870 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-22_14-53-07
+2025-12-25 14:53:07,870 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/21-12-2025-psp.pdf
+2025-12-25 14:53:08,916 - INFO - [32;1m✅ Successfully downloaded: srldc_22122025.pdf to downloads\SRLDC\report_2025-12-22_14-53-07[0m
+2025-12-25 14:53:09,349 - INFO - 📄 Detected PDF Pattern: OLD
+2025-12-25 14:53:09,349 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 14:53:12,545 - INFO - ✅ Tabula found 40 tables.
+2025-12-25 14:53:12,558 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 14:53:12,879 - INFO - 🔍 Extracting Table 2(A) using Tabula (OLD pattern)...
+2025-12-25 14:53:13,056 - WARNING - ⚠️ Start marker '2\s*\(\s*A\s*\)' not found for Table 2(A).
+2025-12-25 14:53:13,057 - ERROR - ❌ Error processing Table 2(A) data: 'NoneType' object has no attribute 'iloc'
+2025-12-25 14:53:13,058 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\test.py", line 1201, in handle
+    h0_vals = df_2A.iloc[0].fillna("").astype(str).str.upper().str.replace("\n", " ").str.strip().tolist()
+AttributeError: 'NoneType' object has no attribute 'iloc'
+
+2025-12-25 14:53:13,059 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 14:53:13,586 - WARNING - ⚠️ Start marker '2\s*\(\s*C\s*\)' not found for Table 2(C).
+2025-12-25 14:53:13,586 - ERROR - ❌ Error processing Table 2(C): 'NoneType' object has no attribute 'iloc'
+2025-12-25 14:53:13,587 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\test.py", line 1325, in handle
+    h0_vals = df_2C.iloc[0].fillna("").astype(str).str.upper().str.replace("\n", " ").str.strip().tolist()
+AttributeError: 'NoneType' object has no attribute 'iloc'
+
+2025-12-25 14:53:13,587 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 14:53:13,914 - WARNING - PDF internal date: 2025-12-22 | Forced report date: 2025-12-21
+2025-12-25 14:53:13,914 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-25 14:53:13,914 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 14:53:27,809 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_14-53-27
+2025-12-25 14:53:27,809 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 14:53:28,319 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_14-53-27[0m
+2025-12-25 14:53:28,324 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 14:53:30,373 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 14:53:30,377 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 14:53:30,747 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 14:53:30,747 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 14:53:31,107 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 14:53:31,108 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 14:53:31,436 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 14:53:31,436 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 14:53:31,436 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 14:53:42,305 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_14-53-42
+2025-12-25 14:53:42,305 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 14:53:42,782 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_14-53-42[0m
+2025-12-25 14:53:42,782 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 14:53:44,446 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 14:53:44,463 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 14:53:44,749 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-25 14:53:44,902 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 14:53:45,144 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 14:53:45,199 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              11095  09:19                            0  ...             495.5  01:18           -427.35  15:49
+3       Karnataka                                              16364  10:00                            0  ...            799.58  06:03           -737.19  15:40
+4          Kerala                                               4294  18:30                            0  ...            381.85  16:46           -240.92  11:05
+
+[5 rows x 13 columns]
+2025-12-25 14:53:45,249 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 14:53:45,469 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 14:53:45,469 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 14:53:45,470 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 15:27:03,604 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-22_15-27-03
+2025-12-25 15:27:03,604 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/21-12-2025-psp.pdf
+2025-12-25 15:27:04,858 - INFO - [32;1m✅ Successfully downloaded: srldc_22122025.pdf to downloads\SRLDC\report_2025-12-22_15-27-03[0m
+2025-12-25 15:27:04,860 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 15:27:08,091 - INFO - ✅ Tabula found 40 tables.
+2025-12-25 15:27:08,104 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 15:27:08,474 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 15:27:08,845 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-25 15:27:09,512 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 15:27:09,881 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 15:27:09,934 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10933  09:27                            0  ...            656.45  06:02           -432.62  05:11
+3       Karnataka                                              15434  11:00                            0  ...           1105.79  18:05           -906.72  09:05
+4          Kerala                                               3821  18:30                            0  ...            423.08  14:01            -506.2  02:46
+
+[5 rows x 13 columns]
+2025-12-25 15:27:10,064 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 15:27:10,402 - WARNING - PDF internal date: 2025-12-22 | Forced report date: 2025-12-21
+2025-12-25 15:27:10,402 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-25 15:27:10,402 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 15:27:41,636 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-22_15-27-41
+2025-12-25 15:27:41,636 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/21-12-2025-psp.pdf
+2025-12-25 15:27:43,640 - INFO - [32;1m✅ Successfully downloaded: srldc_22122025.pdf to downloads\SRLDC\report_2025-12-22_15-27-41[0m
+2025-12-25 15:27:43,642 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 15:27:46,795 - INFO - ✅ Tabula found 40 tables.
+2025-12-25 15:27:46,808 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 15:27:47,179 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 15:27:47,549 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-25 15:27:47,720 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 15:27:48,088 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 15:27:48,141 - INFO -                0                                                  1      2                            3   ...                9      10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None                         None  ...               ACE   None              None   None
+1            None                                Maximum\nDemand Met   Time  Shortage at\nmaximum demand  ...  Maximum\nACE(MW)   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10933  09:27                            0  ...            656.45  06:02           -432.62  05:11
+3       Karnataka                                              15434  11:00                            0  ...           1105.79  18:05           -906.72  09:05
+4          Kerala                                               3821  18:30                            0  ...            423.08  14:01            -506.2  02:46
+
+[5 rows x 13 columns]
+2025-12-25 15:27:48,197 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 15:27:48,530 - WARNING - PDF internal date: 2025-12-22 | Forced report date: 2025-12-21
+2025-12-25 15:27:48,530 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-25 15:27:48,531 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 15:28:00,499 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_15-28-00
+2025-12-25 15:28:00,499 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 15:28:00,961 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_15-28-00[0m
+2025-12-25 15:28:00,963 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 15:28:02,677 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 15:28:02,682 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 15:28:03,064 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 15:28:03,425 - WARNING - ❌ Table 2(A) not found (OLD_PATTERN)
+2025-12-25 15:28:03,426 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 15:28:03,426 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 15:28:03,736 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 15:28:03,737 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 15:28:04,110 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 15:28:04,110 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 15:28:04,110 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 15:29:22,041 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_15-29-22
+2025-12-25 15:29:22,042 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 15:29:22,527 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_15-29-22[0m
+2025-12-25 15:29:22,529 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 15:29:24,250 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 15:29:24,254 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 15:29:24,631 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 15:29:25,050 - WARNING - ❌ Table 2(A) not found (OLD_PATTERN)
+2025-12-25 15:29:25,050 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 15:29:25,050 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 15:29:25,419 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 15:29:25,419 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 15:29:25,792 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 15:29:25,792 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 15:29:25,792 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 15:30:53,188 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_15-30-53
+2025-12-25 15:30:53,189 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 15:30:53,677 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_15-30-53[0m
+2025-12-25 15:30:53,679 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 15:30:55,471 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 15:30:55,476 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 15:30:55,875 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 15:30:56,819 - WARNING - ⚠️ 'state' column missing in 2(A) dataframe after mapping.
+2025-12-25 15:30:56,820 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 15:30:57,816 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 15:30:57,824 - INFO -                                            0      1    2    3      4      5  6      7      8      9    10
+0  VIJJESWARAMGTS(1*112.5+1*34+1*59.5\n+2*33)    272    0    0      0  00:00  0  07:52      0      0    0
+1                      OTHERGAS/NAPTHA/DIESEL     27    0    0      0  00:00  0      -      -      -    -
+2                      TotalGAS/NAPTHA/DIESEL  3,036    0    0      -      -  -      -      0      0    0
+3                                        WIND  4,084  559  147    804  20:46  0  14:20   5.59   5.59  233
+4                                       SOLAR  3,356    0    0  2,199  13:04  0  14:20  15.36  15.36  640
+2025-12-25 15:30:57,826 - ERROR - ❌ Error processing Table 2(C): ['state']
+2025-12-25 15:30:57,831 - ERROR - Traceback (most recent call last):
+  File "D:\dlc_project\processor\management\commands\test.py", line 1452, in handle
+    sub_2C_final = sub_2C_final.dropna(subset=['state']).copy()
+  File "D:\dlc_project\venv\lib\site-packages\pandas\core\frame.py", line 6692, in dropna
+    raise KeyError(np.array(subset)[check].tolist())
+KeyError: ['state']
+
+2025-12-25 15:30:57,831 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 15:30:58,175 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 15:30:58,176 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 15:30:58,176 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 15:33:32,273 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_15-33-32
+2025-12-25 15:33:32,274 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 15:33:32,746 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_15-33-32[0m
+2025-12-25 15:33:32,747 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 15:33:34,467 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 15:33:34,471 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 15:33:34,867 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 15:33:35,767 - WARNING - ⚠️ 'state' column missing in 2(A) dataframe after mapping.
+2025-12-25 15:33:35,767 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 15:33:36,697 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 15:33:36,705 - INFO -                                            0      1    2    3      4      5  6      7      8      9    10
+0  VIJJESWARAMGTS(1*112.5+1*34+1*59.5\n+2*33)    272    0    0      0  00:00  0  07:52      0      0    0
+1                      OTHERGAS/NAPTHA/DIESEL     27    0    0      0  00:00  0      -      -      -    -
+2                      TotalGAS/NAPTHA/DIESEL  3,036    0    0      -      -  -      -      0      0    0
+3                                        WIND  4,084  559  147    804  20:46  0  14:20   5.59   5.59  233
+4                                       SOLAR  3,356    0    0  2,199  13:04  0  14:20  15.36  15.36  640
+2025-12-25 15:33:36,707 - WARNING - ⚠️ 'state' column missing in Table 2(C), skipping DB save.
+2025-12-25 15:33:36,710 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 15:33:37,045 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 15:33:37,045 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 15:33:37,045 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 15:43:49,472 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_15-43-49
+2025-12-25 15:43:49,472 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 15:43:50,071 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_15-43-49[0m
+2025-12-25 15:43:50,072 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 15:43:52,045 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 15:43:52,049 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 15:43:52,753 - WARNING - ❌ Table 2(A) NOT FOUND – OLD PATTERN
+2025-12-25 15:43:52,754 - WARNING - ❌ Table 2(A) NOT FOUND via heading anchor.
+2025-12-25 15:43:52,754 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 15:43:53,068 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 15:43:53,068 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 15:43:53,438 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 15:43:53,438 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 15:43:53,438 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 15:50:26,130 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_15-50-26
+2025-12-25 15:50:26,130 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 15:50:26,709 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_15-50-26[0m
+2025-12-25 16:00:20,726 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_16-00-20
+2025-12-25 16:00:20,726 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 16:00:21,276 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_16-00-20[0m
+2025-12-25 16:00:21,277 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:00:23,517 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 16:00:23,522 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:00:23,867 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:00:24,460 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 16:00:24,691 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:00:25,018 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 16:00:25,018 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:00:25,400 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 16:00:25,400 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 16:00:25,400 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 16:05:48,511 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_16-05-48
+2025-12-25 16:05:48,512 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 16:05:49,021 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_16-05-48[0m
+2025-12-25 16:05:49,025 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:05:51,634 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 16:05:51,643 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:05:51,985 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:05:52,361 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 16:05:52,548 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:05:52,923 - WARNING - ❌ Table 2(C) not found (NEW_PATTERN)
+2025-12-25 16:05:52,923 - INFO - 🔄 Try checking for OLD_PATTERN (Fallback) for 2(C)...
+2025-12-25 16:05:53,244 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 16:05:53,244 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:05:53,629 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 16:05:53,629 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 16:05:53,629 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 16:07:22,543 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_16-07-22
+2025-12-25 16:07:22,544 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 16:07:22,946 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_16-07-22[0m
+2025-12-25 16:07:22,948 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:07:25,428 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 16:07:25,432 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:07:25,776 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:07:26,140 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 16:07:26,353 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:07:26,762 - WARNING - ❌ Table 2(C) not found (NEW_PATTERN)
+2025-12-25 16:07:26,762 - INFO - 🔄 Try checking for OLD_PATTERN (Fallback) for 2(C)...
+2025-12-25 16:07:27,094 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 16:07:27,094 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:07:27,470 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 16:07:27,470 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 16:07:27,470 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 16:09:32,049 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_16-09-32
+2025-12-25 16:09:32,049 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 16:09:32,533 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_16-09-32[0m
+2025-12-25 16:09:32,535 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:09:35,056 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 16:09:35,059 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:09:35,425 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:09:35,813 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 16:09:35,960 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:09:38,253 - WARNING - ❌ Table 2(C) not found (NEW_PATTERN)
+2025-12-25 16:09:38,253 - INFO - 🔄 Try checking for OLD_PATTERN (Fallback) for 2(C)...
+2025-12-25 16:09:38,669 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 16:09:38,670 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:09:39,005 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 16:09:39,005 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 16:09:39,006 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 16:11:25,180 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_16-11-25
+2025-12-25 16:11:25,181 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 16:11:25,961 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_16-11-25[0m
+2025-12-25 16:11:25,962 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:11:28,493 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 16:11:28,497 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:11:28,832 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:11:29,210 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 16:11:29,353 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:11:31,667 - WARNING - ❌ Table 2(C) not found (NEW_PATTERN)
+2025-12-25 16:11:31,667 - INFO - 🔄 Try checking for OLD_PATTERN (Fallback) for 2(C)...
+2025-12-25 16:11:31,992 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 16:11:31,992 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:11:32,447 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 16:11:32,447 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 16:11:32,447 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 16:12:28,246 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_16-12-28
+2025-12-25 16:12:28,247 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 16:12:28,732 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_16-12-28[0m
+2025-12-25 16:12:28,734 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:12:31,343 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 16:12:31,345 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:12:31,682 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:12:32,051 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 16:12:32,213 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:12:34,511 - WARNING - ❌ Table 2(C) not found (NEW_PATTERN)
+2025-12-25 16:12:34,512 - INFO - 🔄 Try checking for OLD_PATTERN (Fallback) for 2(C)...
+2025-12-25 16:12:34,828 - WARNING - ❌ Table 2(C) NOT FOUND via heading anchor.
+2025-12-25 16:12:34,828 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:12:35,164 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 16:12:35,164 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 16:12:35,164 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 16:56:57,141 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_16-56-57
+2025-12-25 16:56:57,141 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 16:56:57,952 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_16-56-57[0m
+2025-12-25 16:56:57,953 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:57:00,519 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 16:57:00,523 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:57:00,865 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:57:01,244 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 16:57:01,402 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:57:03,898 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 16:57:03,918 - INFO -             state  max_demand   time  ...  time_ace_min  ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26  ...         06:01  -484.65         08:57
+1       KARNATAKA     16745.0  10:00  ...         09:01  -776.14         18:01
+2          KERALA      4379.0  18:43  ...         20:02  -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 16:57:04,018 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:57:04,457 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 16:57:04,457 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 16:57:04,457 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 16:58:01,017 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_16-58-01
+2025-12-25 16:58:01,017 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 16:58:01,429 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_16-58-01[0m
+2025-12-25 16:58:01,430 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:58:03,605 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 16:58:03,651 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:58:04,016 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:58:04,463 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 16:58:04,661 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:58:07,056 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 16:58:07,167 - INFO -             state  max_demand   time  shortage_max_demand  ...  ace_min  time_ace_min ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0  ...   797.04         06:01 -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0  ...   580.33         09:01 -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0  ...   258.74         20:02 -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 16:58:07,192 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:58:07,631 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 16:58:07,631 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 16:58:07,631 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 16:58:21,958 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-22_16-58-21
+2025-12-25 16:58:21,958 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/21-12-2025-psp.pdf
+2025-12-25 16:58:22,990 - INFO - [32;1m✅ Successfully downloaded: srldc_22122025.pdf to downloads\SRLDC\report_2025-12-22_16-58-21[0m
+2025-12-25 16:58:22,991 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:58:26,017 - INFO - ✅ Tabula found 40 tables.
+2025-12-25 16:58:26,031 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:58:26,393 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:58:26,724 - INFO - ✅ Table 2(A) processed. 6 rows.
+2025-12-25 16:58:26,894 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:58:28,988 - WARNING - ❌ Table 2(C) not found (NEW_PATTERN)
+2025-12-25 16:58:28,988 - INFO - 🔄 Try checking for OLD_PATTERN (Fallback) for 2(C)...
+2025-12-25 16:58:29,363 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 16:58:29,374 - INFO -                0                                                  1   ...                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...  ...              None   None
+1            None                                Maximum\nDemand Met  ...  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              10933  ...           -432.62  05:11
+3       Karnataka                                              15434  ...           -906.72  09:05
+4          Kerala                                               3821  ...            -506.2  02:46
+
+[5 rows x 13 columns]
+2025-12-25 16:58:29,436 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:58:29,773 - WARNING - PDF internal date: 2025-12-22 | Forced report date: 2025-12-21
+2025-12-25 16:58:29,773 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-25 16:58:29,773 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 16:59:39,902 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-22_16-59-39
+2025-12-25 16:59:39,902 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/21-12-2025-psp.pdf
+2025-12-25 16:59:40,907 - INFO - [32;1m✅ Successfully downloaded: srldc_22122025.pdf to downloads\SRLDC\report_2025-12-22_16-59-39[0m
+2025-12-25 16:59:40,907 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 16:59:43,996 - INFO - ✅ Tabula found 40 tables.
+2025-12-25 16:59:44,008 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 16:59:44,352 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 16:59:44,682 - INFO - ✅ Table 2(A) processed. 6 rows.
+2025-12-25 16:59:44,844 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 16:59:46,925 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 16:59:46,936 - INFO -             state  max_demand   time  shortage_max_demand  ...  ace_min  time_ace_min ace_max  time_ace_max
+0  ANDHRA PRADESH     10933.0  09:27                  0.0  ...   656.45         06:02 -432.62         05:11
+1       KARNATAKA     15434.0  11:00                  0.0  ...  1105.79         18:05 -906.72         09:05
+
+[2 rows x 13 columns]
+2025-12-25 16:59:46,961 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 16:59:47,294 - WARNING - PDF internal date: 2025-12-22 | Forced report date: 2025-12-21
+2025-12-25 16:59:47,294 - INFO - Report DATE (3B extraction): 2025-12-21
+2025-12-25 16:59:47,294 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 17:01:20,983 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_17-01-20
+2025-12-25 17:01:20,983 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 17:01:21,425 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_17-01-20[0m
+2025-12-25 17:01:21,427 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:01:23,181 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 17:01:23,187 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:01:23,545 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:01:23,912 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 17:01:24,055 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:01:26,207 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:01:26,218 - INFO -             state  max_demand   time  shortage_max_demand  req_max_demand  ...  demand_max_req ace_min  time_ace_min  ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0         11220.0  ...         11220.0  797.04         06:01  -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0         16745.0  ...         16745.0  580.33         09:01  -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0          4379.0  ...          4379.0  258.74         20:02  -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 17:01:26,243 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:01:26,677 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 17:01:26,677 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 17:01:26,677 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 17:02:10,304 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_17-02-10
+2025-12-25 17:02:10,305 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 17:02:10,735 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_17-02-10[0m
+2025-12-25 17:02:10,740 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:02:12,539 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 17:02:12,573 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:02:12,809 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:02:13,029 - INFO - ✅ Table 2(A) processed. 6 rows.
+2025-12-25 17:02:13,185 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:02:15,032 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:02:15,045 - INFO -             state  max_demand   time  shortage_max_demand  req_max_demand  ...  demand_max_req ace_min  time_ace_min  ace_max  time_ace_max
+0  ANDHRA PRADESH     11095.0  09:19                  0.0         11095.0  ...         11095.0  495.50         01:18  -427.35         15:49
+1       KARNATAKA     16364.0  10:00                  0.0         16364.0  ...         16364.0  799.58         06:03  -737.19         15:40
+2          KERALA      4294.0  18:30                  0.0          4294.0  ...          4294.0  381.85         16:46  -240.92         11:05
+
+[3 rows x 13 columns]
+2025-12-25 17:02:15,085 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:02:15,303 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 17:02:15,303 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 17:02:15,303 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 17:02:45,962 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_17-02-45
+2025-12-25 17:02:45,962 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 17:02:46,366 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_17-02-45[0m
+2025-12-25 17:02:46,368 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:02:48,176 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 17:02:48,193 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:02:48,431 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:02:48,645 - INFO - ✅ Table 2(A) processed. 6 rows.
+2025-12-25 17:02:48,837 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:02:50,735 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:02:50,746 - INFO -             state  max_demand   time  shortage_max_demand  req_max_demand  ...  demand_max_req ace_min  time_ace_min  ace_max  time_ace_max
+0  ANDHRA PRADESH     11095.0  09:19                  0.0         11095.0  ...         11095.0  495.50         01:18  -427.35         15:49
+1       KARNATAKA     16364.0  10:00                  0.0         16364.0  ...         16364.0  799.58         06:03  -737.19         15:40
+2          KERALA      4294.0  18:30                  0.0          4294.0  ...          4294.0  381.85         16:46  -240.92         11:05
+
+[3 rows x 13 columns]
+2025-12-25 17:02:50,772 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:02:50,988 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 17:02:50,988 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 17:02:50,989 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 17:02:57,877 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_17-02-57
+2025-12-25 17:02:57,877 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 17:02:58,382 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_17-02-57[0m
+2025-12-25 17:02:58,383 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:03:00,156 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 17:03:00,162 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:03:00,508 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:03:00,871 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 17:03:01,039 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:03:03,193 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:03:03,204 - INFO -             state  max_demand   time  shortage_max_demand  req_max_demand  ...  demand_max_req ace_min  time_ace_min  ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0         11220.0  ...         11220.0  797.04         06:01  -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0         16745.0  ...         16745.0  580.33         09:01  -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0          4379.0  ...          4379.0  258.74         20:02  -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 17:03:03,236 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:03:03,663 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 17:03:03,663 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 17:03:03,663 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 17:06:44,511 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_17-06-44
+2025-12-25 17:06:44,511 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 17:06:44,940 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_17-06-44[0m
+2025-12-25 17:06:44,941 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:06:46,822 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 17:06:46,840 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:06:47,078 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:06:47,288 - INFO - ✅ Table 2(A) processed. 6 rows.
+2025-12-25 17:06:47,468 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:06:49,368 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:06:49,380 - INFO -             state  max_demand   time  shortage_max_demand  req_max_demand  ...  demand_max_req ace_min  time_ace_min  ace_max  time_ace_max
+0  ANDHRA PRADESH     11095.0  09:19                  0.0         11095.0  ...         11095.0  495.50         01:18  -427.35         15:49
+1       KARNATAKA     16364.0  10:00                  0.0         16364.0  ...         16364.0  799.58         06:03  -737.19         15:40
+2          KERALA      4294.0  18:30                  0.0          4294.0  ...          4294.0  381.85         16:46  -240.92         11:05
+
+[3 rows x 13 columns]
+2025-12-25 17:06:49,406 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:06:49,619 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 17:06:49,619 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 17:06:49,620 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 17:06:58,522 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_17-06-58
+2025-12-25 17:06:58,522 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 17:06:58,936 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_17-06-58[0m
+2025-12-25 17:06:58,940 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:07:00,705 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 17:07:00,709 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:07:01,072 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:07:01,442 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 17:07:01,592 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:07:03,751 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:07:03,762 - INFO -             state  max_demand   time  shortage_max_demand  req_max_demand  ...  demand_max_req ace_min  time_ace_min  ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0         11220.0  ...         11220.0  797.04         06:01  -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0         16745.0  ...         16745.0  580.33         09:01  -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0          4379.0  ...          4379.0  258.74         20:02  -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 17:07:03,788 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:07:04,233 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 17:07:04,233 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 17:07:04,234 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 17:09:11,403 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_17-09-11
+2025-12-25 17:09:11,403 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 17:09:11,893 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_17-09-11[0m
+2025-12-25 17:09:11,894 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:09:13,506 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 17:09:13,524 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:09:14,159 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 17:09:14,439 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-25 17:09:14,601 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:09:14,842 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:09:14,852 - INFO -                0                                                  1      2   ...     10                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...   None  ...   None              None   None
+1            None                                Maximum\nDemand Met   Time  ...   Time  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              11095  09:19  ...  01:18           -427.35  15:49
+3       Karnataka                                              16364  10:00  ...  06:03           -737.19  15:40
+4          Kerala                                               4294  18:30  ...  16:46           -240.92  11:05
+
+[5 rows x 13 columns]
+2025-12-25 17:09:14,895 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:09:15,106 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 17:09:15,107 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 17:09:15,107 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 17:09:48,728 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_17-09-48
+2025-12-25 17:09:48,728 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 17:09:49,164 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_17-09-48[0m
+2025-12-25 17:09:49,165 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:09:50,835 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 17:09:50,852 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:09:51,498 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 17:09:51,781 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-25 17:09:51,935 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:09:52,178 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:09:52,188 - INFO -                0                                                  1   ...                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...  ...              None   None
+1            None                                Maximum\nDemand Met  ...  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              11095  ...           -427.35  15:49
+3       Karnataka                                              16364  ...           -737.19  15:40
+4          Kerala                                               4294  ...           -240.92  11:05
+
+[5 rows x 13 columns]
+2025-12-25 17:09:52,233 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:09:52,443 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 17:09:52,443 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 17:09:52,444 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 17:10:15,322 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_17-10-15
+2025-12-25 17:10:15,323 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 17:10:15,749 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_17-10-15[0m
+2025-12-25 17:10:15,755 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:10:17,595 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 17:10:17,600 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:10:18,590 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:10:18,960 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 17:10:19,128 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:10:21,356 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:10:21,368 - INFO -             state  max_demand   time  shortage_max_demand  ...  ace_min  time_ace_min ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0  ...   797.04         06:01 -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0  ...   580.33         09:01 -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0  ...   258.74         20:02 -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 17:10:21,392 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:10:21,723 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 17:10:21,723 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 17:10:21,723 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 17:21:35,462 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-23_17-21-35
+2025-12-25 17:21:35,462 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/22-12-2025-psp.pdf
+2025-12-25 17:21:35,995 - INFO - [32;1m✅ Successfully downloaded: srldc_23122025.pdf to downloads\SRLDC\report_2025-12-23_17-21-35[0m
+2025-12-25 17:21:35,997 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:21:37,781 - INFO - ✅ Tabula found 42 tables.
+2025-12-25 17:21:37,801 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:21:38,491 - INFO - 📄 Detected PDF Pattern: OLD_PATTERN
+2025-12-25 17:21:38,775 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-25 17:21:38,925 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:21:39,169 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:21:39,179 - INFO -                0                                                  1   ...                11     12
+0           State  Maximum Demand, corresponding shortage and\nre...  ...              None   None
+1            None                                Maximum\nDemand Met  ...  Minimum\nACE(MW)   Time
+2  Andhra Pradesh                                              11095  ...           -427.35  15:49
+3       Karnataka                                              16364  ...           -737.19  15:40
+4          Kerala                                               4294  ...           -240.92  11:05
+
+[5 rows x 13 columns]
+2025-12-25 17:21:39,222 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:21:39,435 - WARNING - PDF internal date: 2025-12-23 | Forced report date: 2025-12-22
+2025-12-25 17:21:39,436 - INFO - Report DATE (3B extraction): 2025-12-22
+2025-12-25 17:21:39,436 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-25 17:23:55,534 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_17-23-55
+2025-12-25 17:23:55,534 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 17:23:56,054 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_17-23-55[0m
+2025-12-25 17:23:56,057 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:23:58,105 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 17:23:58,110 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:23:59,122 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:23:59,499 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 17:23:59,653 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:24:01,895 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:24:01,906 - INFO -             state  max_demand   time  shortage_max_demand  ...  ace_min  time_ace_min ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0  ...   797.04         06:01 -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0  ...   580.33         09:01 -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0  ...   258.74         20:02 -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 17:24:01,932 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:24:02,275 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 17:24:02,275 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 17:24:02,275 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 17:27:36,037 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_17-27-36
+2025-12-25 17:27:36,037 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 17:27:36,414 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_17-27-36[0m
+2025-12-25 17:27:36,415 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:27:38,273 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 17:27:38,278 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:27:39,260 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:27:39,643 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 17:27:39,826 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:27:42,064 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:27:42,075 - INFO -             state  max_demand   time  shortage_max_demand  ...  ace_min  time_ace_min ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0  ...   797.04         06:01 -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0  ...   580.33         09:01 -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0  ...   258.74         20:02 -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 17:27:42,104 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:27:42,444 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 17:27:42,444 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 17:27:42,444 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 17:30:23,224 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_17-30-23
+2025-12-25 17:30:23,225 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 17:30:23,669 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_17-30-23[0m
+2025-12-25 17:30:23,671 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:30:25,451 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 17:30:25,455 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:30:26,470 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:30:26,863 - INFO - ✅ Table 2(A) processed. 5 rows.
+2025-12-25 17:30:27,039 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:30:29,271 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:30:29,286 - INFO -             state  max_demand   time  shortage_max_demand  ...  ace_min  time_ace_min ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0  ...   797.04         06:01 -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0  ...   580.33         09:01 -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0  ...   258.74         20:02 -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 17:30:29,316 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:30:29,666 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 17:30:29,667 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 17:30:29,667 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
+2025-12-25 17:30:31,034 - WARNING - ❌ Table 3(B) NOT FOUND via heading anchor.
+2025-12-25 17:32:33,717 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-25_17-32-33
+2025-12-25 17:32:33,718 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/24-12-2025-psp.pdf
+2025-12-25 17:32:34,145 - INFO - [32;1m✅ Successfully downloaded: srldc_25122025.pdf to downloads\SRLDC\report_2025-12-25_17-32-33[0m
+2025-12-25 17:32:34,148 - INFO - 🔍 Running Tabula-based extraction for Table 2(A) and 2(C)...
+2025-12-25 17:32:36,017 - INFO - ✅ Tabula found 8 tables.
+2025-12-25 17:32:36,021 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-25 17:32:37,008 - INFO - 📄 Detected PDF Pattern: NEW_PATTERN
+2025-12-25 17:32:37,385 - INFO - ✅ Table 2(A) processed. 6 rows.
+2025-12-25 17:32:37,560 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-25 17:32:39,787 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-25 17:32:39,799 - INFO -             state  max_demand   time  shortage_max_demand  ...  ace_min  time_ace_min ace_max  time_ace_max
+0  ANDHRA PRADESH     11220.0  09:26                  0.0  ...   797.04         06:01 -484.65         08:57
+1       KARNATAKA     16745.0  10:00                  0.0  ...   580.33         09:01 -776.14         18:01
+2          KERALA      4379.0  18:43                  0.0  ...   258.74         20:02 -441.86         16:16
+
+[3 rows x 13 columns]
+2025-12-25 17:32:39,829 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-25 17:32:40,173 - WARNING - PDF internal date: 2025-12-24 | Forced report date: 2025-12-24
+2025-12-25 17:32:40,173 - INFO - Report DATE (3B extraction): 2025-12-24
+2025-12-25 17:32:40,173 - INFO - Reporting DATETIME (3B extraction): 2025-12-25 19:00
