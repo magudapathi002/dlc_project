@@ -22,12 +22,13 @@ from rest_framework import status
 @permission_classes([AllowAny])
 def srldc_view(request):
     date = request.GET.get("date")
-
     if not date:
-        return Response(
-            {"error": "date parameter is required (YYYY-MM-DD)"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        date = datetime.today().strftime("%Y-%m-%d")
+    # if not date:
+    #     return Response(
+    #         {"error": "date parameter is required (YYYY-MM-DD)"},
+    #         status=status.HTTP_400_BAD_REQUEST
+    #     )
 
     # ---------------- DATE PARSING ----------------
     try:

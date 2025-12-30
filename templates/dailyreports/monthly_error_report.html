@@ -9,257 +9,121 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* page fade-in */
     @keyframes pageFadeIn {
       from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .animate-page-fade {
-      animation: pageFadeIn 420ms cubic-bezier(.2,.9,.2,1) both;
+      animation: pageFadeIn 420ms ease both;
     }
 
-    /* card slide up */
-    @keyframes cardSlideUp {
-      from { opacity: 0; transform: translateY(12px) scale(.995); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .animate-card-up {
-      animation: cardSlideUp 520ms cubic-bezier(.16,.84,.24,1) both;
-    }
-
-    /* header shimmer */
-    @keyframes headerShimmer {
-      0% { box-shadow: 0 0 0 rgba(255,255,255,0); }
-      50% { box-shadow: 0 6px 30px rgba(0,0,0,0.06); }
-      100% { box-shadow: 0 0 0 rgba(255,255,255,0); }
-    }
-    .header-shimmer {
-      animation: headerShimmer 2200ms ease-in-out infinite;
-    }
-
-    /* row reveal (fade+up) */
     @keyframes rowReveal {
-      from { opacity: 0; transform: translateY(8px) scale(.998); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .row-hidden {
-      opacity: 0;
-      transform: translateY(8px);
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .row-reveal {
-      animation: rowReveal 360ms cubic-bezier(.2,.9,.3,1) both;
-    }
-
-    /* subtle hover lift */
-    .row-hover-lift {
-      transition: transform 200ms cubic-bezier(.2,.9,.2,1), box-shadow 200ms;
-    }
-    .row-hover-lift:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(15,23,42,0.06);
-      z-index: 10;
-      background-color: #f8fafc;
-    }
-
-    @media (max-width: 640px) {
-      .grid-template-5 { grid-template-columns: 1fr 1fr 1fr 1fr 1fr !important; }
+      animation: rowReveal 360ms ease both;
     }
   </style>
 
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
 <body class="bg-gray-100 text-gray-800 animate-page-fade">
 
-  {% include "partials/navbar.html" %}
+{% include "partials/navbar.html" %}
 
-  <div class="max-w-7xl mx-auto mt-6 p-3">
-    <div class="flex gap-6 items-start">
+<div class="max-w-7xl mx-auto mt-6 p-3">
+  <div class="flex gap-6 items-start">
 
-      <aside class="w-10 hidden lg:block sticky top-6">
-        {% include "partials/sidebar.html" %}
-      </aside>
+    <aside class="w-10 hidden lg:block sticky top-6">
+      {% include "partials/sidebar.html" %}
+    </aside>
 
-      <div class="flex-1 w-full">
-        <main class="w-full">
+    <main class="flex-1 bg-white shadow rounded-lg border">
 
-          <div class="bg-white shadow-md rounded-lg overflow-hidden animate-card-up border border-gray-200">
-
-            <div class="flex items-center justify-between px-4 py-3 border-b header-shimmer bg-white">
-              <div>
-                <h1 class="text-xl font-semibold text-gray-800">Monthly ERROR Reports</h1>
-                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Select month &amp; year</p>
-              </div>
-            </div>
-
-            <div class="px-4 py-3 bg-gray-50/50 border-b border-gray-100">
-              <form method="GET" id="monthYearForm" class="flex flex-col md:flex-row md:items-center gap-3">
-                <label for="month_select" class="sr-only">Month</label>
-                <select id="month_select" name="month" class="w-full md:w-32 p-2 border border-gray-300 rounded bg-white text-sm focus:ring-1 focus:ring-blue-500 outline-none">
-                  <option value="">-- Month --</option>
-                  <option value="01" {% if selected_month == "01" %}selected{% endif %}>January</option>
-                  <option value="02" {% if selected_month == "02" %}selected{% endif %}>February</option>                                                                                                       `
-                  <option value="03" {% if selected_month == "03" %}selected{% endif %}>March</option>
-                  <option value="04" {% if selected_month == "04" %}selected{% endif %}>April</option>
-                  <option value="05" {% if selected_month == "05" %}selected{% endif %}>May</option>
-                  <option value="06" {% if selected_month == "06" %}selected{% endif %}>June</option>
-                  <option value="07" {% if selected_month == "07" %}selected{% endif %}>July</option>
-                  <option value="08" {% if selected_month == "08" %}selected{% endif %}>August</option>
-                  <option value="09" {% if selected_month == "09" %}selected{% endif %}>September</option>
-                  <option value="10" {% if selected_month == "10" %}selected{% endif %}>October</option>
-                  <option value="11" {% if selected_month == "11" %}selected{% endif %}>November</option>
-                  <option value="12" {% if selected_month == "12" %}selected{% endif %}>December</option>
-                </select>
-
-                <label for="year_select" class="sr-only">Year</label>
-                <select id="year_select" name="year" class="w-full md:w-24 p-2 border border-gray-300 rounded bg-white text-sm focus:ring-1 focus:ring-blue-500 outline-none">
-                  </select>
-
-                <button type="submit" id="viewBtn" class="inline-flex items-center justify-center gap-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm font-bold shadow-sm">
-                  VIEW
-                </button>
-
-                <div class="flex items-center gap-2 ml-auto">
-                    <button type="button" id="exportCsvBtn" class="inline-flex items-center gap-1 px-3 py-2 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-100 transition bg-white shadow-sm">
-                      <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                      Excel
-                    </button>
-
-                    <button type="button" id="refreshBtn" class="inline-flex items-center gap-1 px-3 py-2 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-100 transition bg-white shadow-sm" title="Reload page">
-                      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                      Refresh
-                    </button>
-                </div>
-              </form>
-            </div>
-
-            <div class="px-4 py-4 bg-white">
-
-                <div class="border border-gray-200 rounded-lg shadow-sm">
-
-                  <div class="bg-green-700 text-white text-sm font-semibold rounded-t-lg">
-                    <div class="grid grid-cols-5 gap-0 divide-x divide-green-600">
-                      <div class="px-3 py-2">Date</div>
-                      <div class="px-3 py-2">Forecast (MU)</div>
-                      <div class="px-3 py-2">Actual (MU)</div>
-                      <div class="px-3 py-2 text-right">Abs. Dev (MU)</div>
-                      <div class="px-3 py-2 text-right">Abs. Error (%)</div>
-                    </div>
-                  </div>
-
-                  <div id="compact-scroll-area" class="w-full">
-                    <table id="emptyTemplateTable" class="min-w-full table-fixed border-collapse text-sm">
-                      <thead class="hidden"></thead>
-
-                      <tbody id="empty-tbody" class="divide-y divide-gray-100">
-                        {% for r in rows %}
-                          <tr class="hover:bg-blue-50 transition-colors row-hidden"
-                              style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr;">
-                            <td class="px-3 py-2 border-r border-gray-100 font-medium text-gray-700">{{ r.date_display }}</td>
-                            <td class="px-3 py-2 border-r border-gray-100 text-gray-600">&nbsp;</td>
-                            <td class="px-3 py-2 border-r border-gray-100 font-semibold text-gray-800">
-                              {% if r.actual is not None %}
-                                {{ r.actual|floatformat:2 }}
-                              {% else %}
-                                &nbsp;
-                              {% endif %}
-                            </td>
-                            <td class="px-3 py-2 border-r border-gray-100 text-right text-gray-600">&nbsp;</td>
-                            <td class="px-3 py-2 text-right text-gray-600">&nbsp;</td>
-                          </tr>
-                        {% endfor %}
-
-                        <tr class="bg-gray-100 font-bold row-hidden border-t border-gray-300"
-                            style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr;">
-                          <td class="px-3 py-3 text-gray-900">Total</td>
-                          <td class="px-3 py-3">&nbsp;</td>
-                          <td class="px-3 py-3 text-blue-700">
-                            {% if total_actual is not None %}
-                              {{ total_actual|floatformat:2 }}
-                            {% else %}
-                              &nbsp;
-                            {% endif %}
-                          </td>
-                          <td class="px-3 py-3 text-right">&nbsp;</td>
-                          <td class="px-3 py-3 text-right">&nbsp;</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                </div>
-            </div>
-
-          </div>
-        </main>
+      <!-- Header -->
+      <div class="px-4 py-3 border-b">
+        <h1 class="text-xl font-semibold">Monthly ERROR Reports</h1>
+        <p class="text-xs text-gray-500 uppercase">Select month & year</p>
       </div>
-    </div>
+
+      <!-- Filters -->
+      <form method="get" class="px-4 py-3 flex flex-wrap gap-3 border-b bg-gray-50">
+
+        <select name="month" class="p-2 border rounded text-sm">
+          <option value="">-- Month --</option>
+          {% for m in months %}
+            <option value="{{ m.value }}" {% if m.value == selected_month %}selected{% endif %}>
+              {{ m.label }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <select name="year" class="p-2 border rounded text-sm">
+          <option value="">-- Year --</option>
+          {% for y in years %}
+            <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>
+              {{ y }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <button type="submit"
+                class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-bold">
+          VIEW
+        </button>
+
+        <a href="?month={{ selected_month }}&year={{ selected_year }}"
+           class="ml-auto px-3 py-2 border rounded text-sm bg-white">
+          Excel
+        </a>
+
+
+        <a href=""
+           class="px-3 py-2 border rounded text-sm bg-white">
+          Refresh
+        </a>
+      </form>
+
+      <!-- Table -->
+      <div class="p-4">
+
+        <div class="border rounded">
+          <div class="bg-green-700 text-white text-sm font-semibold grid grid-cols-5">
+            <div class="p-2">Date</div>
+            <div class="p-2">Forecast (MU)</div>
+            <div class="p-2">Actual (MU)</div>
+            <div class="p-2 text-right">Abs. Dev</div>
+            <div class="p-2 text-right">Abs. Error %</div>
+          </div>
+
+          {% for r in rows %}
+          <div class="grid grid-cols-5 border-t row-reveal hover:bg-blue-50">
+            <div class="p-2 font-medium">{{ r.date_display }}</div>
+            <div class="p-2"></div>
+            <div class="p-2 font-semibold">{{ r.actual|default_if_none:""|floatformat:2 }}</div>
+            <div class="p-2 text-right"></div>
+            <div class="p-2 text-right"></div>
+          </div>
+          {% endfor %}
+
+          <!-- Total -->
+          <div class="grid grid-cols-5 border-t bg-gray-100 font-bold">
+            <div class="p-3">Total</div>
+            <div></div>
+            <div class="p-3 text-blue-700">
+              {{ total_actual|default_if_none:""|floatformat:2 }}
+            </div>
+            <div></div>
+            <div></div>
+          </div>
+
+        </div>
+      </div>
+    </main>
   </div>
+</div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      window.__SERVER_RENDERED = true;
-      if (typeof window.buildEmptyTemplate === 'function') {
-        window._buildEmptyTemplate_backup = window.buildEmptyTemplate;
-        window.buildEmptyTemplate = function() { return; };
-      }
-
-      const rows = Array.from(document.querySelectorAll('#empty-tbody tr.row-hidden'));
-      rows.forEach((tr, i) => {
-        const delay = 30 + (i * 10);
-        setTimeout(() => {
-          tr.classList.remove('row-hidden');
-          tr.classList.add('row-reveal');
-        }, delay);
-      });
-    });
-
-    (function populateYears() {
-      const yearSelect = document.getElementById('year_select');
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      const start = currentYear - 5;
-      const end = currentYear + 5;
-      const selectedYear = "{{ selected_year|default:'' }}";
-      for (let y = end; y >= start; y--) {
-        const opt = document.createElement('option');
-        opt.value = String(y);
-        opt.textContent = String(y);
-        if (selectedYear && String(y) === String(selectedYear)) opt.selected = true;
-        yearSelect.appendChild(opt);
-      }
-    })();
-
-    function compactTableToCSV(filename = 'psp-compact-empty.csv') {
-      const table = document.getElementById('emptyTemplateTable');
-      if (!table) { alert('No table to export.'); return; }
-      const rows = [];
-      const headers = ['Date','Forecast (MU)','Actual Reported By SRLDC (MU)','Abs. Deviation (MU)','Abs. Error (%)'];
-      rows.push(headers.join(','));
-      const trs = table.querySelectorAll('tbody tr');
-      trs.forEach(tr => {
-        const cols = Array.from(tr.querySelectorAll('td')).map(td => {
-          let text = td.textContent.trim().replace(/"/g, '""');
-          if (text.includes(',')) text = `"${text}"`;
-          return text;
-        });
-        rows.push(cols.join(','));
-      });
-      const csv = rows.join('\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    document.getElementById('exportCsvBtn').addEventListener('click', compactTableToCSV);
-    document.getElementById('refreshBtn').addEventListener('click', function () { location.reload(); });
-  </script>
-
-  {% block content %}{% endblock %}
 </body>
 </html>

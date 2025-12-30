@@ -1458,31 +1458,31 @@ class Command(BaseCommand):
                         if v is None: return None
                         try: return Decimal(str(v))
                         except: return None
-                    # try:
-                    #     obj, created = SRLDC3BData.objects.update_or_create(
-                    #         station=rec.get("station"),
-                    #         report_date=report_date_parsed,
-                    #         defaults={
-                    #             "reporting_datetime": reporting_dt,
-                    #             "installed_capacity_mw": rec.get("installed_capacity_mw"),
-                    #             "peak_1900_mw": rec.get("peak_1900_mw"),
-                    #             "offpeak_0300_mw": rec.get("offpeak_0300_mw"),
-                    #             "day_peak_mw": rec.get("day_peak_mw"),
-                    #             "day_peak_hrs": rec.get("day_peak_hrs"),
-                    #             "min_generation_mw": to_dec(rec.get("min_generation_mw")),
-                    #             "min_generation_hrs": rec.get("min_generation_hrs"),
-                    #             "gross_energy_mu": to_dec(rec.get("gross_energy_mu")),
-                    #             "net_energy_mu": to_dec(rec.get("net_energy_mu")),
-                    #             "avg_mw": to_dec(rec.get("avg_mw")),
-                    #             "row_type": rec.get("row_type"),
-                    #             "source_page": rec.get("source_page"),
-                    #             "source_table_index": rec.get("source_table_index"),
-                    #         }
-                    #     )
-                    #     saved += 1
-                    # except Exception as e:
-                    #     self.write(f"❌ DB save error for station '{rec.get('station')}' : {e}", level='error')
-                    #     self.write(traceback.format_exc(), level='error')
+                    try:
+                        obj, created = SRLDC3BData.objects.update_or_create(
+                            station=rec.get("station"),
+                            report_date=report_date_parsed,
+                            defaults={
+                                "reporting_datetime": reporting_dt,
+                                "installed_capacity_mw": rec.get("installed_capacity_mw"),
+                                "peak_1900_mw": rec.get("peak_1900_mw"),
+                                "offpeak_0300_mw": rec.get("offpeak_0300_mw"),
+                                "day_peak_mw": rec.get("day_peak_mw"),
+                                "day_peak_hrs": rec.get("day_peak_hrs"),
+                                "min_generation_mw": to_dec(rec.get("min_generation_mw")),
+                                "min_generation_hrs": rec.get("min_generation_hrs"),
+                                "gross_energy_mu": to_dec(rec.get("gross_energy_mu")),
+                                "net_energy_mu": to_dec(rec.get("net_energy_mu")),
+                                "avg_mw": to_dec(rec.get("avg_mw")),
+                                "row_type": rec.get("row_type"),
+                                "source_page": rec.get("source_page"),
+                                "source_table_index": rec.get("source_table_index"),
+                            }
+                        )
+                        saved += 1
+                    except Exception as e:
+                        self.write(f"❌ DB save error for station '{rec.get('station')}' : {e}", level='error')
+                        self.write(traceback.format_exc(), level='error')
 
             self.write(f"Saved {saved} rows to SRLDC3BData for {report_date}", level='success')
 

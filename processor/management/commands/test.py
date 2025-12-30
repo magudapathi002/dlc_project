@@ -1099,7 +1099,6 @@ def extract_table_2C_using_heading(pdf_path):
 # ======================================================
 def extract_table_3B_using_heading(pdf_path):
     tables_dict = {"central_sector": [], "joint_venture": []}
-    started_extraction = False
     
     # Text markers to identify section switching within the captured tables
     # Note: "Central Sector" might be implicit at the start 
@@ -1182,18 +1181,6 @@ def extract_table_3B_using_heading(pdf_path):
                 for r in cleaned_rows:
                     row_text = " ".join(r).upper()
                     first_col = r[0].upper().strip()
-
-                    # --- START CONDITION ---
-                    if not started_extraction:
-                        if ("STATION" in row_text and "CAPACITY" in row_text) or \
-                           ("CENTRAL" in row_text and "SECTOR" in row_text) or \
-                           ("JOINT" in row_text and "VENTURE" in row_text):
-                            print(f"DEBUG 3B: Found Start of Table at: {r}")
-                            started_extraction = True
-                            # Continue to let main loop handle header skipping or section switching
-                        else:
-                            # Skip garbage/previous table rows
-                            continue
 
                     # --- STOP CONDITIONS ---
                     # 1. Check for Next Section Header (starts with digit or specific keywords)
