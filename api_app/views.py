@@ -17,19 +17,29 @@ from rest_framework import status
 
 
 
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def srldc_view(request):
     date = request.GET.get("date")
+    
+    # Default to showing all data (historical data) if no date is provided
     if not date:
-        date = datetime.today().strftime("%Y-%m-%d")
-    # if not date:
-    #     return Response(
-    #         {"error": "date parameter is required (YYYY-MM-DD)"},
-    #         status=status.HTTP_400_BAD_REQUEST
-    #     )
+        # If no date filter, show all historical data for all available dates
+        a_tab = Srldc2AData.objects.all()  # Show all A data
+        c_tab = Srldc2CData.objects.all()  # Show all C data
+        b_tab = SRLDC3BData.objects.all()  # Show all B data
 
+        return Response(
+            {
+                "requested_date": "all",
+                "actual_report_date": "all",
+                "table_a": SrldcASerializer(a_tab, many=True).data,  # ALL States
+                "table_c": SrldcCSerializer(c_tab, many=True).data,  # ALL States
+                "table_b": list(b_tab.values()),                     # ALL Stations
+            },
+            status=status.HTTP_200_OK
+        )
+    
     # ---------------- DATE PARSING ----------------
     try:
         requested_date = datetime.strptime(date, "%Y-%m-%d").date()
@@ -39,28 +49,36 @@ def srldc_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # ---------------- FETCH DATA (NO STATE FILTER) ----------------
+    # ---------------- FETCH DATA FOR THE SPECIFIED DATE ----------------
     report_date = requested_date
 
+    # Fetch data based on the requested date
     a_tab = Srldc2AData.objects.filter(report_date=report_date)
     c_tab = Srldc2CData.objects.filter(report_date=report_date)
+    b_tab = SRLDC3BData.objects.filter(report_date=report_date)
 
-    # fallback to previous day ONLY if nothing exists
-    if not a_tab.exists() and not c_tab.exists():
+    # If no data is found for the requested date, fallback to previous day
+    if not a_tab.exists() and not c_tab.exists() and not b_tab.exists():
         report_date = requested_date - timedelta(days=1)
         a_tab = Srldc2AData.objects.filter(report_date=report_date)
         c_tab = Srldc2CData.objects.filter(report_date=report_date)
+        b_tab = SRLDC3BData.objects.filter(report_date=report_date)
 
-    # ---------------- TABLE 3(B) ----------------
-    b_tab = SRLDC3BData.objects.filter(report_date=report_date)
+        # If no data is found for the previous day either
+        if not a_tab.exists() and not c_tab.exists() and not b_tab.exists():
+            return Response(
+                {"error": f"No data available for the date {str(report_date)}"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
+    # ---------------- RESPONSE ----------------
     return Response(
         {
             "requested_date": str(requested_date),
             "actual_report_date": str(report_date),
-            "table_a": SrldcASerializer(a_tab, many=True).data,  # ALL STATES
-            "table_c": SrldcCSerializer(c_tab, many=True).data,  # ALL STATES
-            "table_b": list(b_tab.values()),                     # ALL STATIONS
+            "table_a": SrldcASerializer(a_tab, many=True).data,  # Filtered for the date
+            "table_c": SrldcCSerializer(c_tab, many=True).data,  # Filtered for the date
+            "table_b": list(b_tab.values()),                     # Filtered for the date
         },
         status=status.HTTP_200_OK
     )

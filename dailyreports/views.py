@@ -132,90 +132,92 @@ def error_report(request):
 
 
 
-
 @login_required
 def monthly_error_report(request):
-    # -----------------------------
-    # Month / Year handling
-    # -----------------------------
+
+    # ---------------------------
+    # Month & Year from request
+    # ---------------------------
     today = date.today()
     month = request.GET.get("month") or f"{today.month:02d}"
     year = request.GET.get("year") or str(today.year)
 
-    try:
-        m = int(month)
-        y = int(year)
-    except ValueError:
-        m = today.month
-        y = today.year
+    # ---------------------------
+    # Dropdown: Months (ALL)
+    # ---------------------------
+    months = [
+        {"value": "01", "label": "January"},
+        {"value": "02", "label": "February"},
+        {"value": "03", "label": "March"},
+        {"value": "04", "label": "April"},
+        {"value": "05", "label": "May"},
+        {"value": "06", "label": "June"},
+        {"value": "07", "label": "July"},
+        {"value": "08", "label": "August"},
+        {"value": "09", "label": "September"},
+        {"value": "10", "label": "October"},
+        {"value": "11", "label": "November"},
+        {"value": "12", "label": "December"},
+    ]
 
-    # -----------------------------
-    # Fetch SRLDC payload
-    # -----------------------------
-    srldc_params = {
-        "month": f"{m:02d}",
-        "year": str(y),
-        "type": "monthly"
-    }
+    # ---------------------------
+    # Dropdown: Years (PAST → CURRENT)
+    # ---------------------------
+    start_year = 2015  # change if needed
+    years = [str(y) for y in range(start_year, today.year + 1)]
+
+    # ---------------------------
+    # Fetch SRLDC data
+    # ---------------------------
+    srldc_params = {"month": month, "year": year, "type": "monthly"}
     raw = fetch_srldc_data(srldc_params) or {}
 
-    # -----------------------------
-    # Normalize payload → records
-    # -----------------------------
     records = []
-
     if isinstance(raw, dict):
         if isinstance(raw.get("table_a"), (list, tuple)):
             records = list(raw["table_a"])
         else:
-            # fallback: first list-like value
             for v in raw.values():
                 if isinstance(v, (list, tuple)):
                     records = list(v)
                     break
-
     elif isinstance(raw, (list, tuple)):
         records = list(raw)
 
-    # -----------------------------
-    # Helpers
-    # -----------------------------
-    def normalize_state(val):
-        if not val:
+    # ---------------------------
+    # Normalization helper
+    # ---------------------------
+    def normalize_state(s):
+        if not s:
             return ""
-        return str(val).strip().lower().replace(" ", "")
+        return str(s).strip().lower().replace(" ", "").replace("_", "")
 
-    # -----------------------------
-    # Extract Tamil Nadu WIND by date
-    # -----------------------------
     tn_wind_by_date = {}
 
     for rec in records:
         if not isinstance(rec, dict):
             continue
 
-        state = normalize_state(rec.get("state"))
-        if state not in ("tamilnadu", "tn"):
-            continue
+        ns = normalize_state(rec.get("state"))
 
-        report_date = rec.get("report_date")
-        if not report_date:
-            continue
+        if ns in ("tamilnadu", "tn"):
+            rd = rec.get("report_date")
+            if rd:
+                rd_iso = str(rd)[:10]
+                try:
+                    wind_val = rec.get("wind")
+                    wind_val = float(wind_val) if wind_val not in (None, "") else None
+                except Exception:
+                    wind_val = None
 
-        iso_date = str(report_date)[:10]
+                if wind_val is not None:
+                    tn_wind_by_date[rd_iso] = wind_val
 
-        wind_raw = rec.get("wind")
-        try:
-            wind_val = float(wind_raw)
-        except (TypeError, ValueError):
-            wind_val = None
-
-        if wind_val is not None:
-            tn_wind_by_date[iso_date] = wind_val
-
-    # -----------------------------
-    # Build month rows
-    # -----------------------------
+    # ---------------------------
+    # Build calendar rows
+    # ---------------------------
+    m = int(month)
+    y = int(year)
     _, ndays = calendar.monthrange(y, m)
 
     rows = []
@@ -235,60 +237,25 @@ def monthly_error_report(request):
         rows.append({
             "date_iso": iso,
             "date_display": display,
-            "actual": actual_val
+            "actual": actual_val,
         })
 
     total_display = round(total_actual, 2) if actual_counted else None
 
-    # -----------------------------
-    # Dropdown helpers (NO JS)
-    # -----------------------------
-    years = list(range(today.year - 5, today.year + 6))
-    months = [
-        {"value": "01", "label": "January"},
-        {"value": "02", "label": "February"},
-        {"value": "03", "label": "March"},
-        {"value": "04", "label": "April"},
-        {"value": "05", "label": "May"},
-        {"value": "06", "label": "June"},
-        {"value": "07", "label": "July"},
-        {"value": "08", "label": "August"},
-        {"value": "09", "label": "September"},
-        {"value": "10", "label": "October"},
-        {"value": "11", "label": "November"},
-        {"value": "12", "label": "December"},
-    ]
-
-    # -----------------------------
-    # Debug info (optional)
-    # -----------------------------
-    debug_info = {
-        "records_count": len(records),
-        "tn_dates_found": sorted(tn_wind_by_date.keys()),
-        "tn_sample": {
-            k: tn_wind_by_date[k]
-            for k in sorted(tn_wind_by_date.keys())[:8]
-        }
-    }
-
-    # -----------------------------
+    # ---------------------------
     # Context
-    # -----------------------------
+    # ---------------------------
     context = {
+        "months": months,
+        "years": years,
         "rows": rows,
         "total_actual": total_display,
         "selected_month": f"{m:02d}",
         "selected_year": str(y),
-        "months": months,
-        "years": years,
-        "debug_info": debug_info,
     }
 
-    return render(
-        request,
-        "dailyreports/monthly_error_report.html",
-        context
-    )
+    return render(request, "dailyreports/monthly_error_report.html", context)
+
 
 
 # --- Add these new views --- #
