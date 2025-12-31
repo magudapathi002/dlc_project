@@ -134,17 +134,12 @@ def error_report(request):
 
 @login_required
 def monthly_error_report(request):
-
-    # ---------------------------
-    # Month & Year from request
-    # ---------------------------
+    # --------------------------- Month & Year from request ---------------------------
     today = date.today()
     month = request.GET.get("month") or f"{today.month:02d}"
     year = request.GET.get("year") or str(today.year)
 
-    # ---------------------------
-    # Dropdown: Months (ALL)
-    # ---------------------------
+    # --------------------------- Dropdown: Months ---------------------------
     months = [
         {"value": "01", "label": "January"},
         {"value": "02", "label": "February"},
@@ -160,15 +155,11 @@ def monthly_error_report(request):
         {"value": "12", "label": "December"},
     ]
 
-    # ---------------------------
-    # Dropdown: Years (PAST → CURRENT)
-    # ---------------------------
-    start_year = 2015  # change if needed
+    # --------------------------- Dropdown: Years ---------------------------
+    start_year = 2015
     years = [str(y) for y in range(start_year, today.year + 1)]
 
-    # ---------------------------
-    # Fetch SRLDC data
-    # ---------------------------
+    # --------------------------- Fetch SRLDC data ---------------------------
     srldc_params = {"month": month, "year": year, "type": "monthly"}
     raw = fetch_srldc_data(srldc_params) or {}
 
@@ -184,20 +175,19 @@ def monthly_error_report(request):
     elif isinstance(raw, (list, tuple)):
         records = list(raw)
 
-    # ---------------------------
-    # Normalization helper
-    # ---------------------------
+    # --------------------------- Normalization Helper ---------------------------
     def normalize_state(s):
         if not s:
             return ""
         return str(s).strip().lower().replace(" ", "").replace("_", "")
 
     tn_wind_by_date = {}
+    
 
+    # Process data for Tamil Nadu (TN)
     for rec in records:
         if not isinstance(rec, dict):
             continue
-
         ns = normalize_state(rec.get("state"))
 
         if ns in ("tamilnadu", "tn"):
@@ -213,9 +203,7 @@ def monthly_error_report(request):
                 if wind_val is not None:
                     tn_wind_by_date[rd_iso] = wind_val
 
-    # ---------------------------
-    # Build calendar rows
-    # ---------------------------
+    # --------------------------- Build Calendar Rows ---------------------------
     m = int(month)
     y = int(year)
     _, ndays = calendar.monthrange(y, m)
@@ -224,6 +212,7 @@ def monthly_error_report(request):
     total_actual = 0.0
     actual_counted = 0
 
+    # Generate rows for all days in the month (even if no data)
     for d in range(1, ndays + 1):
         iso = f"{y:04d}-{m:02d}-{d:02d}"
         display = f"{d:02d}-{date(y, m, d).strftime('%b')}-{y}"
@@ -234,17 +223,16 @@ def monthly_error_report(request):
             total_actual += actual_val
             actual_counted += 1
 
+        # Append row even if no data (insert None for missing data)
         rows.append({
             "date_iso": iso,
             "date_display": display,
-            "actual": actual_val,
+            "actual": actual_val if actual_val is not None else None,
         })
 
     total_display = round(total_actual, 2) if actual_counted else None
 
-    # ---------------------------
-    # Context
-    # ---------------------------
+    # --------------------------- Context ---------------------------
     context = {
         "months": months,
         "years": years,
@@ -255,6 +243,10 @@ def monthly_error_report(request):
     }
 
     return render(request, "dailyreports/monthly_error_report.html", context)
+
+
+
+
 
 
 

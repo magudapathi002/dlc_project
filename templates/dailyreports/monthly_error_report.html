@@ -9,119 +9,138 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     @keyframes pageFadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-page-fade {
-      animation: pageFadeIn 420ms ease both;
+      animation: pageFadeIn 300ms ease both;
     }
 
     @keyframes rowReveal {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(3px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .row-reveal {
-      animation: rowReveal 360ms ease both;
+      animation: rowReveal 220ms ease both;
     }
   </style>
 
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body class="bg-gray-100 text-gray-800 animate-page-fade">
+<body class="bg-gray-100 text-gray-800 animate-page-fade h-screen overflow-hidden">
 
 {% include "partials/navbar.html" %}
 
-<div class="max-w-7xl mx-auto mt-6 p-3">
-  <div class="flex gap-6 items-start">
+<div class="min-h-[calc(100vh-64px)] px-2 overflow-hidden">
 
-    <aside class="w-10 hidden lg:block sticky top-6">
+  <div class="flex h-full gap-3 overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-10 hidden lg:block overflow-hidden">
       {% include "partials/sidebar.html" %}
     </aside>
 
-    <main class="flex-1 bg-white shadow rounded-lg border">
+    <!-- 🔽 WIDTH CONTROL WRAPPER -->
+    <div class="flex-1 flex justify-center overflow-hidden">
 
-      <!-- Header -->
-      <div class="px-4 py-3 border-b">
-        <h1 class="text-xl font-semibold">Monthly ERROR Reports</h1>
-        <p class="text-xs text-gray-500 uppercase">Select month & year</p>
-      </div>
+      <!-- Main -->
+      <main class="bg-white shadow rounded border flex flex-col min-h-0 overflow-hidden w-full max-w-[90%]">
 
-      <!-- Filters -->
-      <form method="get" class="px-4 py-3 flex flex-wrap gap-3 border-b bg-gray-50">
-
-        <select name="month" class="p-2 border rounded text-sm">
-          <option value="">-- Month --</option>
-          {% for m in months %}
-            <option value="{{ m.value }}" {% if m.value == selected_month %}selected{% endif %}>
-              {{ m.label }}
-            </option>
-          {% endfor %}
-        </select>
-
-        <select name="year" class="p-2 border rounded text-sm">
-          <option value="">-- Year --</option>
-          {% for y in years %}
-            <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>
-              {{ y }}
-            </option>
-          {% endfor %}
-        </select>
-
-        <button type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-bold">
-          VIEW
-        </button>
-
-        <a href="?month={{ selected_month }}&year={{ selected_year }}"
-           class="ml-auto px-3 py-2 border rounded text-sm bg-white">
-          Excel
-        </a>
-
-
-        <a href=""
-           class="px-3 py-2 border rounded text-sm bg-white">
-          Refresh
-        </a>
-      </form>
-
-      <!-- Table -->
-      <div class="p-4">
-
-        <div class="border rounded">
-          <div class="bg-green-700 text-white text-sm font-semibold grid grid-cols-5">
-            <div class="p-2">Date</div>
-            <div class="p-2">Forecast (MU)</div>
-            <div class="p-2">Actual (MU)</div>
-            <div class="p-2 text-right">Abs. Dev</div>
-            <div class="p-2 text-right">Abs. Error %</div>
+        <!-- Header + Filters -->
+        <div class="px-3 py-2 border-b flex items-center justify-between shrink-0">
+          <div>
+            <h1 class="text-sm font-semibold">Monthly ERROR Reports</h1>
+            <p class="text-[10px] text-gray-500 uppercase">Select month & year</p>
           </div>
 
-          {% for r in rows %}
-          <div class="grid grid-cols-5 border-t row-reveal hover:bg-blue-50">
-            <div class="p-2 font-medium">{{ r.date_display }}</div>
-            <div class="p-2"></div>
-            <div class="p-2 font-semibold">{{ r.actual|default_if_none:""|floatformat:2 }}</div>
-            <div class="p-2 text-right"></div>
-            <div class="p-2 text-right"></div>
-          </div>
-          {% endfor %}
+          <form method="get" class="flex items-center gap-2 text-xs">
+            <select name="month" class="px-1 py-0.5 border rounded">
+              <option value="">Month</option>
+              {% for m in months %}
+                <option value="{{ m.value }}" {% if m.value == selected_month %}selected{% endif %}>
+                  {{ m.label }}
+                </option>
+              {% endfor %}
+            </select>
 
-          <!-- Total -->
-          <div class="grid grid-cols-5 border-t bg-gray-100 font-bold">
-            <div class="p-3">Total</div>
-            <div></div>
-            <div class="p-3 text-blue-700">
-              {{ total_actual|default_if_none:""|floatformat:2 }}
-            </div>
-            <div></div>
-            <div></div>
-          </div>
+            <select name="year" class="px-1 py-0.5 border rounded">
+              <option value="">Year</option>
+              {% for y in years %}
+                <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>
+                  {{ y }}
+                </option>
+              {% endfor %}
+            </select>
 
+            <button type="submit"
+                    class="px-3 py-1 bg-blue-600 text-white rounded font-semibold">
+              VIEW
+            </button>
+
+            <a href="?month={{ selected_month }}&year={{ selected_year }}"
+               class="px-2 py-1 border rounded bg-white">
+              Excel
+            </a>
+
+            <a href=""
+               class="px-2 py-1 border rounded bg-white">
+              Refresh
+            </a>
+          </form>
         </div>
-      </div>
-    </main>
+
+        <!-- Table -->
+        <div class="flex-1 p-1 overflow-hidden">
+
+          <div class="border rounded text-[9.5px] overflow-hidden">
+
+            <div class="bg-green-700 text-white grid grid-cols-5">
+              <div class="px-1  py-[2px]">Date</div>
+              <div class="px-1 py-[2px]">Forecast (MU)</div>
+              <div class="px-1 py-[2px]">Actual (MU)</div>
+              <div class="px-1 py-[2px] text-right">Abs. Dev</div>
+              <div class="px-1 py-[2px] text-right">Abs. Error %</div>
+            </div>
+
+            {% for r in rows %}
+            <div class="grid grid-cols-5 border-t row-reveal">
+              <div class="px-1 font-bold py-[2px]">{{ r.date_display }}</div>
+              <div class="px-1 font-bold py-[2px]"></div>
+              <div class="px-1 font-bold py-[2px]">{{ r.actual|default_if_none:"--" }}</div>
+              <div class="px-1 font-bold py-[2px] text-right"></div>
+              <div class="px-1 font-bold py-[2px] text-right"></div>
+            </div>
+            {% endfor %}
+
+            <div class="grid grid-cols-5 border-t bg-gray-100 font-semibold">
+              <div class="px-1 py-[3px]">Total</div>
+              <div></div>
+              <div class="px-1 py-[3px] text-blue-700">
+                {{ total_actual|default_if_none:"--" }}
+              </div>
+              <div></div>
+              <div></div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+
   </div>
 </div>
 

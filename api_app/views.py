@@ -16,72 +16,107 @@ from rest_framework import status
 
 
 
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def srldc_view(request):
-    date = request.GET.get("date")
-    
-    # Default to showing all data (historical data) if no date is provided
-    if not date:
-        # If no date filter, show all historical data for all available dates
-        a_tab = Srldc2AData.objects.all()  # Show all A data
-        c_tab = Srldc2CData.objects.all()  # Show all C data
-        b_tab = SRLDC3BData.objects.all()  # Show all B data
+    date_param = request.GET.get("date")
+    month = request.GET.get("month")
+    year = request.GET.get("year")
+
+    # =========================================================
+    # 🟢 MODE 1: MONTHLY MODE (month click)
+    # =========================================================
+    if month and year:
+        try:
+            month = int(month)
+            year = int(year)
+        except ValueError:
+            return Response(
+                {"error": "Invalid month/year"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        a_tab = Srldc2AData.objects.filter(
+            report_date__year=year,
+            report_date__month=month
+        )
+        c_tab = Srldc2CData.objects.filter(
+            report_date__year=year,
+            report_date__month=month
+        )
+        b_tab = SRLDC3BData.objects.filter(
+            report_date__year=year,
+            report_date__month=month
+        )
 
         return Response(
             {
-                "requested_date": "all",
-                "actual_report_date": "all",
-                "table_a": SrldcASerializer(a_tab, many=True).data,  # ALL States
-                "table_c": SrldcCSerializer(c_tab, many=True).data,  # ALL States
-                "table_b": list(b_tab.values()),                     # ALL Stations
+                "mode": "monthly",
+                "month": f"{year}-{month:02d}",
+                "record_count": {
+                    "table_a": a_tab.count(),
+                    "table_c": c_tab.count(),
+                    "table_b": b_tab.count(),
+                },
+                "table_a": SrldcASerializer(a_tab, many=True).data,
+                "table_c": SrldcCSerializer(c_tab, many=True).data,
+                "table_b": list(b_tab.values()),
             },
             status=status.HTTP_200_OK
         )
-    
-    # ---------------- DATE PARSING ----------------
-    try:
-        requested_date = datetime.strptime(date, "%Y-%m-%d").date()
-    except ValueError:
-        return Response(
-            {"error": "Invalid date format. Use YYYY-MM-DD"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
 
-    # ---------------- FETCH DATA FOR THE SPECIFIED DATE ----------------
+    # =========================================================
+    # 🟢 MODE 2: DAILY MODE (old behaviour – date click)
+    # =========================================================
+    if not date_param:
+        requested_date = datetime.today().date()
+    else:
+        try:
+            requested_date = datetime.strptime(date_param, "%Y-%m-%d").date()
+        except ValueError:
+            return Response(
+                {"error": "Invalid date format. Use YYYY-MM-DD"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
     report_date = requested_date
 
-    # Fetch data based on the requested date
     a_tab = Srldc2AData.objects.filter(report_date=report_date)
     c_tab = Srldc2CData.objects.filter(report_date=report_date)
     b_tab = SRLDC3BData.objects.filter(report_date=report_date)
 
-    # If no data is found for the requested date, fallback to previous day
+    # ---------- fallback only for DAILY ----------
     if not a_tab.exists() and not c_tab.exists() and not b_tab.exists():
         report_date = requested_date - timedelta(days=1)
+
         a_tab = Srldc2AData.objects.filter(report_date=report_date)
         c_tab = Srldc2CData.objects.filter(report_date=report_date)
         b_tab = SRLDC3BData.objects.filter(report_date=report_date)
 
-        # If no data is found for the previous day either
         if not a_tab.exists() and not c_tab.exists() and not b_tab.exists():
             return Response(
-                {"error": f"No data available for the date {str(report_date)}"},
+                {"error": "No data available"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-    # ---------------- RESPONSE ----------------
     return Response(
         {
+            "mode": "daily",
             "requested_date": str(requested_date),
             "actual_report_date": str(report_date),
-            "table_a": SrldcASerializer(a_tab, many=True).data,  # Filtered for the date
-            "table_c": SrldcCSerializer(c_tab, many=True).data,  # Filtered for the date
-            "table_b": list(b_tab.values()),                     # Filtered for the date
+            "record_count": {
+                "table_a": a_tab.count(),
+                "table_c": c_tab.count(),
+                "table_b": b_tab.count(),
+            },
+            "table_a": SrldcASerializer(a_tab, many=True).data,
+            "table_c": SrldcCSerializer(c_tab, many=True).data,
+            "table_b": list(b_tab.values()),
         },
         status=status.HTTP_200_OK
     )
+
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
