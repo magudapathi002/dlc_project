@@ -3280,3 +3280,39 @@ AttributeError: 'Command' object has no attribute 'to_title_case'
 2025-12-31 15:58:06,643 - WARNING - PDF internal date: 2025-12-21 | Forced report date: 2025-12-20
 2025-12-31 15:58:06,644 - INFO - Report DATE (3B extraction): 2025-12-20
 2025-12-31 15:58:06,644 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-31 16:43:26,331 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-02_16-43-26
+2025-12-31 16:43:26,331 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/01-12-2025-psp.pdf
+2025-12-31 16:43:26,798 - INFO - [32;1m✅ Successfully downloaded: srldc_02122025.pdf to downloads\SRLDC\report_2025-12-02_16-43-26[0m
+2025-12-31 16:43:26,799 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-31 16:43:27,314 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-31 16:43:27,504 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-31 16:43:28,028 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-31 16:43:28,087 - INFO - ✅ Table 2(C) processed. 7 rows. States: ['Andhra Pradesh', 'Karnataka', 'Kerala', 'Pondicherry', 'Tamilnadu', 'Telangana', 'Region']
+2025-12-31 16:43:28,087 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-31 16:43:28,419 - WARNING - PDF internal date: 2025-12-01 | Forced report date: 2025-12-01
+2025-12-31 16:43:28,420 - INFO - Report DATE (3B extraction): 2025-12-01
+2025-12-31 16:43:28,420 - INFO - Reporting DATETIME (3B extraction): 2025-12-02 19:00
+2025-12-31 16:43:44,463 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-28_16-43-44
+2025-12-31 16:43:44,463 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/27-12-2025-psp.pdf
+2025-12-31 16:43:45,480 - INFO - [32;1m✅ Successfully downloaded: srldc_28122025.pdf to downloads\SRLDC\report_2025-12-28_16-43-44[0m
+2025-12-31 16:43:45,480 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-31 16:43:45,960 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-31 16:43:46,120 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-31 16:43:46,485 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-31 16:43:46,528 - INFO - ✅ Table 2(C) processed. 6 rows. States: ['Andhra Pradesh', 'Karnataka', 'Kerala', 'Tamil Nadu', 'Telangana', 'Region']
+2025-12-31 16:43:46,528 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-31 16:43:46,856 - WARNING - PDF internal date: 2025-12-28 | Forced report date: 2025-12-27
+2025-12-31 16:43:46,856 - INFO - Report DATE (3B extraction): 2025-12-27
+2025-12-31 16:43:46,856 - INFO - Reporting DATETIME (3B extraction): None
+2025-12-31 16:43:54,035 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2025-12-29_16-43-54
+2025-12-31 16:43:54,035 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2025/Dec25/28-12-2025-psp.pdf
+2025-12-31 16:43:56,075 - INFO - [32;1m✅ Successfully downloaded: srldc_29122025.pdf to downloads\SRLDC\report_2025-12-29_16-43-54[0m
+2025-12-31 16:43:56,077 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2025-12-31 16:43:56,576 - INFO - ✅ Table 2(A) processed. 7 rows.
+2025-12-31 16:43:56,778 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2025-12-31 16:43:57,142 - INFO - --- RAW DataFrame for Table 2(C) ---
+2025-12-31 16:43:57,187 - INFO - ✅ Table 2(C) processed. 6 rows. States: ['Andhra Pradesh', 'Karnataka', 'Kerala', 'Tamil Nadu', 'Telangana', 'Region']
+2025-12-31 16:43:57,187 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2025-12-31 16:43:57,526 - WARNING - PDF internal date: 2025-12-29 | Forced report date: 2025-12-28
+2025-12-31 16:43:57,526 - INFO - Report DATE (3B extraction): 2025-12-28
+2025-12-31 16:43:57,526 - INFO - Reporting DATETIME (3B extraction): None
