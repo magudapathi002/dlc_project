@@ -7,138 +7,140 @@
   <title>Monthly ERROR Reports</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     html, body {
-      height: 100%;
+      height: 100vh;
+      width: 100vw;
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow: hidden; 
+      font-family: 'Inter', sans-serif;
     }
-
-    .auto-fit-rows {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
+    .font-mono {
+        font-family: 'JetBrains Mono', monospace;
     }
-
-    .ease-layout {
-      transition-property: all;
-      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      transition-duration: 300ms;
+    /* Custom smoother transition class */
+    .smooth-transition {
+        transition-property: width, margin, padding, transform;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 400ms;
     }
   </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 h-screen w-screen overflow-hidden flex flex-col">
+<body class="bg-[#0f172a] text-slate-200 h-screen w-screen flex flex-col overflow-hidden">
 
 {% include "partials/navbar.html" %}
 
-<div class="relative flex-1 w-full h-full overflow-hidden">
+<div class="relative flex-1 w-full h-full overflow-hidden flex flex-row">
 
-  <aside class="peer absolute top-0 left-0 h-full bg-white border-r border-slate-200 z-50 w-14 hover:w-64 ease-layout overflow-hidden shadow-xl group">
+  <aside class="peer h-full bg-[#1e293b] border-r border-slate-700 z-50 w-14 hover:w-64 smooth-transition will-change-[width] overflow-hidden shadow-2xl flex-shrink-0 group">
     <div class="h-full w-64">
       {% include "partials/sidebar.html" %}
     </div>
   </aside>
 
-  <div class="flex-1 h-full flex flex-col ml-14 peer-hover:ml-64 ease-layout overflow-hidden p-3 min-w-0">
+  <div class="flex-1 h-full flex flex-col overflow-hidden min-w-0 smooth-transition">
 
-    <main class="bg-white shadow-sm rounded-xl border border-slate-200 flex flex-col w-full h-full overflow-hidden relative">
+    <main class="bg-[#111827] flex flex-col w-full h-full overflow-hidden relative">
 
-      <!-- HEADER -->
-      <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white h-12">
-
-        <div class="flex items-center gap-2">
-          <div class="bg-green-50 p-1.5 rounded-md text-green-700 shrink-0">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+      <div class="px-4 py-2 border-b border-slate-800 flex items-center justify-between shrink-0 bg-[#111827] h-14">
+        <div class="flex items-center gap-3">
+          <div class="bg-[#14532d] p-1.5 rounded text-green-300 shadow-lg shadow-green-900/40">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
           </div>
-          <h1 class="text-sm font-bold text-slate-700 whitespace-nowrap">
+          <h1 class="text-sm font-bold text-slate-100 tracking-tight uppercase">
             Monthly Error Report
           </h1>
         </div>
 
-        <!-- FILTER FORM -->
-        <form method="get" class="flex items-center gap-2 shrink-0">
-          <div class="flex border border-slate-200 rounded-md bg-slate-50 items-center px-1">
-            <select name="month"
-              class="bg-transparent text-[11px] px-1 py-1 outline-none cursor-pointer text-slate-600 font-semibold">
-              {% for m in months %}
-              <option value="{{ m.value }}" {% if m.value == selected_month %}selected{% endif %}>
-                {{ m.label }}
-              </option>
-              {% endfor %}
-            </select>
+        <div class="flex items-center gap-3">
+            <form method="get" class="flex items-center gap-2 shrink-0">
+            <div class="flex bg-[#1e293b] rounded border border-slate-700 p-1 items-center hover:border-slate-600 transition-colors">
+                <select name="month" class="bg-transparent text-[11px] px-2 py-0.5 outline-none cursor-pointer text-slate-300 font-medium hover:text-white transition-colors">
+                {% for m in months %}
+                <option class="bg-slate-800 text-slate-300" value="{{ m.value }}" {% if m.value == selected_month %}selected{% endif %}>
+                    {{ m.label }}
+                </option>
+                {% endfor %}
+                </select>
 
-            <div class="w-px h-3 bg-slate-300 mx-1"></div>
+                <div class="w-px h-3 bg-slate-600 mx-1"></div>
 
-            <select name="year"
-              class="bg-transparent text-[11px] px-1 py-1 outline-none cursor-pointer text-slate-600 font-semibold">
-              {% for y in years %}
-              <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>
-                {{ y }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
+                <select name="year" class="bg-transparent text-[11px] px-2 py-0.5 outline-none cursor-pointer text-slate-300 font-medium hover:text-white transition-colors">
+                {% for y in years %}
+                <option class="bg-slate-800 text-slate-300" value="{{ y }}" {% if y == selected_year %}selected{% endif %}>
+                    {{ y }}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
 
-          <button type="submit"
-            class="px-3 py-1 bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-medium rounded shadow-sm">
-            View
-          </button>
-        </form>
+            <button type="submit" class="px-3 py-1 bg-[#1e293b] hover:bg-[#334155] border border-slate-600 text-slate-200 text-[11px] font-semibold rounded shadow-sm transition-all hover:shadow-md">
+                View
+            </button>
+            </form>
 
-        <!-- ✅ EXCEL EXPORT (POST ONLY) -->
-        <form method="post" class="flex items-center gap-2">
-          {% csrf_token %}
-          <input type="hidden" name="month" value="{{ selected_month }}">
-          <input type="hidden" name="year" value="{{ selected_year }}">
-
-          <button
-            type="submit"
-            name="export"
-            value="excel"
-            class="px-3 py-1 border border-green-200 text-green-700 bg-green-50 hover:bg-green-100 rounded text-[11px] font-medium flex items-center gap-1 transition-colors">
-            Excel
-          </button>
-        </form>
-
-      </div>
-
-      <!-- TABLE HEADER -->
-      <div class="grid grid-cols-5 px-4 py-2 bg-slate-50 text-slate-400 text-[10px] uppercase font-bold border-b">
-        <div>Date</div>
-        <div class="text-center">Forecast (MU)</div>
-        <div class="text-center text-blue-600">Actual (MU)</div>
-        <div class="text-right">Abs. Dev</div>
-        <div class="text-right">Abs. Error %</div>
-      </div>
-
-      <!-- TABLE BODY -->
-      <div class="flex-1 overflow-hidden px-2 py-1">
-        {% for r in rows %}
-        <div class="grid grid-cols-5 px-2 items-center border-b border-dashed text-[11px]">
-          <div class="font-medium text-slate-600">{{ r.date_display }}</div>
-          <div class="text-center text-slate-400">-</div>
-          <div class="text-center font-mono font-bold text-slate-800">
-            {{ r.actual|default:"-" }}
-          </div>
-          <div class="text-right text-slate-400">-</div>
-          <div class="text-right text-slate-400">-</div>
+            <form method="post" class="flex items-center">
+            {% csrf_token %}
+            <input type="hidden" name="month" value="{{ selected_month }}">
+            <input type="hidden" name="year" value="{{ selected_year }}">
+            <button type="submit" name="export" value="excel" class="px-3 py-1 bg-[#14532d] hover:bg-[#166534] border border-[#15803d] text-green-100 rounded text-[11px] font-semibold transition-all shadow-lg shadow-green-900/20 flex items-center gap-2 transform active:scale-95">
+                <span>Excel</span>
+            </button>
+            </form>
         </div>
-        {% endfor %}
       </div>
 
-      <!-- TOTAL -->
-      <div class="bg-slate-50 border-t px-4 py-2 grid grid-cols-5 text-[10px] font-bold">
-        <div>Total</div>
+      <div class="grid grid-cols-5 bg-[#14532d] text-green-100/90 text-[11px] uppercase tracking-wider font-bold shrink-0 shadow-md z-10">
+            <div class="py-2 px-6">Date</div>
+            <div class="py-2 px-2 text-center">Forecast (MU)</div>
+            <div class="py-2 px-2 text-left pl-8">Actual (MU)</div>
+            <div class="py-2 px-2 text-right">Abs. Dev</div>
+            <div class="py-2 px-6 text-right">Abs. Error %</div>
+      </div>
+
+      <div class="flex-1 flex flex-col overflow-hidden bg-[#1e293b]/20">
+            {% for r in rows %}
+            <div class="flex-1 grid grid-cols-5 items-center border-b border-slate-800/40 hover:bg-slate-800/60 transition-colors text-[11px] group min-h-0 relative">
+                
+                <div class="absolute inset-0 bg-green-500/0 group-hover:bg-green-500/5 transition-colors pointer-events-none"></div>
+
+                <div class="px-6 font-mono font-bold text-slate-200 group-hover:text-green-400 transition-colors whitespace-nowrap z-0">
+                    {{ r.date_display }}
+                </div>
+                
+                <div class="px-2 text-center text-slate-600 z-0">-</div>
+                
+                <div class="px-2 pl-8 flex flex-col justify-center z-0">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono font-bold text-slate-200 text-[11px] w-10 text-right">
+                            {{ r.actual|default:"-" }}
+                        </span>
+                        
+                        {% if r.actual %}
+                        <div class="h-1.5 w-24 bg-slate-700 rounded-full overflow-hidden flex-shrink-0">
+                            <div class="h-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] rounded-full transition-all duration-1000 ease-out" 
+                                 style="width: 0%; animation: fillBar 1s ease-out forwards; --target-width: calc({{ r.actual }} * 2%);">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="px-2 text-right text-slate-600 z-0">-</div>
+                
+                <div class="px-6 text-right text-slate-600 z-0">-</div>
+            </div>
+            {% endfor %}
+      </div>
+
+      <div class="bg-[#0f172a] border-t border-slate-800 px-6 grid grid-cols-5 text-[11px] font-bold text-slate-400 shrink-0 h-9 items-center">
+        <div class="uppercase tracking-widest font-mono font-bold">Total</div>
         <div class="text-center">-</div>
-        <div class="text-center text-blue-700">{{ total_actual|default:"0.00" }}</div>
+        <div class="pl-8 text-green-400 font-mono text-sm shadow-green-900/50 drop-shadow-sm">{{ total_actual|default:"0.00" }}</div>
         <div class="text-right">-</div>
         <div class="text-right">-</div>
       </div>
@@ -147,6 +149,12 @@
   </div>
 </div>
 
+<style>
+@keyframes fillBar {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+</style>
+
 </body>
 </html>
-  
