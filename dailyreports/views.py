@@ -8,6 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 import calendar
 from datetime import date, datetime
+import pandas as pd
+from django.http import HttpResponse
+
 
 
 
@@ -131,99 +134,101 @@ def error_report(request):
     return render(request, 'dailyreports/error_report.html', context)
 
 
-
-
 @login_required
 def monthly_error_report(request):
-    # month/year from GET (defaults to current)
-    month = request.GET.get("month", "")
-    year = request.GET.get("year", "")
-    today = date.today()
-    if not month:
-        month = f"{today.month:02d}"
-    if not year:
-        year = str(today.year)
+    import calendar
+    import pandas as pd
+    from datetime import date
+    from django.http import HttpResponse
+    from django.shortcuts import render
 
-    # fetch SRLDC payload (your helper)
+    today = date.today()
+    month = request.GET.get("month") or f"{today.month:02d}"
+    year = request.GET.get("year") or str(today.year)
+
+    months = [
+        {"value": f"{i:02d}", "label": calendar.month_name[i]}
+        for i in range(1, 13)
+    ]
+    years = [str(y) for y in range(2015, today.year + 1)]
+
+    # ---------------- Fetch data ----------------
     srldc_params = {"month": month, "year": year, "type": "monthly"}
     raw = fetch_srldc_data(srldc_params) or {}
 
-    # Normalize to list 'records' preferring raw['table_a'] when present
-    records = []
-    if isinstance(raw, dict):
-        if 'table_a' in raw and isinstance(raw['table_a'], (list, tuple)):
-            records = list(raw['table_a'])
-        else:
-            # fallback: try first list-like value in dict
-            for v in raw.values():
-                if isinstance(v, (list, tuple)):
-                    records = list(v)
-                    break
-    elif isinstance(raw, (list, tuple)):
-        records = list(raw)
+    records = raw.get("table_a", []) if isinstance(raw, dict) else raw
 
-    # Build TN wind mapping: date_iso -> wind value (float)
-    def normalize_state(s):
-        if not s:
-            return ''
-        return str(s).strip().lower().replace(' ', '')
+    def normalize(s):
+        return str(s).lower().replace(" ", "") if s else ""
 
     tn_wind_by_date = {}
-    for rec in records:
-        # support dict-like records only (your JSON uses dicts)
-        if isinstance(rec, dict):
-            state = rec.get('state') or ''
-            ns = normalize_state(state)
-            if ns in ('tamilnadu', 'tn'):   # cover both
-                # get report_date prefix YYYY-MM-DD
-                rd = rec.get('report_date')
-                if rd:
-                    rd_iso = str(rd)[:10]
-                    try:
-                        wind_val = rec.get('wind')
-                        wind_val = float(wind_val) if wind_val is not None else None
-                    except Exception:
-                        wind_val = None
-                    if wind_val is not None:
-                        tn_wind_by_date[rd_iso] = wind_val
 
-    # Build rows for selected month
-    m = int(month)
-    y = int(year)
+    for r in records:
+        if normalize(r.get("state")) in ("tamilnadu", "tn"):
+            d = str(r.get("report_date"))[:10]
+            try:
+                tn_wind_by_date[d] = float(r.get("wind"))
+            except:
+                pass
+
+    m, y = int(month), int(year)
     _, ndays = calendar.monthrange(y, m)
 
-    rows = []
-    total_actual = 0.0
-    actual_counted = 0
-
+    rows, total = [], 0.0
     for d in range(1, ndays + 1):
-        iso = f"{y:04d}-{m:02d}-{d:02d}"
-        display = f"{d:02d}-{date(y, m, d).strftime('%b')}-{y}"
-        actual_val = tn_wind_by_date.get(iso)   # will be float or None
-        if actual_val is not None:
-            total_actual += actual_val
-            actual_counted += 1
-        rows.append({'date_iso': iso, 'date_display': display, 'actual': actual_val})
+        iso = f"{y}-{m:02d}-{d:02d}"
+        val = tn_wind_by_date.get(iso)
+        if val:
+            total += val
+        rows.append({
+            "date_display": f"{d:02d}-{calendar.month_abbr[m]}-{y}",
+            "actual": val
+        })
 
-    total_display = round(total_actual, 2) if actual_counted > 0 else None
+    total_display = round(total, 2)
 
-    # Debug info returned to template so we can see what server extracted
-    debug_info = {
-        'records_count': len(records),
-        'tn_dates_found': sorted(list(tn_wind_by_date.keys())),
-        'tn_sample': {k: tn_wind_by_date[k] for k in sorted(list(tn_wind_by_date.keys()))[:8]}
-    }
+    # ================== ✅ EXCEL EXPORT (POST ONLY) ==================
+    if request.method == "POST" and request.POST.get("export") == "excel":
+        excel_rows = [{
+            "Date": r["date_display"],
+            "Forecast (MU)": "",
+            "Actual (MU)": r["actual"],
+            "Abs. Dev": "",
+            "Abs. Error %": ""
+        } for r in rows]
+
+        excel_rows.append({
+            "Date": "Total",
+            "Forecast (MU)": "",
+            "Actual (MU)": total_display,
+            "Abs. Dev": "",
+            "Abs. Error %": ""
+        })
+
+        df = pd.DataFrame(excel_rows)
+
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = f'attachment; filename="Monthly_Report_{month}_{year}.xlsx"'
+        df.to_excel(response, index=False)
+        return response
+    # ================================================================
 
     context = {
-        'rows': rows,
-        'total_actual': total_display,
-        'selected_month': f"{m:02d}",
-        'selected_year': str(y),
-        'debug_info': debug_info,
-        # optionally keep raw for deeper debugging (careful volume):
-        # 'srldc_raw': records[:20],
+        "months": months,
+        "years": years,
+        "rows": rows,
+        "total_actual": total_display,
+        "selected_month": month,
+        "selected_year": year,
     }
-    return render(request, 'dailyreports/monthly_error_report.html', context)
+
+    return render(request, "dailyreports/monthly_error_report.html", context)
+
+
+
+
 
 
 # --- Add these new views --- #
