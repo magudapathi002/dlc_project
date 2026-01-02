@@ -1,6 +1,6 @@
 {% load static %}
 <nav class="fixed top-0 left-0 w-full bg-white text-white shadow z-20">
-  <div class="max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+  <div class=" mx-auto px-10 ">
 
     <div class="flex items-center h-14 sm:h-16">
 
@@ -24,7 +24,7 @@
         </div>
 
         <!-- SELECTED STATE -->
-        {% if selected_state %}
+        <!-- {% if selected_state %}
           <div class="flex items-center gap-2">
             <a
               href="{% url 'dashboard:dashboard' %}"
@@ -42,7 +42,58 @@
               {{ request.session.selected_state }}
             </a>
           </div>
-        {% endif %}
+        {% endif %} -->
+        <!--ADDING SOLAR,WIND,DEMAND OPTIONS -->
+        <div class="relative inline-block">
+          <!-- Hover wrapper -->
+          <div class="group">
+
+            <!-- Button -->
+            <div
+              class="px-4 py-2 bg-green-500 text-white font-semibold text-sm
+                    rounded-lg cursor-pointer shadow-md
+                    hover:bg-green-600 transition">
+              Wind
+            </div>
+
+            <!-- Dropdown -->
+            <div
+              class="absolute left-0 top-full w-36
+                    pt-1
+                    opacity-0 invisible
+                    group-hover:opacity-100 group-hover:visible
+                    transition-all duration-150 z-50">
+
+              <div
+                class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+
+                <div
+                  class="px-4 py-2 text-sm text-gray-700
+                        hover:bg-green-100 cursor-pointer">
+                  🌬 Wind
+                </div>
+
+                <div
+                  class="px-4 py-2 text-sm text-gray-700
+                        hover:bg-yellow-100 cursor-pointer">
+                  ☀ Solar
+                </div>
+
+                <div
+                  class="px-4 py-2 text-sm text-gray-700
+                        hover:bg-blue-100 cursor-pointer">
+                  ⚡ Demand
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+
+
 
         <!-- LOGOUT -->
         <form method="post" action="{% url 'logout' %}">

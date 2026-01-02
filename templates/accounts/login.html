@@ -65,7 +65,10 @@
         </div>
 
         <div class="shadow-xl rounded-2xl p-8 border border-gray-200 relative overflow-hidden login-card">
-          <div class="card-bg" style="background-image: url('{% static 'images/logocart.jpg' %}');"></div>
+          <div id="login-card-bg"
+               class="card-bg"
+               style="background-image: url('{% static 'images/logocart.jpg' %}');">
+          </div>
           <div class="absolute inset-0 bg-white/60 dim"></div>
 
           <!-- CARD CONTENT -->
@@ -308,10 +311,19 @@
           mouseout: resetHighlight,
           mousemove: moveTooltip,
           click: () => {
-            const props = feature.properties || {};
-            const name = props.NAME_1 || props.NAME || props.st_nm || 'State';
-            postSelectedState(name);
+          const props = feature.properties || {};
+          const name = props.NAME_1 || props.NAME || props.st_nm || 'State';
+
+          // Update title
+          postSelectedState(name);
+
+          // 🔥 Change card background image
+          const bgEl = document.getElementById("login-card-bg");
+          if (bgEl && stateImageMap[name]) {
+            bgEl.style.backgroundImage = `url('${stateImageMap[name]}')`;
           }
+        }
+
         });
       }
 
@@ -328,6 +340,52 @@
 
     })();
   </script>
+
+<script>
+  const stateImageMap = {
+    // STATES
+    "Andhra Pradesh": "{% static 'images/ap.jpg' %}",
+    "Arunachal Pradesh": "{% static 'images/arp.jpg' %}",
+    "Assam": "{% static 'images/asm.jpg' %}",
+    "Bihar": "{% static 'images/bigar.jpg' %}",
+    "Chhattisgarh": "{% static 'images/logocart.jpg' %}",
+    "Goa": "{% static 'images/logocart.jpg' %}",
+    "Gujarat": "{% static 'images/logocart.jpg' %}",
+    "Haryana": "{% static 'images/logocart.jpg' %}",
+    "Himachal Pradesh": "{% static 'images/logocart.jpg' %}",
+    "Jharkhand": "{% static 'images/logocart.jpg' %}",
+    "Karnataka": "{% static 'images/logocart.jpg' %}",
+    "Kerala": "{% static 'images/kl.jpg' %}",
+    "Madhya Pradesh": "{% static 'images/logocart.jpg' %}",
+    "Maharashtra": "{% static 'images/logocart.jpg' %}",
+    "Manipur": "{% static 'images/logocart.jpg' %}",
+    "Meghalaya": "{% static 'images/logocart.jpg' %}",
+    "Mizoram": "{% static 'images/logocart.jpg' %}",
+    "Nagaland": "{% static 'images/logocart.jpg' %}",
+    "Odisha": "{% static 'images/logocart.jpg' %}",
+    "Punjab": "{% static 'images/logocart.jpg' %}",
+    "Rajasthan": "{% static 'images/rj.jpg' %}",
+    "Sikkim": "{% static 'images/logocart.jpg' %}",
+    "Tamil Nadu": "{% static 'images/logocart.jpg' %}",
+    "Telangana": "{% static 'images/logocart.jpg' %}",
+    "Tripura": "{% static 'images/logocart.jpg' %}",
+    "Uttar Pradesh": "{% static 'images/logocart.jpg' %}",
+    "Uttarakhand": "{% static 'images/logocart.jpg' %}",
+    "West Bengal": "{% static 'images/logocart.jpg' %}",
+
+    // UNION TERRITORIES
+    "Andaman and Nicobar Islands": "{% static 'images/logocart.jpg' %}",
+    "Chandigarh": "{% static 'images/logocart.jpg' %}",
+    "Dadra and Nagar Haveli": "{% static 'images/logocart.jpg' %}",
+    "Daman and Diu": "{% static 'images/logocart.jpg' %}",
+    "Delhi": "{% static 'images/delhi.jpg' %}",
+    "Jammu and Kashmir": "{% static 'images/logocart.jpg' %}",
+    "Ladakh": "{% static 'images/logocart.jpg' %}",
+    "Lakshadweep": "{% static 'images/logocart.jpg' %}",
+    "Puducherry": "{% static 'images/logocart.jpg' %}"
+  };
+</script>
+
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
