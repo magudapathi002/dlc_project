@@ -550,3 +550,36 @@
 2025-12-31 12:41:26,289 - INFO - [32;1m✅ Table 2(C) data saved to database.[0m
 2025-12-31 14:24:48,701 - INFO - [32;1m🔔 Requested report date: 2025-12-27[0m
 2025-12-31 14:24:48,824 - INFO - [32;1m✅ Pass: Report data for 2025-12-27 already exists in the database. Skipping download and extraction.[0m
+2026-01-01 16:47:31,407 - INFO - [32;1m🔔 Requested report date: 2026-01-01[0m
+2026-01-01 16:47:31,796 - INFO - 🌐 Fetching NRDC report metadata for 2026-01-01...
+2026-01-01 16:47:33,307 - INFO - 📁 Created output directory: downloads\NRLDC\report_2026-01-01_16-47-33
+2026-01-01 16:47:33,308 - INFO - ⬇️ Attempting to download PDF to: downloads\NRLDC\report_2026-01-01_16-47-33\daily311225.pdf
+2026-01-01 16:47:33,807 - INFO - [32;1m✅ Downloaded report to: downloads\NRLDC\report_2026-01-01_16-47-33\nrldc_01012026.pdf[0m
+2026-01-01 16:47:33,807 - INFO - 🔍 Extracting tables from PDF...
+2026-01-01 16:47:36,510 - INFO - [32;1m✅ Found 18 tables.[0m
+2026-01-01 16:47:36,543 - INFO - [32;1m✅ Table 2(A) extracted for combined JSON.[0m
+2026-01-01 16:47:36,655 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - PUNJAB[0m
+2026-01-01 16:47:36,663 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - HARYANA[0m
+2026-01-01 16:47:36,671 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - RAJASTHAN[0m
+2026-01-01 16:47:36,707 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - DELHI[0m
+2026-01-01 16:47:36,714 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - UTTAR PRADESH[0m
+2026-01-01 16:47:36,722 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - UTTARAKHAND[0m
+2026-01-01 16:47:36,731 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - HIMACHALPRADESH[0m
+2026-01-01 16:47:36,739 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - J&K(UT) &Ladakh(UT)[0m
+2026-01-01 16:47:36,746 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - CHANDIGARH[0m
+2026-01-01 16:47:36,754 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - RAILWAYS_NR ISTS[0m
+2026-01-01 16:47:36,763 - INFO - [32;1m➕ Created Table 2A entry for 2026-01-01 - Region[0m
+2026-01-01 16:47:36,763 - INFO - [32;1m✅ Table 2(A) data saved to database.[0m
+2026-01-01 16:47:36,812 - INFO - [32;1m✅ Table 2(C) extracted for combined JSON.[0m
+2026-01-01 16:47:36,851 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - PUNJAB[0m
+2026-01-01 16:47:36,862 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - HARYANA[0m
+2026-01-01 16:47:36,871 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - RAJASTHAN[0m
+2026-01-01 16:47:36,880 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - DELHI[0m
+2026-01-01 16:47:36,888 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - UP[0m
+2026-01-01 16:47:36,897 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - UTTARAKHA..[0m
+2026-01-01 16:47:36,905 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - HP[0m
+2026-01-01 16:47:36,914 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - J&K(UT)&Lad..[0m
+2026-01-01 16:47:36,922 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - CHANDIGARH[0m
+2026-01-01 16:47:36,930 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - RAILWAYS_NRISTS[0m
+2026-01-01 16:47:36,939 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-01 - NR[0m
+2026-01-01 16:47:36,939 - INFO - [32;1m✅ Table 2(C) data saved to database.[0m

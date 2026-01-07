@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'accounts',
     'processor',
     'dashboard',
+    'dsmreports',
 ]
 
 
