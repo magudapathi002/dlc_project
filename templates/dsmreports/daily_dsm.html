@@ -1,0 +1,428 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily DSM Report</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; border: 1px solid #1e293b; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        .glass-badge {
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .neon-panel {
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.15), inset 0 0 20px rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .gauge-needle {
+            transition: transform 1s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-origin: bottom center;
+        }
+
+        @keyframes spin-slow { 100% { transform: rotate(360deg); } }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-slate-200 font-sans antialiased h-screen flex flex-col overflow-hidden selection:bg-cyan-500 selection:text-white">
+    
+    <div class="w-full z-50 bg-slate-900 border-b border-slate-800 shadow-lg flex-shrink-0">
+        {% include "partials/navbar.html" %}
+    </div>
+
+    <div class="flex flex-1 overflow-hidden relative">
+        
+        <aside class="w-16 hidden lg:block flex-shrink-0" aria-label="Sidebar">
+            {% include "partials/sidebar.html" %}
+        </aside>
+
+        <main class="flex-1 w-0 overflow-y-auto p-4 bg-slate-950 scroll-smooth">
+            
+            <div class="w-full max-w-[1800px] mx-auto pb-10">
+                
+                <div class="mb-4">
+                    <h1 class="text-xl font-bold text-white tracking-wide border-b border-slate-800 pb-2">
+                        Tamil Nadu Wind Energy Forecast Deviation Settlement Mechanism
+                    </h1>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
+                    
+                    <div class="xl:col-span-3 neon-panel rounded-xl bg-slate-900/80 overflow-hidden flex flex-col">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left border-collapse relative">
+                                <thead class="text-xs uppercase font-bold bg-slate-900 text-white">
+                                    <tr>
+                                        <th class="px-2 py-3 bg-cyan-700 border-r border-slate-900 text-center w-12">#</th>
+                                        <th class="px-4 py-3 bg-cyan-700 border-r border-slate-900">Block No.</th>
+                                        <th class="px-4 py-3 bg-cyan-700 border-r border-slate-900">Time Block</th>
+                                        <th class="px-4 py-3 bg-cyan-700 border-r border-slate-900 text-right">Available<br>Capacity (MW)</th>
+                                        <th class="px-4 py-3 bg-cyan-700 border-r border-slate-900 text-right">Forecast<br>(MW)</th>
+                                        <th class="px-4 py-3 bg-emerald-700 border-r border-slate-900 text-right">TNEB<br>Actual (MW)</th>
+                                        <th class="px-4 py-3 bg-emerald-700 border-r border-slate-900 text-right">AMR<br>Actual (MW)</th>
+                                        <th class="px-4 py-3 bg-cyan-700 border-r border-slate-900 text-center">TNEB<br>Abs Error (%)</th>
+                                        <th class="px-4 py-3 bg-emerald-700 border-r border-slate-900 text-center">AMR<br>Abs Error (%)</th>
+                                        <th class="px-4 py-3 bg-emerald-700 text-right">Slot DSM<br>ropes/unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800 text-slate-300 font-mono text-sm">
+                                    <tr class="hover:bg-slate-800/50">
+                                        <td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">1</td>
+                                        <td class="px-4 py-2 border-r border-slate-800 text-center">67</td>
+                                        <td class="px-4 py-2 border-r border-slate-800">16:15-16:45</td>
+                                        <td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9000.38</td>
+                                        <td class="px-4 py-2 text-right text-white border-r border-slate-800">259</td>
+                                        <td class="px-4 py-2 text-right text-white border-r border-slate-800">339</td>
+                                        <td class="px-4 py-2 text-right text-white border-r border-slate-800">341</td>
+                                        <td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-green-700 to-green-900 border border-green-600 text-white text-xs font-bold">25.52</div></td>
+                                        <td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-green-700 to-green-900 border border-green-600 text-white text-xs font-bold">19.23</div></td>
+                                        <td class="px-4 py-2 text-right text-white">₹0.01</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-800/50 bg-slate-900/50">
+                                        <td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">2</td>
+                                        <td class="px-4 py-2 border-r border-slate-800 text-center">66</td>
+                                        <td class="px-4 py-2 border-r border-slate-800">16:15-16:30</td>
+                                        <td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9000.38</td>
+                                        <td class="px-4 py-2 text-right text-white border-r border-slate-800">236</td>
+                                        <td class="px-4 py-2 text-right text-white border-r border-slate-800">337</td>
+                                        <td class="px-4 py-2 text-right text-white border-r border-slate-800">321</td>
+                                        <td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">42.80</div></td>
+                                        <td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">36.02</div></td>
+                                        <td class="px-4 py-2 text-right text-white">₹0.10</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-800/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">3</td><td class="px-4 py-2 border-r border-slate-800 text-center">65</td><td class="px-4 py-2 border-r border-slate-800">16:00-16:15</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">185</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">307</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">293</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-red-700 to-red-900 border border-red-600 text-white text-xs font-bold">65.95</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-red-700 to-red-900 border border-red-600 text-white text-xs font-bold">36.18</div></td><td class="px-4 py-2 text-right text-white">₹0.26</td></tr>
+                                    <tr class="hover:bg-slate-800/50 bg-slate-900/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">4</td><td class="px-4 py-2 border-r border-slate-800 text-center">64</td><td class="px-4 py-2 border-r border-slate-800">15:45-16:00</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">185</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">250</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">276</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-red-700 to-red-900 border border-red-600 text-white text-xs font-bold">71.80</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-red-700 to-red-900 border border-red-600 text-white text-xs font-bold">65.51</div></td><td class="px-4 py-2 text-right text-white">₹0.29</td></tr>
+                                    <tr class="hover:bg-slate-800/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">5</td><td class="px-4 py-2 text-center border-r border-slate-800">63</td><td class="px-4 py-2 border-r border-slate-800">15:30-15:45</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">153</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">254</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">242</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-red-700 to-red-900 border border-red-600 text-white text-xs font-bold">66.01</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-red-700 to-red-900 border border-red-600 text-white text-xs font-bold">58.17</div></td><td class="px-4 py-2 text-right text-white">₹0.25</td></tr>
+                                    <tr class="hover:bg-slate-800/50 bg-slate-900/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">6</td><td class="px-4 py-2 text-center border-r border-slate-800">62</td><td class="px-4 py-2 border-r border-slate-800">15:15-15:30</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">165</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">216</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">206</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">58.82</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">51.47</div></td><td class="px-4 py-2 text-right text-white">₹0.22</td></tr>
+                                    <tr class="hover:bg-slate-800/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">7</td><td class="px-4 py-2 text-center border-r border-slate-800">62</td><td class="px-4 py-2 border-r border-slate-800">15:15-15:30</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">165</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">216</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">206</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">58.82</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">51.47</div></td><td class="px-4 py-2 text-right text-white">₹0.22</td></tr>
+                                    <tr class="hover:bg-slate-800/50 bg-slate-900/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">8</td><td class="px-4 py-2 text-center border-r border-slate-800">62</td><td class="px-4 py-2 border-r border-slate-800">15:15-15:30</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">165</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">216</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">206</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">58.82</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">51.47</div></td><td class="px-4 py-2 text-right text-white">₹0.22</td></tr>
+                                    <tr class="hover:bg-slate-800/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">9</td><td class="px-4 py-2 text-center border-r border-slate-800">62</td><td class="px-4 py-2 border-r border-slate-800">15:15-15:30</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">165</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">216</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">206</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">58.82</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">51.47</div></td><td class="px-4 py-2 text-right text-white">₹0.22</td></tr>
+                                    <tr class="hover:bg-slate-800/50 bg-slate-900/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">10</td><td class="px-4 py-2 text-center border-r border-slate-800">62</td><td class="px-4 py-2 border-r border-slate-800">15:15-15:30</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">165</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">216</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">206</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">58.82</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">51.47</div></td><td class="px-4 py-2 text-right text-white">₹0.22</td></tr>
+                                    <tr class="hover:bg-slate-800/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">11</td><td class="px-4 py-2 text-center border-r border-slate-800">62</td><td class="px-4 py-2 border-r border-slate-800">15:15-15:30</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">165</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">216</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">206</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">58.82</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">51.47</div></td><td class="px-4 py-2 text-right text-white">₹0.22</td></tr>
+                                    <tr class="hover:bg-slate-800/50 bg-slate-900/50"><td class="px-2 py-2 text-center text-slate-500 border-r border-slate-800">12</td><td class="px-4 py-2 text-center border-r border-slate-800">62</td><td class="px-4 py-2 border-r border-slate-800">15:15-15:30</td><td class="px-4 py-2 text-right text-cyan-200 border-r border-slate-800">9080.38</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">165</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">216</td><td class="px-4 py-2 text-right text-white border-r border-slate-800">206</td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">58.82</div></td><td class="px-4 py-2 text-center border-r border-slate-800"><div class="glass-badge inline-block w-20 py-1 rounded-full bg-gradient-to-b from-yellow-600 to-yellow-800 border border-yellow-600 text-white text-xs font-bold">51.47</div></td><td class="px-4 py-2 text-right text-white">₹0.22</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="xl:col-span-1 neon-panel bg-slate-900/80 rounded-xl flex flex-col relative h-fit">
+                        <div class="p-4 space-y-4">
+                            
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-white font-bold text-lg tracking-wide">Legend</h3>
+                                </div>
+                                <table class="w-full text-xs text-slate-300">
+                                    <thead>
+                                        <tr class="text-slate-400 border-b border-slate-700">
+                                            <th class="py-1.5 text-left">Range</th>
+                                            <th class="py-1.5 text-center">Legend</th>
+                                            <th class="py-1.5 text-center">Count</th>
+                                            <th class="py-1.5 text-right">Charges</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800">
+                                        <tr><td class="py-1.5">0% to 15%</td><td class="py-1.5 text-center"><div class="w-10 h-3 bg-green-600 rounded mx-auto border border-green-500 shadow-[0_0_8px_rgba(22,163,74,0.4)]"></div></td><td class="py-1.5 text-center">5</td><td class="py-1.5 text-right">₹0.00</td></tr>
+                                        <tr><td class="py-1.5">15% to 20%</td><td class="py-1.5 text-center"><div class="w-10 h-3 bg-yellow-500 rounded mx-auto border border-yellow-400 shadow-[0_0_8px_rgba(234,179,8,0.4)]"></div></td><td class="py-1.5 text-center">3</td><td class="py-1.5 text-right">₹940.63</td></tr>
+                                        <tr><td class="py-1.5">20% to 30%</td><td class="py-1.5 text-center"><div class="w-10 h-3 bg-amber-600 rounded mx-auto border border-amber-500 shadow-[0_0_8px_rgba(217,119,6,0.4)]"></div></td><td class="py-1.5 text-center">4</td><td class="py-1.5 text-right">₹6275.63</td></tr>
+                                        <tr><td class="py-1.5">30% and Above</td><td class="py-1.5 text-center"><div class="w-10 h-3 bg-red-600 rounded mx-auto border border-red-500 shadow-[0_0_8px_rgba(220,38,38,0.4)]"></div></td><td class="py-1.5 text-center">45</td><td class="py-1.5 text-right">₹483677</td></tr>
+                                        <tr><td class="py-1.5">N/A</td><td class="py-1.5 text-center"><div class="w-10 h-3 bg-pink-300 rounded mx-auto border"></div></td><td class="py-1.5 text-center">11</td><td class="py-1.5 text-right">₹0.00</td></tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="font-bold text-white border-t border-slate-600">
+                                            <td class="py-2" colspan="2">Total</td>
+                                            <td class="py-2 text-center">68</td>
+                                            <td class="py-2 text-right">₹500687</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <div class="h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent w-full"></div>
+
+                            <div class="flex flex-col items-center">
+                                <div class="w-full max-w-[240px] relative flex flex-col items-center z-10">
+                                    <svg viewBox="0 0 260 200" class="w-full overflow-visible drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                                        <defs>
+                                            <linearGradient id="cyberGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" style="stop-color:#ef4444" />
+                                                <stop offset="50%" style="stop-color:#fbbf24" />
+                                                <stop offset="100%" style="stop-color:#22d3ee" />
+                                            </linearGradient>
+                                            <filter id="neonBlur" x="-50%" y="-50%" width="200%" height="200%">
+                                                <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+                                                <feMerge>
+                                                    <feMergeNode in="coloredBlur" />
+                                                    <feMergeNode in="SourceGraphic" />
+                                                </feMerge>
+                                            </filter>
+                                            <clipPath id="ring-clip">
+                                                <rect x="0" y="0" width="260" height="135" />
+                                            </clipPath>
+                                        </defs>
+
+                                        <g style="transform-origin: 130px 130px; animation: spin-slow 15s linear infinite; opacity: 0.8;" clip-path="url(#ring-clip)">
+                                            <circle cx="130" cy="130" r="120" fill="none" stroke="#22d3ee" stroke-width="1" stroke-dasharray="10 30" />
+                                            <circle cx="130" cy="130" r="124" fill="none" stroke="#22d3ee" stroke-width="2" stroke-dasharray="1 60" />
+                                        </g>
+
+                                        <path d="M 30 130 A 100 100 0 0 1 230 130" fill="none" stroke="#0f172a" stroke-width="24" stroke-linecap="round" />
+                                        <path d="M 30 130 A 100 100 0 0 1 230 130" fill="none" stroke="url(#cyberGradient)" stroke-width="16" stroke-linecap="round" filter="url(#neonBlur)" opacity="0.9" />
+
+                                        <g stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.8">
+                                            <line x1="28" y1="130" x2="10" y2="130" />
+                                            <line x1="130" y1="28" x2="130" y2="10" />
+                                            <line x1="232" y1="130" x2="250" y2="130" />
+                                        </g>
+
+                                        <g class="text-[10px] font-mono font-bold fill-cyan-200" style="text-shadow: 0 0 5px rgba(34,211,238,0.8);">
+                                            <text x="30" y="150" text-anchor="middle">0</text>
+                                            <text x="130" y="150" text-anchor="middle">50</text>
+                                            <text x="230" y="150" text-anchor="middle">100</text>
+                                        </g>
+
+                                        <g class="gauge-needle" style="transform: rotate(-90deg); transform-origin: 130px 130px;">
+                                            <path d="M 130 18 L 122 5 L 138 5 Z" fill="#fff" filter="url(#neonBlur)" />
+                                            <line x1="130" y1="20" x2="130" y2="130" stroke="#22d3ee" stroke-width="1" opacity="0.4" stroke-dasharray="2 2" />
+                                            <circle cx="130" cy="130" r="4" fill="#0f172a" stroke="#22d3ee" stroke-width="2" />
+                                        </g>
+                                    </svg>
+
+                                    <div class="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28">
+                                        <div class="relative bg-slate-900/60 backdrop-blur-md border border-cyan-500/40 rounded-lg p-1.5 text-center shadow-[0_0_20px_rgba(6,182,212,0.2)] overflow-hidden">
+                                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                                            <div class="text-[9px] text-cyan-400 uppercase tracking-widest mb-1 opacity-80">Deviation</div>
+                                            <div id="meterValueText" class="text-2xl font-black font-mono text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]">
+                                                -1 %
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <h4 class="mt-4 text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-white to-slate-400 font-bold text-center tracking-[0.25em] text-[10px] uppercase opacity-90">
+                                    Forecast Analytics
+                                </h4>
+
+                                <div class="w-full text-right space-y-2 mt-2 pr-2 border-t border-slate-800 pt-3 pb-1">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-cyan-400 font-medium text-sm">Expected Generation Today (MU) : </span>
+                                        <span class="text-red-500 font-bold text-base">3.34</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-400 text-sm">Forecast till now (MU) : </span>
+                                        <span class="text-white font-mono text-sm">1.73</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-400 text-sm">Actual till now (MU) : </span>
+                                        <span class="text-green-500 font-mono font-bold text-sm">1.37</span>
+                                    </div>
+                                    <div class="text-[11px] text-green-500 mt-2 text-center opacity-80">
+                                        Revision Count : 6 at 12.30 Hours
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 w-full neon-panel bg-slate-900/80 rounded-xl p-4">
+                    <h3 class="text-white font-bold text-sm mb-3 px-1 border-l-4 border-cyan-500 pl-2">Time Blocks Status (1-96)</h3>
+                    <div class="w-full">
+                        <div id="block-container" class="flex flex-wrap gap-1 justify-start">
+                            </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 w-full neon-panel bg-slate-900/80 rounded-xl p-4 relative">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-700/50 pb-2">
+                        <h3 class="text-white font-bold text-lg tracking-wide">Tamil Nadu Wind Power Forecast for 06-Jan-2026</h3>
+                        <button class="text-slate-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+                    </div>
+                    <div class="w-full h-[350px]">
+                        <canvas id="powerChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Gauge Logic
+            const needle = document.querySelector('.gauge-needle');
+            if(needle) needle.style.transform = `rotate(-10deg)`; 
+
+            // 2. Block Status Generation Logic
+            const container = document.getElementById('block-container');
+            if(container) {
+                for (let i = 1; i <= 96; i++) {
+                    const div = document.createElement('div');
+                    // w-8 h-8 for better visibility, flex-wrap handles the layout
+                    div.className = "w-8 h-8 flex items-center justify-center text-[10px] font-bold rounded-sm border border-opacity-40 transition-all hover:scale-110 cursor-pointer shadow-lg mb-1";
+                    div.innerText = i;
+                    
+                    // Color Logic based on your image pattern
+                    if (i <= 2) {
+                        div.className += " bg-green-600 border-green-400 text-white shadow-green-500/20";
+                    } else if (i <= 22) {
+                        div.className += " bg-pink-200 border-pink-300 text-slate-900 shadow-pink-500/20";
+                    } else if (i <= 29) {
+                        div.className += " bg-orange-500 border-orange-400 text-white shadow-orange-500/20";
+                    } else if (i <= 34) {
+                        div.className += " bg-red-600 border-red-500 text-white shadow-red-500/20";
+                    } else if (i <= 37) {
+                        div.className += " bg-yellow-400 border-yellow-300 text-slate-900 shadow-yellow-500/20";
+                    } else {
+                        div.className += " bg-green-600 border-green-400 text-white shadow-green-500/20";
+                    }
+                    container.appendChild(div);
+                }
+            }
+
+            // 3. Neon Area Chart Logic with Custom Shadow Glow Plugin
+            const ctx = document.getElementById('powerChart').getContext('2d');
+            
+            // Plugin to add Shadow Blur (Glow) to lines
+            const neonGlowPlugin = {
+                id: 'neonGlow',
+                beforeDatasetDraw: (chart, args) => {
+                    const { ctx } = chart;
+                    ctx.save();
+                    ctx.shadowColor = args.meta.dataset.options.borderColor;
+                    ctx.shadowBlur = 20; // High blur for neon effect
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                },
+                afterDatasetDraw: (chart) => {
+                    const { ctx } = chart;
+                    ctx.restore();
+                }
+            };
+
+            // Gradients for the Glowing Area Fill
+            const gradientPurple = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientPurple.addColorStop(0, 'rgba(192, 132, 252, 0.5)'); // Top opacity
+            gradientPurple.addColorStop(1, 'rgba(192, 132, 252, 0.0)'); // Bottom transparent
+
+            const gradientPink = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientPink.addColorStop(0, 'rgba(236, 72, 153, 0.5)');
+            gradientPink.addColorStop(1, 'rgba(236, 72, 153, 0.0)');
+
+            const gradientCyan = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientCyan.addColorStop(0, 'rgba(34, 211, 238, 0.5)');
+            gradientCyan.addColorStop(1, 'rgba(34, 211, 238, 0.0)');
+
+            // Generating dummy data to match the curve shape
+            const labels = Array.from({length: 96}, (_, i) => i + 1);
+            
+            // Smooth curve simulation
+            const forecastData = labels.map(i => {
+                let val = 1300;
+                if(i < 30) val -= i * 15;
+                else if(i < 50) val += (i-30) * 50;
+                else val = 1900 - (i-50) * 20;
+                return val > 0 ? val : 0;
+            });
+
+            const amrData = labels.map(i => {
+                let val = 1100;
+                if(i < 25) val -= i * 20;
+                else if(i < 55) val += (i-25) * 45;
+                else val = 1800 - (i-55) * 25;
+                return val > 0 ? val : 0;
+            });
+
+            const tnebData = labels.map(i => {
+                return 500 + Math.sin(i/10) * 100; // Flat bottom curve
+            });
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Forecast (MW)',
+                            data: forecastData,
+                            borderColor: '#c084fc', // Purple Neon
+                            backgroundColor: gradientPurple,
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4, // Smooth curves
+                            pointRadius: 0,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'AMR Actual (MW)',
+                            data: amrData,
+                            borderColor: '#ec4899', // Pink Neon
+                            backgroundColor: gradientPink,
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'TNEB Actual (MW)',
+                            data: tnebData,
+                            borderColor: '#22d3ee', // Cyan Neon
+                            backgroundColor: gradientCyan,
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#cbd5e1', font: { family: 'monospace' }, usePointStyle: true, boxWidth: 8 },
+                            position: 'top',
+                            align: 'end'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(148, 163, 184, 0.1)', borderDash: [5, 5] },
+                            ticks: { color: '#94a3b8' },
+                            beginAtZero: true
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8', maxTicksLimit: 12 }
+                        }
+                    }
+                },
+                plugins: [neonGlowPlugin] // Registering the glow plugin
+            });
+
+        });
+    </script>
+</body>
+</html>

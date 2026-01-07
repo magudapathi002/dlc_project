@@ -15,7 +15,7 @@ from django.http import HttpResponse
 
 
 
-SRLDC_API_BASE = "http://127.0.0.1:8000/api/srldc/"
+SRLDC_API_BASE = "http://127.0.0.1:1236/api/srldc/"
 
 def fetch_srldc_data(params: dict):
     """
@@ -27,7 +27,6 @@ def fetch_srldc_data(params: dict):
         resp.raise_for_status()
         return resp.json()
     except requests.RequestException:
-        # You can log the exception here if you have logging configured
         return None
 
 
@@ -133,7 +132,6 @@ def error_report(request):
 
     return render(request, 'dailyreports/error_report.html', context)
 
-
 @login_required
 def monthly_error_report(request):
     import calendar
@@ -225,7 +223,6 @@ def monthly_error_report(request):
     }
 
     return render(request, "dailyreports/monthly_error_report.html", context)
-
 
 
 

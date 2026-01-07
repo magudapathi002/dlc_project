@@ -48,6 +48,11 @@ def srldc_view(request):
             report_date__year=year,
             report_date__month=month
         )
+        print(a_tab.query,"a_tab")
+        print(c_tab.query,"c_tab")
+        print(b_tab.query,"b_tab")
+
+        print("📦 MONTHLY RAW:", a_tab)
 
         return Response(
             {
