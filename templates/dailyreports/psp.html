@@ -152,6 +152,42 @@
         object-fit: contain;
         display: inline-block;
       }
+
+
+      .export-mode .app-card {
+  height: auto !important;
+  min-height: auto !important;
+}
+
+.export-mode .right-card {
+  overflow: visible !important;
+}
+
+.export-mode .left-card {
+  overflow: visible !important;
+}
+
+/* FIX: Disable animations and force full opacity in export mode */
+.export-mode * {
+  animation: none !important;
+  transition: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.export-mode *,
+.export-mode *::before,
+.export-mode *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+.export-mode .fade-in {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+
     </style>
   </head>
 
@@ -227,6 +263,13 @@
                         class="px-3 py-2 border rounded-md text-sm"
                       >
                         Refresh
+                      </button>
+                      <button
+                        type="button"
+                        id="exportBtn"
+                        class="px-3 py-2 border rounded-md text-sm"
+                      >
+                        Export
                       </button>
                     </form>
                   </div>
@@ -324,14 +367,14 @@
                       class="flex-1 bg-gray rounded-xl shadow-sm border p-1 relative flex flex-col justify-center h-[430px] fade-in fade-delay-2"
                     >
                       <div class="absolute top-2 left-3 z-10">
-                        <h3 class="text-sm font-bold text-gray-700">
-                          TAMILNADU
+                        <h3 class="text-sm font-bold text-gray-700" id="map-state-label">
+                          {{ selected_state|default:"Tamil Nadu"|upper }}
                         </h3>
                         <p class="text-xs text-gray-500" id="map-date-label">
                           Power Supply Position
                         </p>
                       </div>
-                      <div id="tn-map" class="w-full h-64"></div>
+                      <div id="tn-map" class="w-full h-64" data-current-state="{{ selected_state|default:'Tamil Nadu' }}"></div>
                     </div>
 
                     <div class="w-40 flex flex-col gap-4 justify-center">
@@ -526,16 +569,28 @@
 
               <script src="https://d3js.org/d3.v7.min.js"></script>
               <script src="https://unpkg.com/topojson-client@3"></script>
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 
               <script>
                 (function () {
-                  async function initTamilNaduMap() {
-                    const DATA_URL = "/static/data/tamilnadu.json";
+                  async function initStateMap() {
                     const container = document.getElementById("tn-map");
                     if (!container) return;
+                    
+                    const rawState = container.dataset.currentState || "Tamil Nadu";
+                    const wantState = rawState.toLowerCase().replace(/[^a-z0-9]/g, "");
+                    const isTN = ["tamilnadu", "tn", "madras", "tamil nadu"].some(s => wantState.includes(s));
+                    
                     container.innerHTML = "";
+                    
+                    // Decide which file to load
+                    // Use optimized tamilnadu.json for TN, otherwise india.geojson for others
+                    const DATA_URL = isTN ? "/static/data/tamilnadu.json" : "/static/data/india.geojson";
+                    
                     const width = Math.max(320, container.clientWidth);
                     const height = Math.max(200, container.clientHeight);
+                    
                     const svg = d3
                       .select(container)
                       .append("svg")
@@ -543,44 +598,41 @@
                       .attr("height", "100%")
                       .attr("viewBox", `0 0 ${width} ${height}`)
                       .attr("preserveAspectRatio", "xMidYMid meet");
+                      
                     try {
                       const res = await fetch(DATA_URL);
-                      if (!res.ok) return;
+                      if (!res.ok) throw new Error("Data not found");
+                      
                       const json = await res.json();
                       let geo = json;
                       if (json.type === "Topology" && json.objects) {
                         const k = Object.keys(json.objects)[0];
                         geo = topojson.feature(json, json.objects[k]);
                       }
-                      function isTamilNaduFeature(feature) {
-                        const props = feature.properties || {};
-                        const possible = [
-                          props.NAME_1,
-                          props.NAME,
-                          props.STATE_NAME,
-                          props.st_nm,
-                          props.STATE,
-                          props.st_name,
-                          props.DISTRICT,
-                        ];
-                        const joined = possible
-                          .filter(Boolean)
-                          .join(" ")
-                          .toLowerCase();
-                        return (
-                          joined.includes("tamil") || joined.includes("tn")
-                        );
+                      
+                      const features = geo.features || (geo.type === "Feature" ? [geo] : []);
+                      let feature = null;
+                      
+                      if (isTN && features.length === 1) {
+                         // Fallback for single-feature file
+                         feature = features[0];
+                      } else {
+                         // Search for the state feature
+                         feature = features.find(f => {
+                            const p = f.properties || {};
+                            const possible = [p.NAME_1, p.NAME, p.STATE, p.st_nm, p.state_name, p.id];
+                            const normVals = possible.map(v => String(v || "").toLowerCase().replace(/[^a-z0-9]/g, ""));
+                            // Check exact match or inclusion
+                            return normVals.some(v => v === wantState || (v.length > 3 && wantState.includes(v)));
+                         });
                       }
-                      const feature =
-                        (geo.features || []).find(isTamilNaduFeature) ||
-                        ((geo.features || []).length === 1
-                          ? geo.features[0]
-                          : null);
+                      
                       if (feature) {
                         const projection = d3
                           .geoMercator()
                           .fitSize([width - 20, height - 20], feature);
                         const path = d3.geoPath().projection(projection);
+                        
                         svg
                           .append("path")
                           .datum(feature)
@@ -588,12 +640,20 @@
                           .attr("fill", "#e0f2fe")
                           .attr("stroke", "#3b82f6")
                           .attr("stroke-width", 1.5);
+                          
+                        // Optional: Add tooltip or label? kept simple for now
+                      } else {
+                        container.innerHTML = `<div class="flex items-center justify-center h-full text-gray-400 text-xs text-center p-4">Shape not found for ${rawState}</div>`;
                       }
-                    } catch (e) {}
+                    } catch (e) {
+                       console.error(e);
+                       container.innerHTML = `<div class="flex items-center justify-center h-full text-gray-400 text-xs text-center p-4">Map unavailable</div>`;
+                    }
                   }
-                  initTamilNaduMap();
+                  
+                  initStateMap();
                   window.addEventListener("resize", () => {
-                    setTimeout(initTamilNaduMap, 500);
+                    setTimeout(initStateMap, 500);
                   });
                 })();
               </script>
@@ -996,7 +1056,19 @@
           (dateInput && dateInput.value) ||
           ""
         ).toString();
-        const wantState = normalize((stateInput && stateInput.value) || "");
+        
+        // DEBUG: Check raw input
+        const rawStateInput = stateInput ? stateInput.value : "N/A";
+        console.log(`[DEBUG] Raw state input: '${rawStateInput}'`);
+
+        let wantState = normalize(rawStateInput);
+        
+        // Strict default to Tamil Nadu if empty or invalid
+        if (!wantState || wantState === "none" || wantState === "null") {
+             wantState = "Tamil Nadu";
+             console.log("[DEBUG] Defaulting wantState to: Tamil Nadu");
+        }
+        
         console.log(
           "updateTable: wantState=",
           wantState,
@@ -1016,6 +1088,7 @@
             const arr = arrayFromJson(serverRaw);
             const match = findEntryByStateAndDate(arr, wantState, wantDate);
             if (match) {
+              console.log("[DEBUG] Match found in server data:", match);
               tbody.innerHTML = buildRowsFromProcessor(match);
               if (footer)
                 footer.innerHTML = `Showing report for ${
@@ -1047,6 +1120,7 @@
         const arr2 = arrayFromJson(apiJson);
         const match2 = findEntryByStateAndDate(arr2, wantState, wantDate);
         if (match2) {
+          console.log("[DEBUG] Match found in API data:", match2);
           tbody.innerHTML = buildRowsFromProcessor(match2);
           if (footer)
             footer.innerHTML = `Showing report for ${
@@ -1097,6 +1171,66 @@
           });
         }
       });
+
+document.getElementById("exportBtn").addEventListener("click", async () => {
+  const source = document.querySelector(".cards-row");
+  const wrapper = document.getElementById("export-wrapper");
+
+  if (!source || !wrapper) {
+    alert("Export area not found");
+    return;
+  }
+
+  // Clean wrapper
+  wrapper.innerHTML = "";
+
+  // Clone
+  const clone = source.cloneNode(true);
+
+  // 🔥 Force export mode
+  clone.classList.add("export-mode");
+
+  // 🔥 FORCE GRID + WIDTH
+  clone.style.display = "grid";
+  clone.style.gridTemplateColumns = "40% 60%";
+  clone.style.width = "1600px";
+  clone.style.height = "auto";
+  clone.style.gap = "24px";
+
+  wrapper.appendChild(clone);
+
+  // Allow layout & images to settle (animations disabled via CSS)
+  // Increased wait time to ensure map/SVG stability
+  await new Promise(r => setTimeout(r, 1000));
+
+  const canvas = await html2canvas(wrapper, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: "#f5f7fa",
+    windowWidth: 1600,
+    windowHeight: wrapper.scrollHeight
+  });
+
+  const link = document.createElement("a");
+  link.download = `PSP_Full_Report_${new Date().toISOString().slice(0,10)}.png`;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+
+  // Cleanup
+  wrapper.innerHTML = "";
+});
+
+
     </script>
+
+    <div id="export-wrapper" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -9999;
+  width: 1600px;
+  background: #f5f7fa;
+  padding: 24px;
+"></div>
   </body>
 </html>

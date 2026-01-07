@@ -39,7 +39,9 @@ def psp(request):
     - If no date provided, default to yesterday.
     - Does not block future dates (treats any valid YYYY-MM-DD as valid).
     """
-    selected_state = request.session.get("selected_state", "").strip()
+    # Allow GET param to override session, otherwise fallback to session
+    selected_state = request.GET.get("state") or request.session.get("selected_state", "")
+    selected_state = selected_state.strip()
 
     # default fallback -> yesterday (keeps previous behavior when no date provided)
     yesterday_iso = (date.today() - timedelta(days=1)).isoformat()
