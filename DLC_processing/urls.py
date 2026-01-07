@@ -24,4 +24,5 @@ urlpatterns = [
     path('dashboard/', include(('dashboard.urls', 'dashboard'), namespace='dashboard')),  # <- updated
     path('reports/', include('dailyreports.urls')), # moved dailyreports to /reports/ to avoid conflict
     path('api/', include('api_app.urls')),
+    path('reports/', include('dsmreports.urls')), # moved dailyreports to /reports/ to avoid conflict
 ]
