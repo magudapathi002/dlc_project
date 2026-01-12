@@ -8,6 +8,7 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
@@ -16,24 +17,21 @@
 
   {% include "partials/navbar.html" %}
 
-  <!-- main wrapper: moved a little left (lg:ml-56) so sidebar will overlap main by ~2rem -->
-  <main class="max-w-7xl px-4 sm:px-6 lg:px-8 mt-6 pb-12 lg:ml-56">
+  <main class="w-full px-4 sm:px-6 lg:px-8 mt-6 pb-12">
 
     <div class="flex gap-6">
 
-      <!-- Sidebar: fixed, high z-index so it overlays the main content.
-           added lg:shadow-2xl to make the overlay clearer -->
-      <aside id="mainSidebar" class="hidden lg:block w-64 fixed left-0 top-20 overflow-auto z-50 bg-white lg:shadow-2xl transition-all duration-300">
-        {% include "partials/sidebar.html" %}
+      <aside class="w-16 hidden lg:block flex-shrink-0" aria-label="Sidebar">
+          {% include "partials/sidebar.html" %}
       </aside>
 
-      <!-- Make the main content positioned and z-0 so the sidebar overlays it -->
       <section class="flex-1 min-w-0 relative z-0">
         <div class="w-full">
             <main class="w-full">
-              <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+              
+              <div id="capture-target" class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
 
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-b border-gray-200">
+                <div data-html2canvas-ignore="true" class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-b border-gray-200">
                   <div class="mb-4 sm:mb-0">
                     <h1 class="text-xl font-bold text-gray-800">Daily Comparison</h1>
                     <p class="text-sm text-gray-500">Select date and view state-wise report</p>
@@ -44,8 +42,9 @@
                   </div>
                 </div>
 
-                <div class="p-4 bg-gray-50 border-b border-gray-200">
+                <div data-html2canvas-ignore="true" class="p-4 bg-gray-50 border-b border-gray-200">
                   <form method="GET" id="dateForm" class="flex flex-col md:flex-row md:items-center gap-3">
+                    
                     <div class="w-full md:w-48">
                       <input
                         type="date"
@@ -55,33 +54,57 @@
                         value="{{ request.GET.date|default:'' }}"
                       />
                     </div>
-                    <div class="flex gap-2 items-center">
+
+                    <div class="flex items-center gap-2 bg-white px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input 
+                                type="checkbox" 
+                                name="dsm_charges" 
+                                class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                {% if request.GET.dsm_charges or not request.GET %}checked{% endif %}
+                            >
+                            <span class="text-sm font-medium text-gray-700">DSM Charges</span>
+                        </label>
+
+                        <div class="h-4 w-px bg-gray-300 mx-1"></div>
+
+                        <select name="dsm_source" class="text-sm font-bold text-gray-700 bg-transparent border-none focus:ring-0 cursor-pointer outline-none py-0 pl-1 pr-6">
+                            <option value="AMR" {% if request.GET.dsm_source == 'AMR' or not request.GET.dsm_source %}selected{% endif %}>AMR</option>
+                            <option value="TNEB" {% if request.GET.dsm_source == 'TNEB' %}selected{% endif %}>TNEB</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-2 items-center flex-wrap">
                       <button type="submit" class="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition shadow-sm">
                         VIEW
                       </button>
+                      
                       <button type="button" id="exportCsvBtn" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white rounded-md text-sm text-gray-700 hover:bg-gray-50 font-medium shadow-sm transition">
-                        Export Excel
+                        Export YTD
                       </button>
-                      <button type="button" id="refreshBtn" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white rounded-md text-sm text-gray-700 hover:bg-gray-50 font-medium shadow-sm transition">
-                        Refresh
+                      
+                      <button type="button" id="exportdetailedBtn" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white rounded-md text-sm text-gray-700 hover:bg-gray-50 font-medium shadow-sm transition">
+                        Export YTD Detailed
                       </button>
+                      
                       <button type="button" id="downloadBtn" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 bg-green rounded-md text-sm text-gray-700 hover:bg-green-100 font-medium shadow-sm transition">
                         Download PNG
                       </button>
                     </div>
+
                   </form>
                 </div>
 
-                <div class="w-full col-span-full">
-                  <div class="bg-white">
-
+                <div class="flex flex-col xl:flex-row w-full h-full">
+                  
+                  <div class="w-full xl:w-3/4 bg-white border-b xl:border-b-0 xl:border-r border-gray-200">
+                    
                     <div class="p-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
                              <img src="{% static 'images/logo.png' %}" alt="Leap Green Energy" class="h-10 object-contain">
                              <div>
                                 <h2 class="text-lg font-bold text-[#072a12] uppercase">TN - Daily Wind Power Generation Updates</h2>
-                                <div class="text-sm text-gray-500 mt-0.5">{{ selected_date|default:"-- -- -- -- --" }}</div>
-                             </div>
+                                </div>
                         </div>
                         <div class="text-sm">
                            <div class="font-bold bg-yellow-400 px-3 py-1 rounded text-black shadow-sm">
@@ -91,99 +114,114 @@
                     </div>
 
                     <div class="p-2 bg-white">
-                        <div class="relative h-[500px] w-full">
+                        <div class="relative h-[500px] w-full"> 
                             <canvas id="windChart"></canvas>
                         </div>
                     </div>
+                  </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 border-t border-gray-200 bg-gray-50">
-
+                  <div class="w-full xl:w-1/4 bg-gray-50 p-4 flex flex-col gap-4 overflow-y-auto border-l border-gray-200">
                         <div class="rounded-lg overflow-hidden border border-gray-300 bg-white shadow-sm">
                             <table class="w-full text-sm text-center">
                                 <thead class="bg-[#90ee90] text-black font-bold border-b border-gray-300">
                                     <tr>
-                                        <th class="p-3 border-r border-gray-300" rowspan="2">Absolute Error</th>
-                                        <th class="p-3 border-b border-gray-300" colspan="2">(Act-Sch)/Sch</th>
+                                        <th class="p-2 border-r border-gray-300" rowspan="2">Absolute Error</th>
+                                        <th class="p-2 border-b border-gray-300" colspan="2">(Act-Sch)/Sch</th>
                                     </tr>
                                     <tr>
-                                        <th class="p-3 border-r border-gray-300">No. of Slots</th>
-                                        <th class="p-3">%</th>
+                                        <th class="p-2 border-r border-gray-300">Slots</th>
+                                        <th class="p-2">%</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200">
+                                <tbody class="divide-y divide-gray-200 text-xs">
                                     <tr class="bg-yellow-50 hover:bg-yellow-100 transition">
-                                        <td class="p-3 font-medium text-left pl-4 border-r border-gray-200"><=15%</td>
-                                        <td class="p-3 border-r border-gray-200">46</td>
-                                        <td class="p-3">47.9%</td>
+                                        <td class="p-2 font-medium text-left pl-3 border-r border-gray-200"><=15%</td>
+                                        <td class="p-2 border-r border-gray-200">46</td>
+                                        <td class="p-2">47.9%</td>
                                     </tr>
                                     <tr class="hover:bg-gray-50 transition">
-                                        <td class="p-3 font-medium text-left pl-4 border-r border-gray-200">>15% but <=20%</td>
-                                        <td class="p-3 border-r border-gray-200">8</td>
-                                        <td class="p-3">8.3%</td>
+                                        <td class="p-2 font-medium text-left pl-3 border-r border-gray-200">>15% <=20%</td>
+                                        <td class="p-2 border-r border-gray-200">8</td>
+                                        <td class="p-2">8.3%</td>
                                     </tr>
                                     <tr class="hover:bg-gray-50 transition">
-                                        <td class="p-3 font-medium text-left pl-4 border-r border-gray-200">>20% but <=30%</td>
-                                        <td class="p-3 border-r border-gray-200">14</td>
-                                        <td class="p-3">14.6%</td>
+                                        <td class="p-2 font-medium text-left pl-3 border-r border-gray-200">>20% <=30%</td>
+                                        <td class="p-2 border-r border-gray-200">14</td>
+                                        <td class="p-2">14.6%</td>
                                     </tr>
                                     <tr class="bg-red-50 hover:bg-red-100 transition">
-                                        <td class="p-3 font-medium text-left pl-4 border-r border-gray-200">>30%</td>
-                                        <td class="p-3 border-r border-gray-200">28</td>
-                                        <td class="p-3">29.2%</td>
+                                        <td class="p-2 font-medium text-left pl-3 border-r border-gray-200">>30%</td>
+                                        <td class="p-2 border-r border-gray-200">28</td>
+                                        <td class="p-2">29.2%</td>
                                     </tr>
                                     <tr class="font-bold bg-gray-100 border-t border-gray-300">
-                                        <td class="p-3 text-left pl-4 border-r border-gray-300">Total</td>
-                                        <td class="p-3 border-r border-gray-300" colspan="2">96</td>
+                                        <td class="p-2 text-left pl-3 border-r border-gray-300">Total</td>
+                                        <td class="p-2 border-r border-gray-300" colspan="2">96</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <div class="rounded-lg overflow-hidden border border-gray-300 bg-white shadow-sm">
-                            <div class="bg-[#90ee90] p-3 text-center text-black font-bold border-b border-gray-300 text-xs uppercase tracking-wide">
-                                * Provisional DSM Charges as on {{ selected_date|default:'27-Nov-25' }}
+                        {% if request.GET.dsm_charges or not request.GET %}
+                        <div class="rounded-lg overflow-hidden border border-gray-300 bg-white shadow-sm transition-all duration-300">
+                            <div class="bg-[#90ee90] p-2 text-center text-black font-bold border-b border-gray-300 text-xs uppercase tracking-wide">
+                                * Provisional DSM Charges <br> {{ selected_date|default:'27-Nov-25' }}
                             </div>
                             <table class="w-full text-sm text-center">
                                 <thead class="bg-[#90ee90] text-black font-bold border-b border-gray-300">
                                     <tr>
-                                        <th class="p-3 border-r border-gray-300">Period</th>
-                                        <th class="p-3 border-r border-gray-300">Total Charges (Rs.)</th>
-                                        <th class="p-3">DSM Charges per Unit (Paise)</th>
+                                        <th class="p-2 border-r border-gray-300">Period</th>
+                                        <th class="p-2 border-r border-gray-300">Charges (Rs.)</th>
+                                        <th class="p-2">Per Unit (P)</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200">
+                                <tbody class="divide-y divide-gray-200 text-xs">
                                     <tr class="hover:bg-gray-50 transition">
-                                        <td class="p-3 font-bold bg-gray-50 border-r border-gray-200">DAY</td>
-                                        <td class="p-3 border-r border-gray-200">10,93,469</td>
-                                        <td class="p-3">6.89</td>
+                                        <td class="p-2 font-bold bg-gray-50 border-r border-gray-200">DAY</td>
+                                        <td class="p-2 border-r border-gray-200">10,93,469</td>
+                                        <td class="p-2">6.89</td>
                                     </tr>
                                     <tr class="hover:bg-gray-50 transition">
-                                        <td class="p-3 font-bold bg-gray-50 border-r border-gray-200">MTD</td>
-                                        <td class="p-3 border-r border-gray-200">3,17,93,159</td>
-                                        <td class="p-3">10.944</td>
+                                        <td class="p-2 font-bold bg-gray-50 border-r border-gray-200">MTD</td>
+                                        <td class="p-2 border-r border-gray-200">3,17,93,159</td>
+                                        <td class="p-2">10.94</td>
                                     </tr>
                                     <tr class="hover:bg-gray-50 transition">
-                                        <td class="p-3 font-bold bg-gray-50 border-r border-gray-200">YTD</td>
-                                        <td class="p-3 border-r border-gray-200">26,33,35,631</td>
-                                        <td class="p-3">2.129</td>
+                                        <td class="p-2 font-bold bg-gray-50 border-r border-gray-200">YTD</td>
+                                        <td class="p-2 border-r border-gray-200">26,33,35,631</td>
+                                        <td class="p-2">2.12</td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="p-3 text-xs text-gray-500 bg-white border-t border-gray-200">
-                                <p class="flex items-center gap-1"><span class="text-red-500">*</span> For Internal reference only</p>
-                                <p class="flex items-center gap-1"><span class="text-red-500">*</span> SLDC not yet provided the calculations</p>
-                            </div>
                         </div>
+                        {% endif %}
 
-                    </div>
-
-                    <div class="p-3 text-xs text-gray-500 border-t border-gray-200 bg-gray-100 flex items-center justify-center">
-                        Tip: Choose date then click <strong class="ml-1">VIEW</strong> to fetch state data.
-                    </div>
+                        <div class="p-2 text-[10px] text-gray-500 bg-white border-t border-gray-200">
+                            <p class="flex items-center gap-1"><span class="text-red-500">*</span> For Internal reference only</p>
+                            <p class="flex items-center gap-1"><span class="text-red-500">*</span> SLDC not yet provided the calculations</p>
+                        </div>
                   </div>
                 </div>
 
+                <div class="mt-6">
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-xs text-gray-800 shadow-sm">
+                        <strong class="text-green-900">Note:</strong>
+                        <ul class="list-disc list-inside mt-1 space-y-1 ml-1 text-gray-700">
+                             {% if request.GET.dsm_source == 'TNEB' %}
+                                <li>DSM charges are calculated based on the TNEB reported blocks only</li>
+                             {% else %}
+                                <li>AMR Generation reported is based on available / connected meter readings</li>
+                                <li>DSM charges are calculated based on the AMR reported blocks only</li>
+                             {% endif %}
+                        </ul>
+                        <div class="mt-8 pt-4 border-t border-gray-300 text-center text-gray-500 text-sm font-medium">
+                          Copyright &copy;2026 <strong class="text-gray-700">WIND BUILT</strong>, All rights reserved.
+                        </div>
+                    </div>
+                </div>
+
               </div>
+              
             </main>
         </div>
       </section>
@@ -191,172 +229,232 @@
   </main>
 
   <script>
-    // --- 1. GENERATE 96 TIME SLOTS (00:00-00:15, etc) ---
+    // --- 1. GENERATE 96 TIME SLOTS ---
     function generateTimeSlots() {
         const slots = [];
         for (let i = 0; i < 96; i++) {
             const startMinutes = i * 15;
             const endMinutes = (i + 1) * 15;
-
-            // Helper to format HH:MM
             const format = (mins) => {
                 const h = Math.floor(mins / 60) % 24;
                 const m = mins % 60;
                 return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
             };
-            // Label format: "00:00-00:15"
             slots.push(`${format(startMinutes)}-${format(endMinutes)}`);
         }
         return slots;
     }
 
-    // --- 2. GENERATE DUMMY DATA FOR DEMO (96 points) ---
-    // (Remove this function when connecting real API data)
+    // --- 2. GENERATE DUMMY DATA FOR CHART ---
     function generateRandomData(min, max) {
         return Array.from({ length: 96 }, () => Math.floor(Math.random() * (max - min + 1) + min));
     }
 
-    // --- 3. CHART CONFIGURATION ---
+    // --- 3. COLORS CONFIG ---
+    const colors = {
+        dayAheadDevBorder: '#f87171',
+        dayAheadDevBg: 'rgba(248, 113, 113, 0.5)',
+        intraDayDevBorder: '#fdba74',
+        intraDayDevBg: 'rgba(253, 186, 116, 0.5)',
+        dayAheadSch: '#ec4899',
+        intraDaySch: '#3b82f6',
+        amrGen: '#16a34a'
+    };
+
+    // --- 4. CHART CONFIGURATION ---
     document.addEventListener('DOMContentLoaded', () => {
       const ctx = document.getElementById('windChart').getContext('2d');
-
       const timeLabels = generateTimeSlots();
 
-      const windChart = new Chart(ctx, {
+      new Chart(ctx, {
         type: 'line',
         data: {
           labels: timeLabels,
           datasets: [
-            {
-              label: 'Wind Forecast',
-              data: generateRandomData(600, 1200), // Dummy data
-              borderColor: '#22c55e', // Green
-              backgroundColor: 'rgba(34, 197, 94, 0.1)',
-              borderWidth: 1.5,
-              pointRadius: 0, // Hide points for clean line
-              pointHoverRadius: 4,
-              tension: 0.4,
-              fill: true
+            // 0. Day Ahead Deviation (Filled)
+            { 
+                label: 'DayAhead Deviation', 
+                data: generateRandomData(100, 400), 
+                borderColor: colors.dayAheadDevBorder, 
+                backgroundColor: colors.dayAheadDevBg, 
+                borderWidth: 1, 
+                pointRadius: 0, 
+                tension: 0.4, 
+                fill: true 
             },
-            {
-              label: 'Actual Generation',
-              data: generateRandomData(500, 1100), // Dummy data
-              borderColor: '#db2777', // Pink/Red
-              backgroundColor: 'rgba(219, 39, 119, 0.1)',
-              borderWidth: 1.5,
-              pointRadius: 0,
-              pointHoverRadius: 4,
-              tension: 0.4,
-              fill: false
+            // 1. Intra Day Deviation (Filled)
+            { 
+                label: 'Intra Day Deviation', 
+                data: generateRandomData(50, 300), 
+                borderColor: colors.intraDayDevBorder, 
+                backgroundColor: colors.intraDayDevBg, 
+                borderWidth: 1, 
+                pointRadius: 0, 
+                tension: 0.4, 
+                fill: true 
             },
-            {
-              label: 'Schedule',
-              data: generateRandomData(550, 1300), // Dummy data
-              borderColor: '#3b82f6', // Blue
-              backgroundColor: 'rgba(59, 130, 246, 0.1)',
-              borderWidth: 1.5,
-              pointRadius: 0,
-              pointHoverRadius: 4,
-              tension: 0.4,
-              fill: false
+            // 2. Day Ahead Schedule (Solid, THICK)
+            { 
+                label: 'Day Ahead Schedule', 
+                data: generateRandomData(500, 900), 
+                borderColor: colors.dayAheadSch, 
+                backgroundColor: 'transparent', 
+                borderWidth: 2, 
+                pointRadius: 0, 
+                tension: 0.4, 
+                fill: false 
+            },
+            // 3. Intraday Schedule (Solid, THICK)
+            { 
+                label: 'Intraday Schedule', 
+                data: generateRandomData(450, 850), 
+                borderColor: colors.intraDaySch, 
+                backgroundColor: 'transparent', 
+                borderWidth: 2, 
+                pointRadius: 0, 
+                tension: 0.4, 
+                fill: false 
+            },
+            // 4. AMR Generation (Solid, THICK)
+            { 
+                label: 'AMR Generation', 
+                data: generateRandomData(480, 880), 
+                borderColor: colors.amrGen, 
+                backgroundColor: 'transparent', 
+                borderWidth: 2, 
+                pointRadius: 0, 
+                tension: 0.4, 
+                fill: false 
             }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          interaction: {
-            mode: 'index',
-            intersect: false,
-          },
+          interaction: { mode: 'index', intersect: false },
           plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                  color: '#374151',
-                  usePointStyle: true,
-                  padding: 20,
-                  font: { size: 12 }
-              }
+            legend: { 
+                position: 'top', 
+                align: 'end',
+                labels: {
+                    usePointStyle: true,
+                    pointStyle: 'rectRounded'
+                },
+                // --- HOVER ANIMATION LOGIC ---
+                onHover: function(event, legendItem, legend) {
+                    const chart = legend.chart;
+                    const index = legendItem.datasetIndex;
+                    
+                    chart.data.datasets.forEach((d, i) => {
+                        if (i !== index) {
+                            // Dim others
+                            if (i === 0) { d.borderColor = '#f8717120'; d.backgroundColor = 'rgba(248, 113, 113, 0.05)'; }
+                            else if (i === 1) { d.borderColor = '#fdba7420'; d.backgroundColor = 'rgba(253, 186, 116, 0.05)'; }
+                            else if (i === 2) { d.borderColor = '#ec489920'; } 
+                            else if (i === 3) { d.borderColor = '#3b82f620'; } 
+                            else if (i === 4) { d.borderColor = '#16a34a20'; }
+                        } else {
+                            // Highlight selected
+                            if (i === 0) { d.borderColor = colors.dayAheadDevBorder; d.backgroundColor = colors.dayAheadDevBg; }
+                            else if (i === 1) { d.borderColor = colors.intraDayDevBorder; d.backgroundColor = colors.intraDayDevBg; }
+                            else if (i === 2) { d.borderColor = colors.dayAheadSch; } 
+                            else if (i === 3) { d.borderColor = colors.intraDaySch; } 
+                            else if (i === 4) { d.borderColor = colors.amrGen; }
+                        }
+                    });
+                    chart.update();
+                },
+                onLeave: function(event, legendItem, legend) {
+                    const chart = legend.chart;
+                    chart.data.datasets[0].borderColor = colors.dayAheadDevBorder; chart.data.datasets[0].backgroundColor = colors.dayAheadDevBg;
+                    chart.data.datasets[1].borderColor = colors.intraDayDevBorder; chart.data.datasets[1].backgroundColor = colors.intraDayDevBg;
+                    chart.data.datasets[2].borderColor = colors.dayAheadSch;
+                    chart.data.datasets[3].borderColor = colors.intraDaySch;
+                    chart.data.datasets[4].borderColor = colors.amrGen;
+                    chart.update();
+                }
             },
-            tooltip: {
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                titleColor: '#1f2937',
-                bodyColor: '#1f2937',
-                borderColor: '#e5e7eb',
-                borderWidth: 1,
-                padding: 10,
-                displayColors: true
-            }
+            tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.9)', titleColor: '#1f2937', bodyColor: '#1f2937', borderColor: '#e5e7eb', borderWidth: 1, displayColors: true }
           },
           scales: {
-            x: {
-              grid: { display: false },
-              ticks: {
-                  color: '#4b5563',
-                  font: { size: 10 },
-                  autoSkip: true,
-                  maxTicksLimit: 32, // Shows roughly 2 labels per hour to fit space
-                  maxRotation: 90,   // Vertical Text as per your image
-                  minRotation: 90
-              }
-            },
-            y: {
-              grid: { color: 'rgba(0, 0, 0, 0.05)' },
-              ticks: { color: '#4b5563' },
-              beginAtZero: true
-            }
+            x: { grid: { display: false }, ticks: { color: '#4b5563', font: { size: 10 }, autoSkip: true, maxTicksLimit: 32, maxRotation: 90, minRotation: 90 } },
+            y: { grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { color: '#4b5563' }, beginAtZero: true }
           }
         }
       });
     });
 
-    // --- EXISTING FUNCTIONALITY ---
-    const dataApiUrl = "";
-    const selectedState = "{{ selected_state|default:''|escapejs }}";
-    const refreshBtn = document.getElementById('refreshBtn');
+    // --- 4. EXPORT / DOWNLOAD LOGIC ---
+
+    // (C) DOWNLOAD PNG LOGIC FIXED FOR MOBILE
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', function() {
+            const element = document.getElementById('capture-target');
+            const originalText = this.innerText;
+            this.innerText = 'Capturing...';
+            
+            html2canvas(element, {
+                scale: 2, 
+                width: 1600, // FORCE width to be desktop size
+                windowWidth: 1600, // TRICK media queries to think it's desktop
+                useCORS: true, 
+                backgroundColor: '#ffffff',
+                // This 'onclone' function allows us to modify the "virtual" element before screenshotting
+                onclone: (clonedDoc) => {
+                    const clonedElement = clonedDoc.getElementById('capture-target');
+                    if(clonedElement) {
+                        // Force the cloned element to be wide, preventing mobile stacking
+                        clonedElement.style.width = '1600px';
+                        clonedElement.style.maxWidth = 'none';
+                    }
+                }
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Daily_Comparison_Report.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                this.innerText = originalText;
+            });
+        });
+    }
+    
+    // (A) Logic for Normal YTD Export
     const exportCsvBtn = document.getElementById('exportCsvBtn');
-
-    function getFormParams() {
-      return {
-        date: document.getElementById('date_input') ? document.getElementById('date_input').value : ''
-      };
+    if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', () => {
+            const dateInput = document.getElementById('date_input').value;
+            if (!dateInput) { alert("Please select a date first."); return; }
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('date', dateInput);
+            currentUrl.searchParams.set('export', 'ytd'); 
+            window.location.href = currentUrl.toString();
+        });
     }
 
-    async function fetchAndPopulate() {
-      if (!dataApiUrl || !selectedState) return;
-      const { date } = getFormParams();
-      if (!date) return;
-
-      const url = new URL(dataApiUrl, window.location.origin);
-      url.searchParams.set('state', selectedState);
-      url.searchParams.set('date', date);
-
-      try {
-        const res = await fetch(url.toString(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
-        if (!res.ok) return;
-        const data = await res.json();
-        console.log("Data received:", data);
-        // TODO: Update chart datasets with real `data.values` here
-      } catch (e) { console.error(e); }
+    // (B) Logic for Detailed YTD Export
+    const exportdetailedBtn = document.getElementById('exportdetailedBtn');
+    if (exportdetailedBtn) {
+        exportdetailedBtn.addEventListener('click', () => {
+            const dateInput = document.getElementById('date_input').value;
+            if (!dateInput) { alert("Please select a date first."); return; }
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('date', dateInput);
+            currentUrl.searchParams.set('export', 'ytd_detailed'); 
+            window.location.href = currentUrl.toString();
+        });
     }
 
-    // Mobile sidebar toggle logic
+    // --- OTHER UI LOGIC ---
     const sidebarToggle = document.getElementById('sidebarToggle');
     const mainSidebar = document.getElementById('mainSidebar');
     if (sidebarToggle && mainSidebar) {
       sidebarToggle.addEventListener('click', () => {
         mainSidebar.classList.toggle('hidden');
         mainSidebar.classList.toggle('block');
-        mainSidebar.classList.toggle('absolute');
-        mainSidebar.classList.toggle('z-50');
-        mainSidebar.classList.toggle('left-0');
-        mainSidebar.classList.toggle('bg-white');
       });
     }
-
-    if (refreshBtn) refreshBtn.addEventListener('click', fetchAndPopulate);
-    fetchAndPopulate();
   </script>
 
   {% block content %}{% endblock %}

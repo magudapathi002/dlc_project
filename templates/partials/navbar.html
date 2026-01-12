@@ -1,114 +1,84 @@
 {% load static %}
-<nav class="fixed top-0 left-0 w-full bg-white text-white shadow z-20">
-  <div class=" mx-auto px-10 ">
+<nav class="fixed top-0 left-0 w-full bg-white shadow z-50">
+  <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <div class="flex items-center h-14 sm:h-16">
+    <div class="flex items-center justify-between h-14 sm:h-16">
 
-      <!-- LOGO -->
       <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        
+        <button 
+            type="button" 
+            onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"
+            class="lg:hidden p-2 text-gray-600 rounded-md hover:bg-gray-100 focus:outline-none"
+        >
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+
         <a href="#" class="inline-flex items-center">
           <img
             src="{% static 'images/logo.png' %}"
             alt="logo"
-            class="h-10 sm:h-12 md:h-14 w-auto object-contain rounded"
+            class="h-8 sm:h-10 md:h-12 w-auto object-contain rounded"
           >
         </a>
       </div>
 
-      <!-- RIGHT SIDE -->
-      <div class="ml-auto flex items-center gap-2 sm:gap-3 md:gap-4">
+      <div class="flex items-center gap-2 sm:gap-4">
 
-        <!-- USER NAME -->
-        <div class="hidden sm:block text-xs sm:text-sm text-gray-800 whitespace-nowrap">
+        <div class="hidden md:block text-xs sm:text-sm text-gray-800 font-medium whitespace-nowrap">
           {{ user.get_full_name|default:user.username }}
         </div>
 
-        <!-- SELECTED STATE -->
-        <!-- {% if selected_state %}
-          <div class="flex items-center gap-2">
-            <a
-              href="{% url 'dashboard:dashboard' %}"
-              class="text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded bg-yellow-400 text-black font-semibold whitespace-nowrap"
-            >
-              {{ selected_state }}
-            </a>
+        <div class="relative inline-block text-left group">
+          
+          <div
+            class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-500 text-white font-semibold text-xs sm:text-sm
+                   rounded-lg cursor-pointer shadow-md
+                   hover:bg-green-600 transition flex items-center gap-1">
+            <span>Wind</span>
+            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </div>
-        {% elif request.session.selected_state %}
-          <div class="flex items-center gap-2">
-            <a
-              href="{% url 'dashboard:dashboard' %}"
-              class="text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded bg-yellow-400 text-black font-semibold whitespace-nowrap"
-            >
-              {{ request.session.selected_state }}
-            </a>
-          </div>
-        {% endif %} -->
-        <!--ADDING SOLAR,WIND,DEMAND OPTIONS -->
-        <div class="relative inline-block">
-          <!-- Hover wrapper -->
-          <div class="group">
 
-            <!-- Button -->
-            <div
-              class="px-4 py-2 bg-green-500 text-white font-semibold text-sm
-                    rounded-lg cursor-pointer shadow-md
-                    hover:bg-green-600 transition">
-              Wind
-            </div>
+          <div
+            class="absolute right-0 mt-2 w-36
+                   opacity-0 invisible
+                   group-hover:opacity-100 group-hover:visible
+                   transition-all duration-150 z-50 origin-top-right pt-1">
 
-            <!-- Dropdown -->
-            <div
-              class="absolute left-0 top-full w-36
-                    pt-1
-                    opacity-0 invisible
-                    group-hover:opacity-100 group-hover:visible
-                    transition-all duration-150 z-50">
+            <div class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
 
-              <div
-                class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
-
-                <div
-                  class="px-4 py-2 text-sm text-gray-700
-                        hover:bg-green-100 cursor-pointer">
-                  🌬 Wind
-                </div>
-
-                <div
-                  class="px-4 py-2 text-sm text-gray-700
-                        hover:bg-yellow-100 cursor-pointer">
-                  ☀ Solar
-                </div>
-
-                <div
-                  class="px-4 py-2 text-sm text-gray-700
-                        hover:bg-blue-100 cursor-pointer">
-                  ⚡ Demand
-                </div>
-
+              <div class="px-4 py-2 text-sm text-gray-700 hover:bg-green-100 cursor-pointer flex items-center gap-2">
+                 <span>🌬</span> Wind
               </div>
-            </div>
 
+              <div class="px-4 py-2 text-sm text-gray-700 hover:bg-yellow-100 cursor-pointer flex items-center gap-2">
+                 <span>☀</span> Solar
+              </div>
+
+              <div class="px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 cursor-pointer flex items-center gap-2">
+                 <span>⚡</span> Demand
+              </div>
+
+            </div>
           </div>
         </div>
 
-
-
-
-
-        <!-- LOGOUT -->
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}
           <button
             type="submit"
             class="
               inline-flex items-center
-              px-2 sm:px-3
-              py-0.5 sm:py-1
+              px-3 py-1.5 sm:px-4 sm:py-2
               rounded-md
               bg-red-500 hover:bg-red-600
               text-white
               text-xs sm:text-sm
+              font-medium
               whitespace-nowrap
+              transition
             "
           >
             Logout
@@ -120,5 +90,4 @@
   </div>
 </nav>
 
-<!-- Spacer for fixed navbar -->
 <div class="h-14 sm:h-16" aria-hidden="true"></div>
