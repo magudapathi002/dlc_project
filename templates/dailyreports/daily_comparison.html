@@ -59,6 +59,18 @@
       </aside>
 
       <section class="flex-1 min-w-0 relative z-0">
+        
+        <nav class="flex items-center text-sm text-gray-500 mb-4" aria-label="Breadcrumb">
+            <a href="/dashboard" class="hover:text-blue-600 transition-colors">Dashboard</a>
+            <svg class="w-3 h-3 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <a href="#" class="hover:text-blue-600 transition-colors">Daily Report</a>
+            <svg class="w-3 h-3 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="font-semibold text-gray-700">DSM Chart</span>
+        </nav>
         <div class="w-full">
             <main class="w-full">
               
@@ -206,15 +218,63 @@
     }
     function generateRandomData(min, max) { return Array.from({ length: 96 }, () => Math.floor(Math.random() * (max - min + 1) + min)); }
 
-    // --- 2. CHART CONFIG ---
+    // --- 2. CUSTOM PLUGIN: VERTICAL HOVER LINE ---
+    const verticalHoverLine = {
+        id: 'verticalHoverLine',
+        defaults: {
+            color: '#6b7280', 
+            width: 1,
+            dash: [5, 5]      
+        },
+        afterInit: (chart, args, opts) => {
+            chart.verticalHoverLine = { x: 0, y: 0, draw: false };
+        },
+        afterEvent: (chart, args) => {
+            const { inChartArea } = args;
+            const { type, x, y } = args.event;
+            // Draw line on hover, remove on mouseout
+            chart.verticalHoverLine = { x, y, draw: inChartArea && type !== 'mouseout' };
+            chart.draw();
+        },
+        beforeDraw: (chart, args, opts) => {
+            const { ctx, chartArea: { top, bottom } } = chart;
+
+            // Only draw if an active tooltip exists (mouse is hovering a data point)
+            if (chart.tooltip && chart.tooltip._active && chart.tooltip._active.length) {
+                const activePoint = chart.tooltip._active[0];
+                const x = activePoint.element.x; // Lock X to the data point
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, top);
+                ctx.lineTo(x, bottom);
+                ctx.lineWidth = opts.width;
+                ctx.strokeStyle = opts.color;
+                ctx.setLineDash(opts.dash);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+    };
+
+    // --- 3. CHART CONFIG ---
     const colors = { dayAheadDevBorder: '#f87171', dayAheadDevBg: 'rgba(248, 113, 113, 0.5)', intraDayDevBorder: '#fdba74', intraDayDevBg: 'rgba(253, 186, 116, 0.5)', dayAheadSch: '#ec4899', intraDaySch: '#3b82f6', amrGen: '#16a34a' };
     
     let myChart = null; 
 
     document.addEventListener('DOMContentLoaded', () => {
       const ctx = document.getElementById('windChart').getContext('2d');
+      
+      // Calculate delay for progressive animation
+      const totalDuration = 2000; // 2 seconds total draw time
+      const delayBetweenPoints = totalDuration / 96;
+      
+      // Helper to find previous Y point for smooth animation from point-to-point
+      const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
+
       myChart = new Chart(ctx, {
         type: 'line',
+        plugins: [verticalHoverLine], // Register the custom plugin
         data: {
           labels: generateTimeSlots(),
           datasets: [
@@ -228,8 +288,50 @@
         options: {
           responsive: true,
           maintainAspectRatio: false, 
+          // Progressive Rendering Animation
+          animation: {
+            x: {
+                type: 'number',
+                easing: 'linear',
+                duration: delayBetweenPoints,
+                from: NaN, 
+                delay(ctx) {
+                    if (ctx.type !== 'data' || ctx.xStarted) return 0;
+                    ctx.xStarted = true;
+                    return ctx.index * delayBetweenPoints;
+                }
+            },
+            y: {
+                type: 'number',
+                easing: 'linear',
+                duration: delayBetweenPoints,
+                from: previousY,
+                delay(ctx) {
+                    if (ctx.type !== 'data' || ctx.yStarted) return 0;
+                    ctx.yStarted = true;
+                    return ctx.index * delayBetweenPoints;
+                }
+            }
+          },
           interaction: { mode: 'index', intersect: false },
-          plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'rectRounded' } } },
+          plugins: { 
+              legend: { position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'rectRounded' } },
+              tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.95)', // White background
+                titleColor: '#111827', // Dark title
+                bodyColor: '#374151',  // Dark text
+                borderColor: '#e5e7eb',
+                borderWidth: 1,
+                padding: 10,
+                boxWidth: 8,
+                usePointStyle: true,
+                displayColors: true,
+              },
+              verticalHoverLine: {
+                  color: '#374151', // Dark gray dashed line
+                  dash: [6, 6]
+              }
+          },
           scales: {
             x: { grid: { display: false }, ticks: { color: '#4b5563', font: { size: 10 }, autoSkip: true, maxTicksLimit: 32 } },
             y: { grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { color: '#4b5563' }, beginAtZero: true }
@@ -238,7 +340,7 @@
       });
     });
 
-    // --- 3. DOWNLOAD FUNCTION (FIXED ALIGNMENT + BLUR) ---
+    // --- 4. DOWNLOAD FUNCTION (WITH HIGH-RES FIX) ---
     const downloadBtn = document.getElementById('downloadBtn');
     if (downloadBtn) {
         downloadBtn.addEventListener('click', function() {
@@ -264,11 +366,12 @@
                 // C. CHART BLUR FIX: High Pixel Density
                 if (myChart) {
                     myChart.options.devicePixelRatio = 4; // Ultra Sharp
+                    myChart.options.animation = false; // Disable animation for snapshot
                     myChart.resize(); 
                     myChart.update(); 
                 }
 
-                // D. WAIT FOR REDRAW (600ms)
+                // D. WAIT FOR REDRAW (800ms)
                 setTimeout(() => {
                     
                     html2canvas(captureTarget, {
@@ -287,7 +390,6 @@
                                 clonedHeader.className = '';
                                 
                                 // 2. APPLY HARDCODED FLEX STYLES
-                                // This ensures justify-between works regardless of Tailwind responsive quirks
                                 clonedHeader.style.cssText = "display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; padding: 16px !important; border-bottom: 1px solid #e5e7eb !important; box-sizing: border-box !important;";
                                 
                                 // 3. FORCE DATE BOX TO RIGHT
@@ -308,6 +410,7 @@
                         // Restore Chart Quality
                         if (myChart) { 
                             myChart.options.devicePixelRatio = originalPixelRatio;
+                            myChart.options.animation = {}; // Re-enable animations if needed
                             myChart.resize(); 
                         } 
                         
@@ -330,7 +433,7 @@
         });
     }
 
-    // --- 4. Navigation Logic ---
+    // --- 5. Navigation Logic ---
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     if (exportCsvBtn) {
         exportCsvBtn.addEventListener('click', () => {
