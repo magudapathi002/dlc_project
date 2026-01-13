@@ -10,6 +10,8 @@ import calendar
 from datetime import date, datetime
 import pandas as pd
 from django.http import HttpResponse
+import openpyxl
+from openpyxl.styles import Font, Alignment, Border, Side
 
 
 
@@ -39,7 +41,9 @@ def psp(request):
     - If no date provided, default to yesterday.
     - Does not block future dates (treats any valid YYYY-MM-DD as valid).
     """
-    selected_state = request.session.get("selected_state", "").strip()
+    # Allow GET param to override session, otherwise fallback to session
+    selected_state = request.GET.get("state") or request.session.get("selected_state", "")
+    selected_state = selected_state.strip()
 
     # default fallback -> yesterday (keeps previous behavior when no date provided)
     yesterday_iso = (date.today() - timedelta(days=1)).isoformat()
@@ -232,18 +236,64 @@ def monthly_error_report(request):
 @login_required
 def daily_comparison(request):
     """
-    Renders the Daily Comparison - Chart page.
-    Accessible via {% url 'daily_comparison' %}
+    Renders the Daily Comparison page AND handles both YTD and Detailed YTD Excel Exports.
     """
-    selected_state = request.session.get("selected_state")
-    # optional GET params you might use for chart filters
+    selected_state = request.session.get("selected_state", "TN")
     date_value = request.GET.get("date")
     month = request.GET.get("month")
     year = request.GET.get("year")
+    export_type = request.GET.get('export')
 
-    # Fetch SRLDC data for the requested filter set
-    srldc_params = {"state": selected_state or "", "date": date_value or "", "month": month or "", "year": year or "", "type": "daily_comparison"}
-    srldc_data = fetch_srldc_data(srldc_params)
+    # --- 1. EXPORT LOGIC: SUMMARY YTD (Existing) ---
+    if export_type == 'ytd':
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        filename = f"YTD_Summary_{selected_state}_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "YTD Summary"
+
+        headers = ["Date", "0% to 15%", "15% to 20%", "20% to 30%", "30% and Above", "Connectivity Loss", "Total Charges", "DSM Charges per unit(paise)"]
+        ws.append(headers)
+
+        # Style Headers
+        _style_headers(ws)
+        
+        wb.save(response)
+        return response
+
+    # --- 2. EXPORT LOGIC: DETAILED YTD (New) ---
+    elif export_type == 'ytd_detailed':
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        filename = f"YTD_Detailed_{selected_state}_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Detailed YTD Data"
+
+        # Define Detailed Headers (You can change these based on requirements)
+        detailed_headers = [
+            "DateTime", "Forecast", "Actual", "Connected Capacity", 
+            "Error%", "Charges in Rs"
+        ]
+        ws.append(detailed_headers)
+
+        # Style Headers
+        _style_headers(ws)
+
+        wb.save(response)
+        return response
+
+    # --- 3. NORMAL PAGE RENDERING ---
+    srldc_params = {
+        "state": selected_state or "", 
+        "date": date_value or "", 
+        "month": month or "", 
+        "year": year or "", 
+        "type": "daily_comparison"
+    }
 
     context = {
         "user": request.user,
@@ -252,10 +302,20 @@ def daily_comparison(request):
         "date": date_value,
         "month": month,
         "year": year,
-        "preview_image": "/mnt/data/979ee8e8-59f4-47a7-add1-68f484a32caf.png",
-        "srldc_data": srldc_data,
+        "srldc_data": [], 
     }
     return render(request, "dailyreports/daily_comparison.html", context)
+
+
+# --- Helper Function to Style Headers (keeps code clean) ---
+def _style_headers(ws):
+    bold_font = Font(bold=True)
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    
+    for cell in ws[1]:
+        cell.font = bold_font
+        cell.border = thin_border
+        cell.alignment = Alignment(horizontal='center')
 
 
 @login_required

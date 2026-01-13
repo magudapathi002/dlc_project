@@ -1,6 +1,4 @@
 {% load static %}
-<!-- {% static 'images/placeholder.png' as placeholder_img %} -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -18,7 +16,7 @@
     <style>
       :root {
         --navbar-height: 72px;
-      }c
+      }
 
       html,
       body {
@@ -107,8 +105,8 @@
       }
 
       /* ----------------------
-       Page entry animations
-       ---------------------- */
+        Page entry animations
+        ---------------------- */
       .fade-in {
         opacity: 0;
         transform: translateY(18px);
@@ -152,6 +150,190 @@
         object-fit: contain;
         display: inline-block;
       }
+
+
+      /* --- PROPER EXPORT DESIGN SYSTEM --- */
+      
+      /* 1. Layout & Typography */
+      .export-mode {
+          font-family: 'Inter', sans-serif;
+          color: #1e293b;
+      }
+      .export-mode .app-card {
+          border: 1px solid #e2e8f0 !important;
+          box-shadow: none !important;
+          border-radius: 12px !important;
+      }
+      .export-mode h1 {
+          font-size: 32px !important;
+          margin-bottom: 8px !important;
+          color: #0f172a !important;
+      }
+      .export-mode p {
+          font-size: 16px !important;
+          color: #64748b !important;
+      }
+      .export-mode #date_input { 
+          font-size: 26px !important;
+          color: #1e40af !important; /* Darker blue */
+          margin-bottom: 24px !important;
+          display: block !important;
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 2px solid #e2e8f0 !important;
+          padding: 0 0 8px 0 !important;
+          width: 100% !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+      }
+
+      /* 2. Table Design - Professional Data Report */
+      .export-mode .psp-table {
+          width: 100%;
+          border-collapse: separate;
+          border-spacing: 0;
+      }
+      /* 2. Table Design - Professional Data Report */
+      /* 2. Table Design - Compact & Aligned */
+      .export-mode .psp-table thead th {
+          background-color: #1e293b !important;
+          color: #ffffff !important;
+          font-size: 13px !important;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          padding: 10px 12px !important; 
+          font-weight: 600 !important;
+      }
+      .export-mode .psp-table tbody td {
+          padding: 12px 14px !important; 
+          font-size: 15px !important;
+          font-weight: 500 !important;
+          border-bottom: 1px solid #f1f5f9;
+          color: #334155;
+      }
+      .export-mode .psp-table tbody tr:nth-last-child(2) td {
+          background-color: #eff6ff !important;
+          font-weight: 700 !important;
+          color: #1e3a8a !important;
+      }
+      .export-mode .psp-table tbody tr:last-child td {
+          background-color: #0f172a !important;
+          color: #fff !important;
+          font-size: 16px !important;
+      }
+      
+      /* 3. Left Card Layout Fix - Deep Flex */
+      .export-mode .left-card .card-body {
+          display: flex !important;
+          flex-direction: column !important;
+          padding-bottom: 0 !important;
+      }
+      /* Select the div containing the table (it's the 2nd child usually) */
+      .export-mode .left-card .card-body > div:last-child {
+          display: flex !important;
+          flex-direction: column !important;
+          flex: 1 !important;
+      }
+       .export-mode #psp-footer {
+          margin-top: auto !important;
+          padding: 20px 0 24px 0 !important; /* Bottom spacing */
+          border-top: 1px solid #e2e8f0;
+          font-size: 12px !important;
+          color: #94a3b8 !important;
+          text-align: right;
+      }
+      
+      /* 4. Dashboard Scaling - Flex & Stretch */
+      .export-mode .right-card {
+          padding: 24px !important;
+          background-color: #f8fafc !important; /* Restore Gray BG for contrast */
+      }
+      .export-mode .right-card > div {
+          height: 100% !important;
+      }
+      /* Top row container */
+      .export-mode .right-card .flex-1.flex.gap-4 {
+           align-items: stretch !important;
+           min-height: 500px !important; /* Define the main height block */
+      }
+      /* Side Columns (Thermal/Hydro container) */
+      .export-mode .right-card .w-40.flex.flex-col {
+          height: auto !important;
+          justify-content: space-between !important;
+      }
+      /* Individual Gauges - STRETCH TO FILL */
+      .export-mode .right-card .h-\[220px\] {
+          height: auto !important;
+          flex: 1 !important;
+          min-height: 0 !important;
+          margin-bottom: 0 !important; /* Remove gaps, use gap-4 from parent */
+      }
+      
+      /* Map Section sizing */
+      .export-mode #tn-map {
+          height: 100% !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+      }
+      .export-mode .right-card .flex-1.bg-gray- {
+          height: auto !important; /* Stretch match side cols */
+          background-color: #ffffff !important; /* Map card needs white */
+      }
+
+      /* Bottom Row */
+      .export-mode .h-32 {
+          height: auto !important;
+          min-height: 140px !important; 
+          flex: none !important;
+          margin-top: 16px !important;
+      }
+      .export-mode .h-32 .flex-1 {
+          height: 100% !important;
+      }
+
+      /* Icons & Text Boost */
+      .export-mode .icon-gif {
+          width: 56px !important;
+          height: 56px !important;
+          margin-bottom: 12px !important;
+      }
+       .export-mode .text-\[10px\] {
+          font-size: 13px !important;
+          margin-top: 8px !important;
+          font-weight: 700 !important;
+      }
+
+      /* Hide Controls */
+      .export-mode #psp-filter-form button { display: none !important; }
+      .export-mode #psp-filter-form input[type="hidden"] { display: none; }
+      .export-mode .fade-in { opacity: 1 !important; transform: none !important; }
+
+      /* FIX PERCENTAGE BOX ALIGNMENT */
+      /* Target the specific progress bar container in the table */
+      .export-mode .psp-table .relative.h-7 {
+          height: 32px !important; 
+          display: block !important; 
+          border-radius: 6px !important;
+      }
+      /* Target the flex container holding the text */
+      .export-mode .psp-table .relative.h-7 .absolute.inset-0 {
+          display: flex !important;
+          align-items: center !important; 
+          justify-content: center !important;
+          font-size: 14px !important; 
+          font-weight: 800 !important; 
+          height: 100% !important; 
+          width: 100% !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          line-height: normal !important; 
+          transform: translateY(-2px) !important; /* Manual Lift force */
+          top: 0 !important;
+          left: 0 !important;
+      }
+
+
     </style>
   </head>
 
@@ -165,8 +347,16 @@
             {% include "partials/sidebar.html" %}
           </aside>
 
-          <main class="flex-1 h-full">
-            <div class="cards-row h-full">
+          <main class="flex-1 h-full flex flex-col">
+            
+            <nav class="flex items-center text-sm text-gray-500 mb-3" aria-label="Breadcrumb">
+                <a href="/dashboard" class="hover:text-blue-600 transition-colors">Dashboard</a>
+                <span class="mx-2 text-gray-400">/</span>
+                <a href="#" class="hover:text-blue-600 transition-colors">Daily Report</a>
+                <span class="mx-2 text-gray-400">/</span>
+                <span class="font-semibold text-gray-700">PSP</span>
+            </nav>
+            <div class="cards-row flex-1 min-h-0">
               <section class="left-card app-card fade-in">
                 <header class="px-6 py-5 border-b flex-shrink-0">
                   <div class="flex items-start justify-between">
@@ -176,19 +366,6 @@
                         Plant breakdown for the selected state &amp; date
                       </p>
                     </div>
-                    <!-- <div class="text-sm text-gray-600 text-right">
-                      {% if selected_state %}
-                      <div>
-                        State:
-                        <span class="font-medium">{{ selected_state }}</span>
-                      </div>
-                      {% endif %} {% if selected_date %}
-                      <div>
-                        Date:
-                        <span class="font-medium">{{ selected_date }}</span>
-                      </div>
-                      {% endif %}
-                    </div> -->
                   </div>
                 </header>
 
@@ -227,6 +404,13 @@
                         class="px-3 py-2 border rounded-md text-sm"
                       >
                         Refresh
+                      </button>
+                      <button
+                        type="button"
+                        id="exportBtn"
+                        class="px-3 py-2 border rounded-md text-sm"
+                      >
+                        Export
                       </button>
                     </form>
                   </div>
@@ -321,17 +505,17 @@
                     </div>
 
                     <div
-                      class="flex-1 bg-gray rounded-xl shadow-sm border p-1 relative flex flex-col justify-center h-[430px] fade-in fade-delay-2"
+                      class="flex-1 bg-gray rounded-xl shadow-sm border p-1 relative flex flex-col justify-center h-[456px] fade-in fade-delay-2"
                     >
                       <div class="absolute top-2 left-3 z-10">
-                        <h3 class="text-sm font-bold text-gray-700">
-                          TAMILNADU
+                        <h3 class="text-sm font-bold text-gray-700" id="map-state-label">
+                          {{ selected_state|default:"Tamil Nadu"|upper }}
                         </h3>
                         <p class="text-xs text-gray-500" id="map-date-label">
                           Power Supply Position
                         </p>
                       </div>
-                      <div id="tn-map" class="w-full h-64"></div>
+                      <div id="tn-map" class="w-full h-64" data-current-state="{{ selected_state|default:'Tamil Nadu' }}"></div>
                     </div>
 
                     <div class="w-40 flex flex-col gap-4 justify-center">
@@ -526,16 +710,28 @@
 
               <script src="https://d3js.org/d3.v7.min.js"></script>
               <script src="https://unpkg.com/topojson-client@3"></script>
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 
               <script>
                 (function () {
-                  async function initTamilNaduMap() {
-                    const DATA_URL = "/static/data/tamilnadu.json";
+                  async function initStateMap() {
                     const container = document.getElementById("tn-map");
                     if (!container) return;
+                    
+                    const rawState = container.dataset.currentState || "Tamil Nadu";
+                    const wantState = rawState.toLowerCase().replace(/[^a-z0-9]/g, "");
+                    const isTN = ["tamilnadu", "tn", "madras", "tamil nadu"].some(s => wantState.includes(s));
+                    
                     container.innerHTML = "";
+                    
+                    // Decide which file to load
+                    // Use optimized tamilnadu.json for TN, otherwise india.geojson for others
+                    const DATA_URL = isTN ? "/static/data/tamilnadu.json" : "/static/data/india.geojson";
+                    
                     const width = Math.max(320, container.clientWidth);
                     const height = Math.max(200, container.clientHeight);
+                    
                     const svg = d3
                       .select(container)
                       .append("svg")
@@ -543,44 +739,41 @@
                       .attr("height", "100%")
                       .attr("viewBox", `0 0 ${width} ${height}`)
                       .attr("preserveAspectRatio", "xMidYMid meet");
+                      
                     try {
                       const res = await fetch(DATA_URL);
-                      if (!res.ok) return;
+                      if (!res.ok) throw new Error("Data not found");
+                      
                       const json = await res.json();
                       let geo = json;
                       if (json.type === "Topology" && json.objects) {
                         const k = Object.keys(json.objects)[0];
                         geo = topojson.feature(json, json.objects[k]);
                       }
-                      function isTamilNaduFeature(feature) {
-                        const props = feature.properties || {};
-                        const possible = [
-                          props.NAME_1,
-                          props.NAME,
-                          props.STATE_NAME,
-                          props.st_nm,
-                          props.STATE,
-                          props.st_name,
-                          props.DISTRICT,
-                        ];
-                        const joined = possible
-                          .filter(Boolean)
-                          .join(" ")
-                          .toLowerCase();
-                        return (
-                          joined.includes("tamil") || joined.includes("tn")
-                        );
+                      
+                      const features = geo.features || (geo.type === "Feature" ? [geo] : []);
+                      let feature = null;
+                      
+                      if (isTN && features.length === 1) {
+                          // Fallback for single-feature file
+                          feature = features[0];
+                      } else {
+                          // Search for the state feature
+                          feature = features.find(f => {
+                            const p = f.properties || {};
+                            const possible = [p.NAME_1, p.NAME, p.STATE, p.st_nm, p.state_name, p.id];
+                            const normVals = possible.map(v => String(v || "").toLowerCase().replace(/[^a-z0-9]/g, ""));
+                            // Check exact match or inclusion
+                            return normVals.some(v => v === wantState || (v.length > 3 && wantState.includes(v)));
+                          });
                       }
-                      const feature =
-                        (geo.features || []).find(isTamilNaduFeature) ||
-                        ((geo.features || []).length === 1
-                          ? geo.features[0]
-                          : null);
+                      
                       if (feature) {
                         const projection = d3
                           .geoMercator()
                           .fitSize([width - 20, height - 20], feature);
                         const path = d3.geoPath().projection(projection);
+                        
                         svg
                           .append("path")
                           .datum(feature)
@@ -588,12 +781,20 @@
                           .attr("fill", "#e0f2fe")
                           .attr("stroke", "#3b82f6")
                           .attr("stroke-width", 1.5);
+                          
+                        // Optional: Add tooltip or label? kept simple for now
+                      } else {
+                        container.innerHTML = `<div class="flex items-center justify-center h-full text-gray-400 text-xs text-center p-4">Shape not found for ${rawState}</div>`;
                       }
-                    } catch (e) {}
+                    } catch (e) {
+                        console.error(e);
+                        container.innerHTML = `<div class="flex items-center justify-center h-full text-gray-400 text-xs text-center p-4">Map unavailable</div>`;
+                    }
                   }
-                  initTamilNaduMap();
+                  
+                  initStateMap();
                   window.addEventListener("resize", () => {
-                    setTimeout(initTamilNaduMap, 500);
+                    setTimeout(initStateMap, 500);
                   });
                 })();
               </script>
@@ -941,12 +1142,12 @@
 
           // Debug partial matches
           if (dateMatch && !stateMatch && wantStateNorm) {
-             console.log(`[DEBUG] Date matched (${pDate}) but state mismatch. Candidates: ${JSON.stringify(candidateNorms)} vs Want: ${wantStateNorm}`);
+              console.log(`[DEBUG] Date matched (${pDate}) but state mismatch. Candidates: ${JSON.stringify(candidateNorms)} vs Want: ${wantStateNorm}`);
           }
           
           if (dateMatch && stateMatch) {
-             console.log(`[DEBUG] MATCH FOUND for State='${wantStateNorm}' Date='${wantDateNorm}'`, p);
-             return p;
+              console.log(`[DEBUG] MATCH FOUND for State='${wantStateNorm}' Date='${wantDateNorm}'`, p);
+              return p;
           }
         }
         console.log(`[DEBUG] No match found for State='${wantStateNorm}' Date='${wantDateNorm}' in ${arr.length} rows.`);
@@ -996,7 +1197,19 @@
           (dateInput && dateInput.value) ||
           ""
         ).toString();
-        const wantState = normalize((stateInput && stateInput.value) || "");
+        
+        // DEBUG: Check raw input
+        const rawStateInput = stateInput ? stateInput.value : "N/A";
+        console.log(`[DEBUG] Raw state input: '${rawStateInput}'`);
+
+        let wantState = normalize(rawStateInput);
+        
+        // Strict default to Tamil Nadu if empty or invalid
+        if (!wantState || wantState === "none" || wantState === "null") {
+              wantState = "Tamil Nadu";
+              console.log("[DEBUG] Defaulting wantState to: Tamil Nadu");
+        }
+        
         console.log(
           "updateTable: wantState=",
           wantState,
@@ -1016,6 +1229,7 @@
             const arr = arrayFromJson(serverRaw);
             const match = findEntryByStateAndDate(arr, wantState, wantDate);
             if (match) {
+              console.log("[DEBUG] Match found in server data:", match);
               tbody.innerHTML = buildRowsFromProcessor(match);
               if (footer)
                 footer.innerHTML = `Showing report for ${
@@ -1047,6 +1261,7 @@
         const arr2 = arrayFromJson(apiJson);
         const match2 = findEntryByStateAndDate(arr2, wantState, wantDate);
         if (match2) {
+          console.log("[DEBUG] Match found in API data:", match2);
           tbody.innerHTML = buildRowsFromProcessor(match2);
           if (footer)
             footer.innerHTML = `Showing report for ${
@@ -1097,6 +1312,115 @@
           });
         }
       });
+
+    // --- FIX: UPDATED EXPORT LOGIC FOR PROPER ALIGNMENT, MAP VISIBILITY & EQUAL HEIGHTS ---
+    document.getElementById("exportBtn").addEventListener("click", async () => {
+      const source = document.querySelector(".cards-row");
+      const wrapper = document.getElementById("export-wrapper");
+
+      if (!source || !wrapper) {
+        alert("Export area not found");
+        return;
+      }
+
+      // 1. Clean wrapper
+      wrapper.innerHTML = "";
+
+      // 2. Deep Clone
+      const clone = source.cloneNode(true);
+      clone.classList.add("export-mode");
+
+      // 3. Layout Setup
+      const exportWidth = 1280; 
+      wrapper.style.width = `${exportWidth}px`;
+      wrapper.style.padding = "40px"; // More breathable padding
+      wrapper.style.backgroundColor = "#f1f5f9"; // Match body bg
+
+      // 4. Force Grid Styling
+      clone.style.display = "grid";
+      clone.style.gridTemplateColumns = "42% 58%"; // Better balance
+      clone.style.gap = "2rem";
+      clone.style.width = "100%";
+      clone.style.height = "auto";
+      clone.style.margin = "0";
+      clone.style.alignItems = "stretch"; // Ensure full height stretch
+
+      wrapper.appendChild(clone);
+
+      // 5. MAP FIX: Allow SVG to fill container naturally
+      // We removed the hard pixel width forcing. 
+      // We only ensure the map has current content.
+      // The CSS rule .export-mode #tn-map { height: 100%; ... } controls size.
+      
+      // 6. Wait for rendering to settle
+      await new Promise(r => setTimeout(r, 800));
+
+      // 7. EQUAL HEIGHT FIX: Measure and Force Uniform Height
+      const cards = clone.querySelectorAll(".app-card");
+      if (cards.length > 0) {
+        let maxH = 0;
+        cards.forEach(c => {
+            // Reset to ensure we get natural height with new styles
+            c.style.height = "auto"; 
+            const h = c.offsetHeight;
+            if (h > maxH) maxH = h;
+        });
+        
+        if (maxH > 0) {
+            cards.forEach(c => {
+                c.style.setProperty("height", maxH + "px", "important");
+                // For flexible internal spacing
+                 c.style.display = "flex";
+                 c.style.flexDirection = "column";
+            });
+             
+             // Ensure the left card body expands
+            const leftBody = clone.querySelector(".left-card .card-body");
+            if (leftBody) leftBody.style.flex = "1";
+        }
+      }
+
+      // 8. Capture
+      try {
+        const canvas = await html2canvas(wrapper, {
+            scale: 2, 
+            useCORS: true,
+            backgroundColor: "#f1f5f9", // Output bg
+            width: exportWidth, 
+            windowWidth: exportWidth,
+            scrollX: 0,
+            scrollY: -window.scrollY,
+            onclone: (doc) => {
+                // thorough cleanup of animations
+                const anims = doc.querySelectorAll('*');
+                anims.forEach(el => {
+                    el.style.animation = 'none';
+                    el.style.transition = 'none';
+                });
+            }
+        });
+
+        // 9. Download
+        const link = document.createElement("a");
+        link.download = `PSP_Report_${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } catch (err) {
+        console.error("Export failed", err);
+        alert("Export failed: " + err.message);
+      } finally {
+        // 10. Cleanup
+        wrapper.innerHTML = "";
+      }
+    });
+
     </script>
+
+    <div id="export-wrapper" style="
+    position: fixed;
+    top: 0;
+    left: -9999px;
+    z-index: -9999;
+    "></div>
   </body>
 </html>
