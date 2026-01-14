@@ -3328,3 +3328,15 @@ AttributeError: 'Command' object has no attribute 'to_title_case'
 2026-01-01 16:44:31,908 - WARNING - PDF internal date: 2026-01-01 | Forced report date: 2025-12-31
 2026-01-01 16:44:31,909 - INFO - Report DATE (3B extraction): 2025-12-31
 2026-01-01 16:44:31,909 - INFO - Reporting DATETIME (3B extraction): None
+2026-01-14 14:37:55,829 - INFO - 📁 Checking/Created report directory: downloads\SRLDC\report_2026-01-14_14-37-55
+2026-01-14 14:37:55,829 - INFO - 🌐 Attempting to download from: https://www.srldc.in/var/ftp/reports/psp/2026/Jan26/13-01-2026-psp.pdf
+2026-01-14 14:37:56,873 - INFO - [32;1m✅ Successfully downloaded: srldc_14012026.pdf to downloads\SRLDC\report_2026-01-14_14-37-55[0m
+2026-01-14 14:37:56,873 - INFO - 🔍 Extracting Table 2(A) using pdfplumber heading anchor...
+2026-01-14 14:37:57,346 - INFO - ✅ Table 2(A) processed. 7 rows.
+2026-01-14 14:37:57,581 - INFO - 🔍 Extracting Table 2(C) using pdfplumber heading anchor...
+2026-01-14 14:37:57,949 - INFO - --- RAW DataFrame for Table 2(C) ---
+2026-01-14 14:37:58,043 - INFO - ✅ Table 2(C) processed. 6 rows. States: ['Andhra Pradesh', 'Karnataka', 'Kerala', 'Tamil Nadu', 'Telangana', 'Region']
+2026-01-14 14:37:58,043 - INFO - 🔍 Extracting Table 3(B) using pdfplumber heading anchor...
+2026-01-14 14:37:58,406 - WARNING - PDF internal date: 2026-01-14 | Forced report date: 2026-01-13
+2026-01-14 14:37:58,406 - INFO - Report DATE (3B extraction): 2026-01-13
+2026-01-14 14:37:58,406 - INFO - Reporting DATETIME (3B extraction): None

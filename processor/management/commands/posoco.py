@@ -10,6 +10,38 @@ from ...models import PosocoTableA, PosocoTableG
 from PyPDF2 import PdfReader
 import shutil
 
+import ssl
+from requests.adapters import HTTPAdapter
+from urllib3.util.ssl_ import create_urllib3_context
+from urllib3.poolmanager import PoolManager
+
+
+
+class LegacySSLAdapter(HTTPAdapter):
+    def init_poolmanager(self, connections, maxsize, block=False):
+        ctx = create_urllib3_context()
+
+        # 🔥 CRITICAL FIX
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
+        # Allow legacy renegotiation
+        ctx.options |= 0x4
+
+        # Allow weak ciphers (gov sites)
+        try:
+            ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+        except Exception:
+            pass
+
+        self.poolmanager = PoolManager(
+            num_pools=connections,
+            maxsize=maxsize,
+            block=block,
+            ssl_context=ctx
+        )
+
+
 # --- Constants ---
 API_URL = "https://webapi.grid-india.in/api/v1/file"
 BASE_URL = "https://webcdn.grid-india.in/"
@@ -75,7 +107,14 @@ def _parse_date_from_string(s):
 def _post_and_get_retdata(api_url, payload, timeout=30):
     """POST and return parsed JSON (or None on failure)."""
     try:
-        resp = requests.post(api_url, json=payload, timeout=timeout)
+        session = requests.Session()
+        session.mount('https://', LegacySSLAdapter())
+        resp = session.post(
+            api_url,
+            json=payload,
+            timeout=timeout,
+            verify=False
+        )
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.RequestException as e:
@@ -89,7 +128,14 @@ def _post_and_get_retdata(api_url, payload, timeout=30):
 def _download_to_temp(url, timeout=60):
     """Download URL to a temporary file and return its path (or None)."""
     try:
-        r = requests.get(url, stream=True, timeout=timeout)
+        session = requests.Session()
+        session.mount('https://', LegacySSLAdapter())
+        r = session.get(
+            url,
+            stream=True,
+            timeout=timeout,
+            verify=False
+        )
         r.raise_for_status()
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         with open(tmp.name, "wb") as fh:
