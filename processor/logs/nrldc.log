@@ -616,3 +616,13 @@
 2026-01-14 14:37:42,092 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-14 - RAILWAYS_NRISTS[0m
 2026-01-14 14:37:42,104 - INFO - [32;1m➕ Created Table 2C entry for 2026-01-14 - NR[0m
 2026-01-14 14:37:42,104 - INFO - [32;1m✅ Table 2(C) data saved to database.[0m
+2026-01-19 10:30:38,178 - INFO - [32;1m🔔 Requested report date: 2026-01-15[0m
+2026-01-19 10:30:38,362 - INFO - [32;1m✅ Pass: Report data for 2026-01-15 already exists in the database. Skipping download and extraction.[0m
+2026-01-19 10:30:44,947 - INFO - [32;1m🔔 Requested report date: 2026-01-15[0m
+2026-01-19 10:30:45,109 - INFO - [32;1m✅ Pass: Report data for 2026-01-15 already exists in the database. Skipping download and extraction.[0m
+2026-01-19 10:35:21,583 - INFO - [32;1m🔔 Requested report date: 2026-01-16[0m
+2026-01-19 10:35:21,689 - INFO - [32;1m✅ Pass: Report data for 2026-01-16 already exists in the database. Skipping download and extraction.[0m
+2026-01-19 10:36:50,188 - INFO - [32;1m🔔 Requested report date: 2026-01-17[0m
+2026-01-19 10:36:50,288 - INFO - [32;1m✅ Pass: Report data for 2026-01-17 already exists in the database. Skipping download and extraction.[0m
+2026-01-19 10:38:45,648 - INFO - [32;1m🔔 Requested report date: 2026-01-18[0m
+2026-01-19 10:38:45,780 - INFO - [32;1m✅ Pass: Report data for 2026-01-18 already exists in the database. Skipping download and extraction.[0m

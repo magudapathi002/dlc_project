@@ -17,6 +17,8 @@ tabula-py = "*"
 pandas = "*"
 pypdf2 = "*"
 certifi = "*"
+pdfplumber = "*"
+openpyxl = "*"
 
 [dev-packages]
 
